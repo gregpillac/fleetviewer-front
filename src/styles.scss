@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+.neosolix-svg {
+  path {
+    fill: #252525;
+  }
+}
+
+.fleetviewer-svg {
+  .bright-color {
+    fill: #D6D6D6;
+  }
+  .contrast-color {
+    fill: #8B8B8B;
+
+  }
+}

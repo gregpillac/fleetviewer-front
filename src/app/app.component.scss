@@ -1,0 +1,16 @@
+.featuring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+
+  .neosolix-svg {
+    height: 30px;
+    width: auto;
+  }
+}
+
+.fleetviewer-svg {
+  width: 400px;
+  height: auto;
+}
