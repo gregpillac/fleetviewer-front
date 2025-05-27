@@ -1,0 +1,21 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <label for="username">Nom d'utilisateur</label>
+  <input id="username" formControlName="username" required />
+
+  <label for="password">Mot de passe</label>
+  <div class="password-field">
+    <input
+      [type]="showPassword ? 'text' : 'password'"
+      id="password"
+      formControlName="password"
+      required
+    />
+    <button type="button" (click)="togglePasswordVisibility()" class="eye-toggle">
+      {{ showPassword ? '🙈' : '👁️' }}
+    </button>
+  </div>
+
+  <button type="submit">Connexion</button>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+</form>
