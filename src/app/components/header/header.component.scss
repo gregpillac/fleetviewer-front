@@ -1,0 +1,41 @@
+.header {
+  background-color: #202020;
+  color: white;
+  padding: 1rem 2rem;
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .logo svg {
+    height: 40px;
+    width: auto;
+
+    .bright-color {
+      fill: white;
+    }
+  }
+
+  .menu {
+    display: flex;
+    gap: 1.5rem;
+
+    a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+
+      &.active {
+        border-bottom: 2px solid white;
+      }
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}

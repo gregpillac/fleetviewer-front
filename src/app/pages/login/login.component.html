@@ -1,21 +1,32 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <label for="username">Nom d'utilisateur</label>
-  <input id="username" formControlName="username" required />
-
-  <label for="password">Mot de passe</label>
-  <div class="password-field">
-    <input
-      [type]="showPassword ? 'text' : 'password'"
-      id="password"
-      formControlName="password"
-      required
-    />
-    <button type="button" (click)="togglePasswordVisibility()" class="eye-toggle">
-      {{ showPassword ? '🙈' : '👁️' }}
-    </button>
+<div class="login-wrapper">
+  <div class="logo">
+    <svg-icon src="/fleetviewer/fleetViewerOffbeat.svg" svgClass="fleetviewer-svg"></svg-icon>
   </div>
 
-  <button type="submit">Connexion</button>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="field">
+      <label for="username">Nom d'utilisateur</label>
+      <input id="username" formControlName="username" required />
+    </div>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-</form>
+    <div class="field">
+      <label for="password">Mot de passe</label>
+      <div class="password-field">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="password"
+          formControlName="password"
+          required
+        />
+        <button type="button" (click)="togglePasswordVisibility()" class="eye-toggle">
+          {{ showPassword ? '🙈' : '👁️' }}
+        </button>
+      </div>
+    </div>
+
+
+    <button type="submit">Connexion</button>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  </form>
+</div>

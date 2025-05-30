@@ -1,10 +1,26 @@
 :host {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #f4f4f4;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-wrapper {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    svg {
+      height: auto;
+      width: 200px;
+      display: block;
+    }
+  }
 }
 
 form {
@@ -12,8 +28,6 @@ form {
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -29,7 +43,13 @@ form {
     color: #444;
   }
 
+  .field {
+    display: flex;
+    flex-direction: column;
+  }
+
   input {
+    width: 250px;
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 0.5rem;

@@ -1,19 +1,11 @@
-
-
 <header>
-  <div class="content">
-    <div class="left-side">
-      <div class="featuring">
-        <svg-icon src="/neosolix/neosolixLogo.svg" svgClass="neosolix-svg"></svg-icon>
-        <svg-icon src="/fleetviewer/fleetViewerInline.svg" svgClass="fleetviewer-svg"></svg-icon>
-      </div>
-    </div>
-  </div>
+  <app-header *ngIf="showLayout"></app-header>
 </header>
 
-<router-outlet />
+<main [class.full-screen]="!showLayout">
+  <router-outlet></router-outlet>
+</main>
 
 <footer>
-
+  <app-footer *ngIf="showLayout"></app-footer>
 </footer>
-

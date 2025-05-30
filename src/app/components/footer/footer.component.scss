@@ -1,0 +1,28 @@
+.footer {
+  background-color: #202020;
+  color: white;
+  padding: 1rem 2rem;
+
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .logo svg {
+    height: 30px;
+    width: auto;
+    path {
+      fill: white !important;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
