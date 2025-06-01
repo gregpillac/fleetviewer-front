@@ -12,13 +12,27 @@ import {Router} from '@angular/router';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  menuOpen = false;
+
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu() {
+    // petit timeout pour éviter fermeture avant clic
+    setTimeout(() => {
+      this.menuOpen = false;
+    }, 200);
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+    this.menuOpen = false;
   }
 }

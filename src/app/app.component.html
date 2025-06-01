@@ -1,11 +1,8 @@
-<header>
-  <app-header *ngIf="showLayout"></app-header>
-</header>
+<app-header *ngIf="showLayout"></app-header>
+
 
 <main [class.full-screen]="!showLayout">
   <router-outlet></router-outlet>
 </main>
 
-<footer>
-  <app-footer *ngIf="showLayout"></app-footer>
-</footer>
+<app-footer *ngIf="showLayout"></app-footer>

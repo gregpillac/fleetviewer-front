@@ -42,11 +42,10 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.errorMessage = '';
       const credentials = this.loginForm.value;
+
       this.authService.login(credentials).subscribe({
         next: (res) => {
-          localStorage.setItem('token', res.token);
           this.router.navigate(['/home']);
-          console.log('Login success, token:', res.token);
         },
         error: (err) => {
           this.errorMessage = 'Login failed: ' + (err.error?.message || err.statusText);
@@ -56,5 +55,4 @@ export class LoginComponent implements OnInit {
       console.log('Login avec', credentials);
     }
   }
-
 }

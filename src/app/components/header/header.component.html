@@ -5,10 +5,17 @@
     </div>
     <nav class="menu">
       <a routerLink="/dashboard" routerLinkActive="active">Accueil</a>
-      <a routerLink="/users" routerLinkActive="active">Utilisateurs</a>
-      <a routerLink="/vehicles" routerLinkActive="active">Véhicules</a>
-      <a routerLink="/vehicles" routerLinkActive="active">Véhicules</a>
-      <button (click)="logout()">Se déconnecter</button>
+
+      <div class="avatar-wrapper" (click)="toggleMenu()" tabindex="0" (blur)="closeMenu()">
+        <img src="/images/default-pfp.jpg" alt="Avatar utilisateur" class="avatar" />
+      </div>
+
+      <div class="dropdown-avatar" *ngIf="menuOpen">
+        <p></p>
+        <a routerLink="/account" (click)="closeMenu()">Accéder au compte</a>
+        <button (click)="logout()">Se déconnecter</button>
+      </div>
     </nav>
+
   </div>
 </header>

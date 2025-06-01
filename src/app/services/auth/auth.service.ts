@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {map, Observable, tap} from 'rxjs';
 
 interface LoginRequest {
   username: string;
@@ -20,15 +20,20 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.loginUrl, credentials);
+  login(credentials: LoginRequest): Observable<void> {
+    return this.http.post<LoginResponse>(this.loginUrl, credentials).pipe(
+      tap((res) => {
+        sessionStorage.setItem('token', res.token);
+      }),
+      map(() => {})
+    );
   }
 
   logout() {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!sessionStorage.getItem('token');
   }
 }
