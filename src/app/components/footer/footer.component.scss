@@ -15,7 +15,7 @@ footer.footer {
     gap: 1.5rem;
   }
 
-  .logo, .footer-links {
+  .logo, .copyright {
     width: 350px;
   }
 
@@ -36,7 +36,6 @@ footer.footer {
   .footer-links {
     list-style: none;
     display: flex;
-    justify-content: right;
     gap: 1.5rem;
     padding: 0;
     margin: 0;
@@ -53,6 +52,8 @@ footer.footer {
   }
 
   .copyright {
+    display: flex;
+    justify-content: right;
     text-align: center;
     font-size: 1rem;
     color: #aaa;

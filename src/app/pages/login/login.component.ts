@@ -4,6 +4,7 @@ import {AuthService} from '../../services/auth/auth.service';
 import {CommonModule} from '@angular/common';
 import {SvgIconComponent} from "angular-svg-icon";
 import {Router} from '@angular/router';
+import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +31,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/']);
     }
   }
 
@@ -45,10 +46,10 @@ export class LoginComponent implements OnInit {
 
       this.authService.login(credentials).subscribe({
         next: (res) => {
-          this.router.navigate(['/home']);
-        },
+          this.router.navigate(['/']);
+          },
         error: (err) => {
-          this.errorMessage = 'Login failed: ' + (err.error?.message || err.statusText);
+          this.errorMessage = 'Echec de connexion: ' + (err.error?.message || err.statusText);
 
         }
       });

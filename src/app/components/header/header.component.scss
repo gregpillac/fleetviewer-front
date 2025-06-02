@@ -12,12 +12,20 @@
     position: relative;
   }
 
-  .logo svg {
-    height: 40px;
-    width: auto;
+  .logo {
+    cursor: pointer;
 
-    .bright-color {
-      fill: white;
+    svg {
+      height: 30px;
+      width: auto;
+
+      .bright-color {
+        fill: #434343;
+      }
+
+      .contrast-color {
+        fill: white;
+      }
     }
   }
 
@@ -48,7 +56,7 @@
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
-    outline: none; /* pour enlever le contour focus par défaut */
+    outline: none;
 
     img.avatar {
       width: 100%;
@@ -69,14 +77,23 @@
     min-width: 150px;
     z-index: 10;
 
-    a, button {
+    p, a, button {
       padding: 0.75rem 1rem;
       border: none;
       background: none;
-      text-align: left;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #7c7c7c;
+      text-align: center;
+    }
+
+    a, button {
       font-size: 0.9rem;
       color: #333;
       cursor: pointer;
+      text-align: left;
 
       &:hover {
         background-color: #f0f0f0;
