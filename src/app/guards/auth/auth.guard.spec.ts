@@ -1,17 +1,34 @@
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn } from '@angular/router';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { UserService } from '../../services/user/user.service';
 
-import { authGuard } from './auth.guard';
+// Mocks
+const mockAuthService = {
+  isLoggedIn: jasmine.createSpy('isLoggedIn'),
+};
 
-describe('authGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) => 
-      TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+const mockUserService = {
+  getCurrentUser: jasmine.createSpy('getCurrentUser'),
+};
 
+const mockRouter = {
+  navigate: jasmine.createSpy('navigate'),
+};
+
+describe('canActivateWithRole', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-  });
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: UserService, useValue: mockUserService },
+        { provide: Router, useValue: mockRouter },
+      ],
+    });
 
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
+    // Reset spies
+    mockAuthService.isLoggedIn.calls.reset();
+    mockUserService.getCurrentUser.calls.reset();
+    mockRouter.navigate.calls.reset();
   });
 });

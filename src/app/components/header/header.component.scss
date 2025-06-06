@@ -1,7 +1,28 @@
+.header.admin {
+  background-color: var(--primary-admin);
+
+  .logo svg {
+    .bright-color {
+      fill: #ffffff;
+    }
+
+    .contrast-color {
+      fill: white;
+    }
+  }
+}
+
 .header {
-  background-color: #202020;
+  background-color: var(--primary);
+  transition: background-color 0.3s ease;
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.75rem 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* effet de séparation */
 
   .container {
     display: flex;

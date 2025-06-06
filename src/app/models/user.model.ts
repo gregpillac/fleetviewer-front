@@ -1,8 +1,9 @@
+import {Person} from './person.model';
+
 export interface User {
   id: number;
   username: string;
   enabled: boolean;
   role: string;
-  firstname: string;
-  lastname: string;
+  person: Person;
 }

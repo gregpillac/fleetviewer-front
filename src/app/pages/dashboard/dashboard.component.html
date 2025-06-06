@@ -1,1 +1,12 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <aside class="sidebar">
+    <nav>
+      <a routerLink="./" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Hub</a>
+      <a routerLink="./users" routerLinkActive="active">Utilisateurs</a>
+      <a routerLink="./vehicles" routerLinkActive="active">Véhicules</a>
+    </nav>
+  </aside>
+  <div class="dashboard-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -10,11 +10,15 @@ app-footer {
   flex-shrink: 0;
 }
 
+
 main {
+  width: 100%;
+  box-sizing: inherit;
+  position: relative;
   flex-grow: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 1rem;
+  margin-top: 64px; /* ajuste à la hauteur du header */
 }
 
 /* Centrage quand layout caché (ex: page de login) */
@@ -22,6 +26,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 0 !important;
 }
 
 h1 {
@@ -39,17 +44,6 @@ h1 {
 p {
   margin: 0;
   color: var(--gray-700);
-}
-
-main {
-  width: 100%;
-  min-height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  box-sizing: inherit;
-  position: relative;
 }
 
 .angular-logo {

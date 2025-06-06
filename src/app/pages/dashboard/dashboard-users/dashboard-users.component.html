@@ -1,0 +1,41 @@
+<h1>Liste des utilisateurs</h1>
+<table mat-table [dataSource]="users" class="mat-elevation-z8">
+  <!-- Username Column -->
+  <ng-container matColumnDef="username">
+    <th mat-header-cell *matHeaderCellDef>Identifiant</th>
+    <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+  </ng-container>
+
+  <!-- FullName Column -->
+  <ng-container matColumnDef="fullname">
+    <th mat-header-cell *matHeaderCellDef>Nom</th>
+    <td mat-cell *matCellDef="let element">{{getFullName(element)}}</td>
+  </ng-container>
+
+  <!-- Email Column -->
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <td mat-cell *matCellDef="let element">{{element.person.email || '(non renseigné)'}}</td>
+  </ng-container>
+
+  <!-- Phone Column -->
+  <ng-container matColumnDef="phone">
+    <th mat-header-cell *matHeaderCellDef>N° téléphone</th>
+    <td mat-cell *matCellDef="let element">{{element.person.phone || '(non renseigné)'}}</td>
+  </ng-container>
+
+  <!-- Place Column -->
+  <ng-container matColumnDef="place">
+    <th mat-header-cell *matHeaderCellDef>Site de référence</th>
+    <td mat-cell *matCellDef="let element">{{element.person.place?.name || '(non renseigné)'}}</td>
+  </ng-container>
+
+  <!-- Role Column -->
+  <ng-container matColumnDef="role">
+    <th mat-header-cell *matHeaderCellDef>Rôle</th>
+    <td mat-cell *matCellDef="let element">{{element.role}}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

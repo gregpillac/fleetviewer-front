@@ -14,6 +14,13 @@ html {
     density: 0,
   ));
 }/* You can add global styles to this file, and also import other style files */
+
+:root {
+  --primary: #202020; /* couleur par défaut */
+  --primary-admin: #0048ff;
+  --primary-manager: #ff0062;
+}
+
 * {
   margin: 0;
   padding: 0;
