@@ -41,7 +41,7 @@ export class DashboardUsersComponent implements OnInit {
       const rolePriority: { [key: string]: number } = { 'ROLE_ADMIN': 1, 'ROLE_MANAGER': 2, 'ROLE_USER': 3 };
 
       this.users = users.sort((a, b) => {
-        return rolePriority[a.role] - rolePriority[b.role];
+        return rolePriority[a.role.id] - rolePriority[b.role.id];
       });
     });
   }

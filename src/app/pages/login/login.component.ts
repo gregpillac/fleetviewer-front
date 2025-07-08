@@ -50,10 +50,8 @@ export class LoginComponent implements OnInit {
           },
         error: (err) => {
           this.errorMessage = 'Echec de connexion: ' + (err.error?.message || err.statusText);
-
         }
       });
-      console.log('Login avec', credentials);
     }
   }
 }

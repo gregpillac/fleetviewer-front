@@ -1,0 +1,57 @@
+<div *ngIf="user" class="account-container">
+    <div *ngIf="toastMessage" class="toast-success">{{ toastMessage }}</div>
+
+    <h2>Mon compte</h2>
+    <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label>Identifiant</label>
+            <input type="text" [(ngModel)]="user.username" name="username" readonly required/>
+        </div>
+
+        <div class="form-group">
+            <label>Prénom</label>
+            <input type="text"
+                         (ngModelChange)="onNameFieldsChange()" [(ngModel)]="user.person.firstName"
+                         name="firstName" [readonly]="!isEditing" required
+            />
+        </div>
+
+        <div class="form-group">
+            <label>Nom</label>
+            <input type="text"
+                         (ngModelChange)="onNameFieldsChange()" [(ngModel)]="user.person.lastName"
+                         name="lastName" [readonly]="!isEditing" required
+            />
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="user.person.email" name="email" [readonly]="!isEditing"/>
+        </div>
+
+        <div class="form-group">
+            <label>Téléphone</label>
+            <input type="text" [(ngModel)]="user.person.phone" name="phone" [readonly]="!isEditing"/>
+        </div>
+
+        <div class="buttons">
+            <div class="edit-buttons" *ngIf="!isEditing && !isEditingPassword">
+                <button type="button" (click)="toggleEdit()">Modifier mon profil</button>
+                <button type="button" (click)="toggleEditPassword()">Changer mon mot de passe</button>
+            </div>
+
+            <div *ngIf="isEditing" class="action-buttons">
+                <button type="submit" (click)="onSubmit()" [disabled]="showSecurityModal">Enregistrer</button>
+                <button type="button" (click)="cancelEdit()">Annuler</button>
+            </div>
+        </div>
+    </form>
+</div>
+<app-account-security-modal
+    [show]="showSecurityModal"
+    [mode]="securityMode"
+    [errorMessage]="modalError"
+    (confirm)="onSecurityConfirm($event)"
+    (cancel)="cancelModal()">
+</app-account-security-modal>
+

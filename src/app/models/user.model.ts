@@ -1,9 +1,11 @@
 import {Person} from './person.model';
+import { Role } from './role.model';
 
 export interface User {
   id: number;
   username: string;
+  password?: string;
   enabled: boolean;
-  role: string;
+  role: Role;
   person: Person;
 }

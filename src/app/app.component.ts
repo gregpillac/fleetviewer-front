@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
 import {HeaderComponent} from './components/header/header.component';
 import {FooterComponent} from './components/footer/footer.component';
@@ -14,7 +14,7 @@ import {UserService} from './services/user/user.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit{
+export class AppComponent {
   title = 'fleetviewer-front';
   showLayout = true;
 
@@ -29,16 +29,18 @@ export class AppComponent implements OnInit{
       const url = (event as NavigationEnd).urlAfterRedirects;
       this.showLayout = !url.startsWith('/login'); // ← MASQUE le layout si on est sur /login
     });
+    this.loadCurrentUser();
   }
 
-  ngOnInit(): void {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      this.userService.getCurrentUser().subscribe(user => {
-        this.authService.setUser(user);
+  loadCurrentUser() {
+    if (sessionStorage.getItem('token')) {
+      this.userService.getCurrentUser().subscribe({
+        next: user => this.authService.setCurrentUser(user),
+        error: () => this.authService.setCurrentUser(null)
       });
     }
   }
+
 
 
 }

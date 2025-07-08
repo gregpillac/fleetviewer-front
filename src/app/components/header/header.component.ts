@@ -6,67 +6,55 @@ import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {UserService} from "../../services/user/user.service";
 import {User} from "../../models/user.model";
+import {Observable} from 'rxjs';
 
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [CommonModule, SvgIconComponent, MatTooltipModule, RouterLink, RouterLinkActive],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+    selector: 'app-header',
+    standalone: true,
+    imports: [CommonModule, SvgIconComponent, MatTooltipModule, RouterLink, RouterLinkActive],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss'
 })
 
-export class HeaderComponent implements OnInit {
-  menuOpen = false;
-  currentUser: any;
+export class HeaderComponent {
+    menuOpen = false;
+    user$: Observable<User | null>;
 
-  constructor(
-    private authService: AuthService,
-    private userService: UserService,
-    private router: Router
-  ) {
+    constructor(
+        private authService: AuthService,
+        private router: Router
+    ) {
+        this.user$ = this.authService.currentUser$;
+    }
 
-  }
+    get isAdmin(): boolean {
+        return this.authService.isAdmin();
+    }
 
-  ngOnInit() {
-    this.userService.getCurrentUser().subscribe(user => {
-      if (user) {
-        this.currentUser = user;
-        console.log(user, 'USER');
-      }
-    });
-  }
+    get isManager(): boolean {
+        return this.authService.isManager();
+    }
 
-  get isAdmin(): boolean {
-    return this.authService.isAdmin();
-  }
+    get isUser(): boolean {
+        return this.authService.isUser();
+    }
 
-  get isManager(): boolean {
-    return this.authService.isManager();
-  }
+    toggleMenu() {
+        this.menuOpen = !this.menuOpen;
+    }
 
-  get isUser(): boolean {
-    return this.authService.isUser();
-  }
+    closeMenu() {
+        // petit timeout pour éviter fermeture avant clic
+        setTimeout(() => {
+            this.menuOpen = false;
+        }, 200);
+    }
 
+    logout(): void {
+        this.authService.logout();
+        this.menuOpen = false;
+    }
 
-
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
-  }
-
-  closeMenu() {
-    // petit timeout pour éviter fermeture avant clic
-    setTimeout(() => {
-      this.menuOpen = false;
-    }, 200);
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-    this.menuOpen = false;
-  }
-
-  protected readonly isSecureContext = isSecureContext;
+    protected readonly isSecureContext = isSecureContext;
 }

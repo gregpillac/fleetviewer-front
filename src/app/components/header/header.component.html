@@ -1,22 +1,22 @@
-<header class="header" [ngClass]="{'admin': isAdmin}">
-  <div class="container">
-    <div class="logo" routerLink="/">
-      <svg-icon src="/fleetviewer/fleetviewer_inline.svg" svgClass="fleetviewer-svg"></svg-icon>
+<header *ngIf="user$ | async as user" class="header" [ngClass]="{'admin': isAdmin}">
+    <div class="container">
+        <div class="logo" routerLink="/">
+            <svg-icon src="/fleetviewer/fleetviewer_inline.svg" svgClass="fleetviewer-svg"></svg-icon>
+        </div>
+
+        <nav class="menu">
+            <a routerLink="/travels" routerLinkActive="active">Mes trajets</a>
+            <a *ngIf="isAdmin" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+
+            <div class="avatar-wrapper" (click)="toggleMenu()" tabindex="0" (blur)="closeMenu()">
+                <img src="/images/default_pfp.jpg" alt="Avatar utilisateur" class="avatar" />
+            </div>
+
+            <div class="dropdown-avatar" *ngIf="menuOpen">
+                <p>Bonjour {{ user.person.firstName}} !</p>
+                <a routerLink="/account" (click)="closeMenu()">Voir mon profil</a>
+                <button (click)="logout()">Se déconnecter</button>
+            </div>
+        </nav>
     </div>
-    <nav class="menu">
-      <a routerLink="/travels" routerLinkActive="active">Mes trajets</a>
-      <a *ngIf="isAdmin" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-
-      <div class="avatar-wrapper" (click)="toggleMenu()" tabindex="0" (blur)="closeMenu()">
-        <img src="/images/default_pfp.jpg" alt="Avatar utilisateur" class="avatar" />
-      </div>
-
-      <div class="dropdown-avatar" *ngIf="menuOpen">
-        <p>Bonjour {{ currentUser.person.firstName}} !</p>
-        <a routerLink="/account" (click)="closeMenu()">Accéder au compte</a>
-        <button (click)="logout()">Se déconnecter</button>
-      </div>
-    </nav>
-
-  </div>
 </header>

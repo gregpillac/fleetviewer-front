@@ -12,13 +12,13 @@ export function canActivateWithRole(requiredRole?: string): CanActivateFn {
     const router = inject(Router);
 
     if (!authService.isLoggedIn()) {
-      router.navigate(['/login']);
+      authService.logout();
       return of(false);
     }
 
     return userService.getCurrentUser().pipe(
       map(user => {
-        if (!requiredRole || user.role === requiredRole) {
+        if (!requiredRole || user.role.id === requiredRole) {
           return true;
         } else {
           router.navigate(['/not-found']);
@@ -26,7 +26,7 @@ export function canActivateWithRole(requiredRole?: string): CanActivateFn {
         }
       }),
       catchError(() => {
-        router.navigate(['/not-found']);
+        authService.logout();
         return of(false);
       })
     );

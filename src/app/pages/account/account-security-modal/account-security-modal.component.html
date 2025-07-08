@@ -1,0 +1,64 @@
+<div class="modal-backdrop" *ngIf="show">
+    <div class="modal">
+        <h2>
+            {{ mode === 'username' ? 'Confirmer la modification du nom d’utilisateur' : 'Changer le mot de passe' }}
+        </h2>
+
+        <div *ngIf="mode === 'username'">
+            <p>Veuillez entrer votre mot de passe actuel pour continuer</p>
+            <div class="password-field">
+                <input [type]="showCurrentPassword ? 'text' : 'password'" [(ngModel)]="password"
+                       placeholder="Mot de passe actuel" required
+                />
+                <button type="button" (click)="toggleField('current')" class="eye-toggle">
+                    {{ showCurrentPassword ? '🙈' : '👁️' }}
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="mode === 'password'">
+            <p>Veuillez renseigner votre mot de passe actuel, puis saisir et confirmer votre nouveau mot de passe.</p>
+
+            <!-- Mot de passe actuel -->
+            <div class="password-field">
+                <input [type]="showCurrentPassword ? 'text' : 'password'" [(ngModel)]="password"
+                       placeholder="Mot de passe actuel" required
+                />
+                <button type="button" (click)="toggleField('current')" class="eye-toggle">
+                    {{ showCurrentPassword ? '🙈' : '👁️' }}
+                </button>
+            </div>
+
+            <!-- Nouveau mot de passe -->
+            <div class="password-field">
+                <input [type]="showNewPassword ? 'text' : 'password'" [(ngModel)]="newPassword"
+                       placeholder="Nouveau mot de passe" required
+                />
+                <button type="button" (click)="toggleField('new')" class="eye-toggle">
+                    {{ showNewPassword ? '🙈' : '👁️' }}
+                </button>
+            </div>
+
+            <!-- Confirmation du nouveau mot de passe -->
+            <div class="password-field">
+                <input [type]="showNewPasswordConfirm ? 'text' : 'password'" [(ngModel)]="newPasswordConfirm"
+                       placeholder="Confirmation du nouveau mot de passe" required
+                />
+                <button type="button" (click)="toggleField('confirm')" class="eye-toggle">
+                    {{ showNewPasswordConfirm ? '🙈' : '👁️' }}
+                </button>
+            </div>
+
+        </div>
+
+
+        <div *ngIf="errorMessage" class="modal-error">
+            {{ errorMessage }}
+        </div>
+
+        <div class="actions">
+            <button (click)="onCancel()">Annuler</button>
+            <button (click)="onConfirm()">Valider</button>
+        </div>
+    </div>
+</div>
