@@ -13,7 +13,7 @@ export const routes: Routes = [
   { title: 'FleetViewer - Accueil',path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
   { title: 'FleetViewer - Connexion',path: 'login', component: LoginComponent },
   { title: 'FleetViewer - Mon compte',path: 'account', component: AccountComponent, canActivate: [canActivateWithRole()] },
-  { title: 'FleetViewer - Dashboard Supervision', path: 'dashboard', component: DashboardComponent, canActivate: [canActivateWithRole('ROLE_ADMIN')], children: [
+  { title: 'FleetViewer - Dashboard Supervision', path: 'dashboard', component: DashboardComponent, canActivate: [canActivateWithRole(['ROLE_ADMIN', 'ROLE_MANAGER'])], children: [
     { path: '', component: DashboardHubComponent }, // hub d'accueil
     { path: 'users', component: DashboardUsersComponent },
     { path: 'vehicles', component: DashboardVehiclesComponent },

@@ -1,20 +1,5 @@
-.header.admin {
-    background-color: var(--primary-admin);
-
-    .logo svg {
-        .bright-color {
-            fill: #ffffff;
-            transition: fill 2s;
-        }
-
-        .contrast-color {
-            fill: white;
-        }
-    }
-}
-
 .header {
-    background-color: var(--primary);
+    background-color: var(--main-color);
     transition: background-color 0.3s, height 0.3s;
     color: white;
     padding: 0.75rem 2rem;
@@ -42,11 +27,12 @@
             width: auto;
 
             .bright-color {
-                fill: #434343;
+                fill: var(--logo-bright-color);
+                transition: fill 2s;
             }
 
             .contrast-color {
-                fill: white;
+                fill: var(--logo-contrast-color);
             }
         }
     }

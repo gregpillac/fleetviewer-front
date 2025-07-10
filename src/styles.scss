@@ -15,10 +15,31 @@ html {
   ));
 }/* You can add global styles to this file, and also import other style files */
 
-:root {
-  --primary: #202020; /* couleur par défaut */
-  --primary-admin: #0048ff;
-  --primary-manager: #ff0062;
+:root { /* Default */
+    --main-color: #202020;
+    --bg-color: #fff;
+    --text-color: #000000;
+    // Logo
+    --logo-bright-color: #434343;
+    --logo-contrast-color: #fff;
+}
+
+body.ADMIN { /* Admin */
+    --main-color: #0048ff;
+}
+
+body.MANAGER { /* Manager */
+    --main-color: #7b00ff;
+}
+
+body.ADMIN, body.MANAGER, {
+    // Logo
+    --logo-bright-color: #fff;
+    --logo-contrast-color: #fff;
+}
+
+body.USER { /* User */
+    --main-color: #202020;
 }
 
 * {
@@ -27,11 +48,8 @@ html {
   box-sizing: border-box;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
+html, body { margin: 0; padding: 0; height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .neosolix-svg {
   path {
@@ -49,5 +67,3 @@ html, body {
   }
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
