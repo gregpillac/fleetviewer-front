@@ -9,5 +9,6 @@ export interface Vehicle {
   mileage: number;
   isRoadworthy: boolean;
   isInsuranceValid: boolean;
-  place: Place;
+  placeId: number;
+  place?: Place;
 }

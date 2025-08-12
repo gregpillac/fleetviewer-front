@@ -1,8 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Vehicle} from '../../../models/vehicle';
 import {VehicleService} from '../../../services/vehicle.service';
+import {PlaceService} from '../../../services/place.service';
 import {CommonModule} from '@angular/common';
 import {MatTableModule} from '@angular/material/table';
+import {forkJoin} from 'rxjs';
+import {Place} from '../../../models/place.model';
 
 @Component({
   selector: 'app-dashboard-vehicles',
@@ -13,15 +16,27 @@ import {MatTableModule} from '@angular/material/table';
 
 export class DashboardVehiclesComponent implements OnInit {
   vehicles: Vehicle[] = [];
+  places: Place[] = [];
+
   displayedColumns: string[] = ['place', 'brandModel', 'licensePlate', 'SeatNumber', 'MileAge'];
 
 
-  constructor(private vehicleService: VehicleService) {}
+  constructor(
+    private vehicleService: VehicleService,
+    private placeService: PlaceService
+  ) {}
 
   ngOnInit() {
-    this.vehicleService.getVehicles().subscribe(v => {
-      console.log('Véhicules reçus par le composant :', v);
-      this.vehicles = v;
+    forkJoin({
+      vehicles: this.vehicleService.getVehicles(),
+      places: this.placeService.getPlaces()
+    }).subscribe(({ vehicles, places }) => {
+      this.places = places;
+      // Associer chaque véhicule à son objet Place complet
+      this.vehicles = vehicles.map(vehicle => ({
+        ...vehicle,
+        place: places.find(p => p.id === vehicle.placeId) // placeId doit exister dans le VehicleDTO
+      }));
     });
   }
 }
