@@ -1,4 +1,11 @@
-<h1>Liste des véhicules</h1>
+<h2>Liste des véhicules</h2>
+
+<!-- Ligne pour la création d'un vehicule-->
+<tr style="background:#e0f7fa; cursor:pointer; margin-top: 32px auto;" (click)="goToCreateVehicle()">
+  <td colspan="5" style="text-align:center; font-weight:bold;">
+    + Créer un véhicule
+  </td>
+</tr>
 
 <table mat-table [dataSource]="vehicles" class="mat-elevation-z8">
 
@@ -33,5 +40,5 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClick(row)" style="cursor:pointer"></tr>
 </table>

@@ -1,0 +1,46 @@
+<h2 *ngIf="isEditMode">Modifier le véhicule</h2>
+<h2 *ngIf="!isEditMode">Créer un véhicule</h2>
+
+<form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()"
+      style="max-width:400px; display:flex; flex-direction:column; gap:16px; margin: 32px auto;" class="mat-elevation-z8">
+
+  <mat-form-field appearance="fill">
+    <mat-label>Marque</mat-label>
+    <input matInput type="text" formControlName="brand" [readonly]="isEditMode" class="material-input"/>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+  <mat-label>Modèle</mat-label>
+    <input matInput formControlName="model" [readonly]="isEditMode" class="material-input"/>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+  <mat-label>Immatriculation</mat-label>
+    <input matInput formControlName="licensePlate" [readonly]="isEditMode"/>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+  <mat-label>Nombre de places</mat-label>
+    <input matInput type="number" formControlName="seats" [readonly]="isEditMode"/>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Kilométrage</mat-label>
+    <input matInput type="number" formControlName="mileage" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Site de rattachement</mat-label>
+    <mat-select formControlName="placeId">
+      <mat-option *ngFor="let place of places" [value]="place.id">{{ place.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-checkbox formControlName="isRoadworthy">CT valide</mat-checkbox>
+
+  <mat-checkbox formControlName="isInsuranceValid">Assurance valide</mat-checkbox>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="vehicleForm.invalid">
+    {{ isEditMode ? 'Enregistrer' : 'Créer' }}
+  </button>
+</form>

@@ -41,11 +41,12 @@ export class VehicleService {
 
   /**
    * Met à jour un véhicule existant.
+   * @param vehicleId
    * @param vehicle Les données du véhicule à mettre à jour.
    * @returns Un Observable contenant le véhicule mis à jour.
    */
-  updateVehicle(vehicle: Vehicle): Observable<Vehicle> {
-    return this.http.put<Vehicle>(`${this.apiUrl}/${vehicle.id}`, vehicle);
+  updateVehicle(vehicleId: number, vehicle: Vehicle): Observable<Vehicle> {
+    return this.http.put<Vehicle>(`${this.apiUrl}/${vehicleId}`, vehicle);
   }
 
   /**

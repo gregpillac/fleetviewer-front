@@ -6,6 +6,7 @@ import {CommonModule} from '@angular/common';
 import {MatTableModule} from '@angular/material/table';
 import {forkJoin} from 'rxjs';
 import {Place} from '../../../models/place.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-vehicles',
@@ -15,6 +16,7 @@ import {Place} from '../../../models/place.model';
 })
 
 export class DashboardVehiclesComponent implements OnInit {
+
   vehicles: Vehicle[] = [];
   places: Place[] = [];
 
@@ -23,7 +25,8 @@ export class DashboardVehiclesComponent implements OnInit {
 
   constructor(
     private vehicleService: VehicleService,
-    private placeService: PlaceService
+    private placeService: PlaceService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -38,5 +41,13 @@ export class DashboardVehiclesComponent implements OnInit {
         place: places.find(p => p.id === vehicle.placeId) // placeId doit exister dans le VehicleDTO
       }));
     });
+  }
+
+  onRowClick(vehicle: any) {
+    this.router.navigate(['dashboard/vehicles', vehicle.id]);
+  }
+
+  goToCreateVehicle() {
+    this.router.navigate(['dashboard/vehicles/create']);
   }
 }
