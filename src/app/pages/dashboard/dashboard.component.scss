@@ -1,33 +1,47 @@
 dashboard-container {
-  display: flex;
-  height: 100%;
-}
-
-.sidebar {
-  width: 220px;
-  background-color: #2c3e50;
-  padding: 1rem;
-  color: white;
-  position: fixed;
-}
-
-.sidebar nav a {
-  display: block;
-  color: white;
-  text-decoration: none;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-}
-
-.sidebar nav a.active {
-  background-color: #34495e;
+    display: flex;
+    height: 100%;
 }
 
 .dashboard-content {
-  flex: 1;
-  padding: 2rem;
-  background-color: #f8f9fa;
-  display: flex;
-  justify-content: center;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
+
+.app-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.7rem;
+    background: #fff;
+    padding: 0.8rem 2rem;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(30,30,40,0.07);
+    font-size: 1.05em;
+}
+
+.app-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    color: #23272f;
+    padding: 0.45em 1.15em;
+    border-radius: 9px;
+    text-decoration: none;
+    transition: background 0.12s, color 0.12s;
+    font-weight: 500;
+}
+
+.app-nav a .icon {
+    font-size: 1.15em;
+    opacity: 0.8;
+}
+
+.app-nav a.active,
+.app-nav a:hover {
+    background: #f1f4fa;
+    color: #111;
 }

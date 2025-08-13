@@ -1,12 +1,12 @@
 <div class="dashboard-container">
-  <aside class="sidebar">
-    <nav>
-      <a routerLink="./" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Hub</a>
-      <a routerLink="./users" routerLinkActive="active">Utilisateurs</a>
-      <a routerLink="./vehicles" routerLinkActive="active">Véhicules</a>
-    </nav>
-  </aside>
-  <div class="dashboard-content">
-    <router-outlet></router-outlet>
-  </div>
+    <nav class="app-nav" *ngIf="!isOnHub()">
+        <a routerLink="./" routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: true }"><span class="icon">📊</span>Vue générale</a>
+        <a routerLink="users" routerLinkActive="active"><span class="icon">👤</span>Utilisateurs</a>
+        <a routerLink="vehicles" routerLinkActive="active"><span class="icon">🚗</span>Véhicules</a>
+       </nav>
+
+    <div class="dashboard-content">
+        <router-outlet></router-outlet>
+    </div>
 </div>

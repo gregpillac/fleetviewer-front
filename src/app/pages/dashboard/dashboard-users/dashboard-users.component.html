@@ -1,41 +1,25 @@
-<h1>Liste des utilisateurs</h1>
-<table mat-table [dataSource]="users" class="mat-elevation-z8">
-  <!-- Username Column -->
-  <ng-container matColumnDef="username">
-    <th mat-header-cell *matHeaderCellDef>Identifiant</th>
-    <td mat-cell *matCellDef="let element"> {{element.username}} </td>
-  </ng-container>
+<div class="users-content">
+    <h1>Les utilisateurs</h1>
 
-  <!-- FullName Column -->
-  <ng-container matColumnDef="fullname">
-    <th mat-header-cell *matHeaderCellDef>Nom</th>
-    <td mat-cell *matCellDef="let element">{{getFullName(element)}}</td>
-  </ng-container>
+    <div class="table-actions" style="display:flex; justify-content: space-between; align-items: center; margin-bottom:1rem;">
+        <button class="reset-btn" (click)="onResetFilters()">
+            <span style="font-size:1.1em;">🧹</span> Réinitialiser les filtres
+        </button>
+        <button class="add-btn" (click)="onAddUser()">
+        <span style="font-size:1.3em;">➕</span> Ajouter un utilisateur
+    </button>
+    </div>
 
-  <!-- Email Column -->
-  <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef>Email</th>
-    <td mat-cell *matCellDef="let element">{{element.person.email || '(non renseigné)'}}</td>
-  </ng-container>
+    <ag-grid-angular #agGrid
+        (gridReady)="onGridReady($event)"
+        style="width: 100%; height: 600px;"
+        [columnDefs]="columnDefs"
+        [rowData]="users"
+        [pagination]="true"
+        [paginationPageSize]="25"
+        [paginationPageSizeSelector]="[10, 25, 50, 100]"
+        [animateRows]="true"
+        [localeText]="localeText">
+    </ag-grid-angular>
+</div>
 
-  <!-- Phone Column -->
-  <ng-container matColumnDef="phone">
-    <th mat-header-cell *matHeaderCellDef>N° téléphone</th>
-    <td mat-cell *matCellDef="let element">{{element.person.phone || '(non renseigné)'}}</td>
-  </ng-container>
-
-  <!-- Place Column -->
-  <ng-container matColumnDef="place">
-    <th mat-header-cell *matHeaderCellDef>Site de référence</th>
-    <td mat-cell *matCellDef="let element">{{element.person.place?.name || '(non renseigné)'}}</td>
-  </ng-container>
-
-  <!-- Role Column -->
-  <ng-container matColumnDef="role">
-    <th mat-header-cell *matHeaderCellDef>Rôle</th>
-    <td mat-cell *matCellDef="let element">{{element.role.id}}</td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>

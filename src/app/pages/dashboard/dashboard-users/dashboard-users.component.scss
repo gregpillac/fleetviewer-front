@@ -1,0 +1,63 @@
+.users-content {
+    padding: 2rem 10rem;
+
+    h1 {
+        margin-bottom: 1rem;
+        text-align: center;
+        font-weight: normal;
+    }
+}
+
+ag-grid-angular {
+    width: 100%;
+    min-width: 0;
+}
+
+.ag-action-btn {
+    border: 0;
+    background: none;
+    cursor: pointer;
+    margin-right: 4px;
+    font-size: 1.15em;
+}
+
+.table-actions button {
+    background: #f4f6fa;
+    border: 1px solid #c5c6c9;
+    border-radius: 5px;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    font-size: 1em;
+    margin-right: 0.7em;
+    transition: background 0.15s;
+}
+.table-actions button:hover {
+    background: #e7e9ee;
+}
+.add-btn {
+    color: #1976d2;
+    font-weight: bold;
+}
+.reset-btn {
+    color: #6b7280;
+}
+
+// A RETRAVAILLER
+
+.ag-paging .ag-paging-page-size {
+    display: none;
+}
+
+/* Optionnel : ajouter ton propre texte via :before */
+.ag-paging-panel .ag-paging-page-size .ag-picker-field {
+    position: relative;
+}
+.ag-paging-panel .ag-paging-page-size .ag-picker-field:before {
+    content: "Lignes par page";
+    position: absolute;
+    left: -120px; /* ajuste selon ton layout */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #444;
+    font-size: 0.98em;
+}
