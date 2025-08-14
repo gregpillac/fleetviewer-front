@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Vehicle} from '../../../models/vehicle';
-import {VehicleService} from '../../../services/vehicle.service';
-import {PlaceService} from '../../../services/place.service';
+import {VehicleService} from '../../../services/vehicleService/vehicle.service';
+import {PlaceService} from '../../../services/placeService/place.service';
 import {CommonModule} from '@angular/common';
 import {MatTableModule} from '@angular/material/table';
 import {forkJoin} from 'rxjs';
