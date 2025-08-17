@@ -34,9 +34,12 @@ ag-grid-angular {
 .table-actions button:hover {
     background: #e7e9ee;
 }
+.add-btn, .reset-btn {
+    font-size: 1.1em;
+}
+
 .add-btn {
-    color: #1976d2;
-    font-weight: bold;
+    color: #373b43;
 }
 .reset-btn {
     color: #6b7280;

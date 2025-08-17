@@ -6,6 +6,7 @@ import type {ColDef, ValueGetterParams} from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import { locale_fr } from '../ag-grid-locale/locale_fr'
+import {switchMap} from 'rxjs';
 
 ModuleRegistry.registerModules([ AllCommunityModule ]);
 
@@ -56,7 +57,30 @@ export class DashboardUsersComponent implements OnInit {
             headerName: 'Rôle',
             filter: 'agTextColumnFilter',
             valueGetter: (params: ValueGetterParams) =>
-                params.data.role?.id ?? '(non renseigné)'
+                params.data.role?.id ?? '(non renseigné)',
+            valueFormatter: (params) => {
+                switch (params.value) {
+                    case 'ROLE_ADMIN': return 'Administrateur';
+                    case 'ROLE_MANAGER': return 'Manager';
+                    case 'ROLE_USER': return 'Utilisateur';
+                    case 'ROLE_DEFAULT': return 'Restreint';
+                    default: return params.value;
+                }
+            },
+            comparator: (valueA: string, valueB: string) => {
+                const order = ['ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER', 'ROLE_DEFAULT'];
+
+                // Trouver l'index dans l'ordre
+                const indexA = order.indexOf(valueA);
+                const indexB = order.indexOf(valueB);
+
+                // Si la valeur n'est pas dans la liste, on met à la fin
+                const safeA = indexA === -1 ? order.length : indexA;
+                const safeB = indexB === -1 ? order.length : indexB;
+
+                return safeA - safeB;
+            },
+            sort: 'asc'
         },
         {
             headerName: 'Actions',
@@ -105,7 +129,20 @@ export class DashboardUsersComponent implements OnInit {
     }
 
     toggleUser(user: User)  {
-        alert(`Toggle ${user}`);
+        // Inverser le statut
+        const newStatus = !user.enabled
+
+        if (confirm(
+            `Êtes-vous certain de vouloir ${newStatus ? "" : "dés"}activer le compte utilisateur de
+            ${this.getFullName(user)} ?`))
+        {
+            this.userService.updateStatus(user.id, newStatus).pipe(
+                switchMap(() => this.userService.getUsers())
+            ).subscribe({
+                next: (users) => { this.users = users; },
+                error: console.error
+            });
+        }
     }
 
     onGridReady(params: any) {

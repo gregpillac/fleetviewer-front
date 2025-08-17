@@ -40,8 +40,8 @@ export class UserService {
         return this.http.put<User>(`${this.apiUrl}/${user.id}`, user);
     }
 
-    updateStatus(id: number, active: boolean): Observable<User> {
-        return this.http.put<User>(`${this.apiUrl}/status/${id}?active=${active}`, {});
+    updateStatus(id: number, enabled: boolean): Observable<User> {
+        return this.http.put<User>(`${this.apiUrl}/status/${id}?enabled=${enabled}`, {});
     }
 
     generateUsername(firstName: string, lastName: string): Observable<string> {
