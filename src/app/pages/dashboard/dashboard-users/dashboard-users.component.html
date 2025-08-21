@@ -1,41 +1,56 @@
+<!-- Section principale des utilisateurs -->
 <h1>Liste des utilisateurs</h1>
-<table mat-table [dataSource]="users" class="mat-elevation-z8">
-  <!-- Username Column -->
-  <ng-container matColumnDef="username">
-    <th mat-header-cell *matHeaderCellDef>Identifiant</th>
-    <td mat-cell *matCellDef="let element"> {{element.username}} </td>
-  </ng-container>
 
-  <!-- FullName Column -->
-  <ng-container matColumnDef="fullname">
-    <th mat-header-cell *matHeaderCellDef>Nom</th>
-    <td mat-cell *matCellDef="let element">{{getFullName(element)}}</td>
-  </ng-container>
+<!-- Conteneur pour la table avec défilement horizontal sur petit écran -->
+<div class="table-container">
+  <table mat-table [dataSource]="users" class="mat-elevation-z8">
 
-  <!-- Email Column -->
-  <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef>Email</th>
-    <td mat-cell *matCellDef="let element">{{element.person.email || '(non renseigné)'}}</td>
-  </ng-container>
+    <!-- ====== Colonne : Identifiant ====== -->
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef>Identifiant</th>
+      <td mat-cell *matCellDef="let element"> {{ element.username }} </td>
+    </ng-container>
 
-  <!-- Phone Column -->
-  <ng-container matColumnDef="phone">
-    <th mat-header-cell *matHeaderCellDef>N° téléphone</th>
-    <td mat-cell *matCellDef="let element">{{element.person.phone || '(non renseigné)'}}</td>
-  </ng-container>
+    <!-- ====== Colonne : Nom complet ====== -->
+    <ng-container matColumnDef="fullname">
+      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <td mat-cell *matCellDef="let element">{{ getFullName(element) }}</td>
+    </ng-container>
 
-  <!-- Place Column -->
-  <ng-container matColumnDef="place">
-    <th mat-header-cell *matHeaderCellDef>Site de référence</th>
-    <td mat-cell *matCellDef="let element">{{element.person.place?.name || '(non renseigné)'}}</td>
-  </ng-container>
+    <!-- ====== Colonne : Email ====== -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.person.email || '(non renseigné)' }}
+      </td>
+    </ng-container>
 
-  <!-- Role Column -->
-  <ng-container matColumnDef="role">
-    <th mat-header-cell *matHeaderCellDef>Rôle</th>
-    <td mat-cell *matCellDef="let element">{{element.role.id}}</td>
-  </ng-container>
+    <!-- ====== Colonne : Téléphone ====== -->
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef>N° téléphone</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.person.phone || '(non renseigné)' }}
+      </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+    <!-- ====== Colonne : Site de référence ====== -->
+    <ng-container matColumnDef="place">
+      <th mat-header-cell *matHeaderCellDef>Site de référence</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.person.place?.name || '(non renseigné)' }}
+      </td>
+    </ng-container>
+
+    <!-- ====== Colonne : Rôle ====== -->
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef>Rôle</th>
+      <td mat-cell *matCellDef="let element">{{ element.role.id }}</td>
+    </ng-container>
+
+    <!-- ====== Ligne d'en-tête ====== -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+    <!-- ====== Ligne de données ====== -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

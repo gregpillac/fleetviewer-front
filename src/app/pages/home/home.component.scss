@@ -6,11 +6,33 @@
     text-align: center;
     margin-bottom: 4rem;
     font-weight: normal;
-  }
-  .calendar-container {
-    width: 80%;
-    margin: 0 auto; /* centre le calendrier horizontalement */
+
+    /* Ajustements pour les petits écrans */
+    @media (max-width: 768px) {
+      font-size: 28px; /* Réduit la taille du titre sur tablette */
+      margin-bottom: 2.5rem; /* Réduit l'espace sous le titre */
+    }
+
+    @media (max-width: 576px) {
+      font-size: 24px; /* Réduit encore la taille sur mobile */
+      margin-bottom: 1.5rem; /* Réduit l'espace sous le titre */
+    }
   }
 
+  .calendar-container {
+    width: 80%;
+    margin: 0 auto; /* Centre le calendrier horizontalement */
+    
+    /* Adaptation du calendrier pour les petits écrans */
+    @media (max-width: 768px) {
+      width: 90%; /* Augmente la largeur du calendrier sur tablette */
+    }
+
+    @media (max-width: 576px) {
+      width: 100%; /* Prend toute la largeur sur mobile */
+      margin: 0; /* Retire les marges sur mobile */
+    }
+  }
 }
+
 

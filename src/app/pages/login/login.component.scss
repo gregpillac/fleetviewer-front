@@ -15,6 +15,7 @@
     display: flex;
     justify-content: center;
     margin-bottom: 2rem;
+    
     svg {
       height: auto;
       width: 200px;
@@ -49,7 +50,8 @@ form {
   }
 
   input {
-    width: 250px;
+    width: 100%;
+    max-width: 400px;  /* Pour éviter que le champ soit trop large */
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 0.5rem;
@@ -102,5 +104,54 @@ form {
       cursor: pointer;
       font-size: 1.2rem;
     }
+  }
+}
+
+/* Media Queries pour rendre le formulaire responsive */
+
+@media (max-width: 768px) {
+  .login-wrapper {
+    padding: 1.5rem;
+  }
+
+  .logo svg {
+    width: 150px;  /* Logo plus petit sur les tablettes */
+  }
+
+  form {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  input, button {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-wrapper {
+    padding: 1rem;
+  }
+
+  .logo svg {
+    width: 120px;  /* Logo encore plus petit sur les téléphones */
+  }
+
+  form {
+    padding: 1rem;
+    gap: 0.8rem;
+  }
+
+  .field {
+    gap: 0.8rem;  /* Réduire l'écart entre les champs sur mobile */
+  }
+
+  input {
+    font-size: 1rem;  /* Ajuster la taille de la police sur mobile */
+  }
+
+  button {
+    padding: 0.7rem;
+    font-size: 1rem;  /* Le bouton est plus petit sur mobile */
   }
 }

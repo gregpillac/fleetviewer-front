@@ -1,8 +1,12 @@
+<!-- Header affiché uniquement si showLayout = true -->
 <app-header *ngIf="showLayout"></app-header>
 
-
+<!-- Contenu principal -->
 <main [class.full-screen]="!showLayout">
+  <!-- Router outlet : zone où Angular charge le composant de la route en cours -->
   <router-outlet></router-outlet>
 </main>
 
+<!-- Footer affiché uniquement si showLayout = true -->
 <app-footer *ngIf="showLayout"></app-footer>
+

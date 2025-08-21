@@ -3,6 +3,7 @@
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1rem;
   margin-top: 2rem;
+  padding: 0 1rem; /* Ajout d’un peu d’espace autour de la grille */
 }
 
 .panel {
@@ -15,9 +16,56 @@
   text-align: center;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s;
+  transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
-.tile:hover {
+.panel:hover {
   background-color: #eaeaea;
+  transform: scale(1.05); /* Légère mise en avant lors du survol */
 }
+
+.panel h4 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.panel span {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+/* Pour les petits écrans, réduire les tailles de police et l'espacement */
+@media (max-width: 768px) {
+  .grid {
+    gap: 0.5rem; /* Moins d’espace entre les panneaux */
+  }
+
+  .panel {
+    padding: 1rem;
+  }
+
+  .panel h4 {
+    font-size: 1.1rem;
+  }
+
+  .panel span {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 0.75rem;
+  }
+
+  .panel h4 {
+    font-size: 1rem;
+  }
+
+  .panel span {
+    font-size: 0.75rem;
+  }
+}
+

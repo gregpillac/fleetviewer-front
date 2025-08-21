@@ -1,8 +1,17 @@
-  <section class="home-page">
-    <h1>Besoin de réserver un véhicule ? Nous avons ce qu'il vous faut !</h1>
+<!-- Section principale de la page d'accueil -->
+<section class="home-page">
+  
+  <!-- Titre principal de la page -->
+  <h1>
+    Besoin de réserver un véhicule ? Nous avons ce qu'il vous faut !
+  </h1>
 
+  <!-- Conteneur du calendrier -->
   <div class="calendar-container">
+    <!-- Composant Angular "full-calendar" -->
+    <!-- [options]="calendarOptions" → binding des paramètres du calendrier depuis le TS -->
     <full-calendar [options]="calendarOptions"></full-calendar>
   </div>
 
 </section>
+

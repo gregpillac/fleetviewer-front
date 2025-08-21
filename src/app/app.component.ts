@@ -8,35 +8,42 @@ import {AuthService} from './services/auth/auth.service';
 import {UserService} from './services/user/user.service';
 
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+    selector: 'app-root', // Nom de la balise HTML qui représente ce composant
+    standalone: true, // Angular 15+ : composant autonome, pas besoin de NgModule
+    imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent], // Modules et composants utilisés ici
+    templateUrl: './app.component.html', // Template associé
+    styleUrl: './app.component.scss' // Styles spécifiques à ce composant
 })
 export class AppComponent implements OnInit {
-    title = 'fleetviewer-front';
-    showLayout = true;
+    title = 'fleetviewer-front'; // Titre de l'application (non utilisé directement ici)
+    showLayout = true; // Permet de savoir si on affiche header/footer ou non
 
     constructor(
-        private router: Router,
-        private authService: AuthService,
-        private userService: UserService
+        private router: Router, // Service Angular pour naviguer et écouter les changements de route
+        private authService: AuthService, // Gestion de l'authentification
+        private userService: UserService // Gestion des infos utilisateur
     ) {
+        // On écoute les changements de route
         this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd)
+            filter(event => event instanceof NavigationEnd) // On ne garde que les fins de navigation
         ).subscribe((event) => {
             const url = (event as NavigationEnd).urlAfterRedirects;
-            this.showLayout = !url.startsWith('/login'); // ← MASQUE le layout si on est sur /login
+            // Si on est sur /login → on cache le layout (header/footer)
+            this.showLayout = !url.startsWith('/login');
         });
-        this.loadCurrentUser(); // ← charge le current
+
+        // On charge l'utilisateur courant si un token existe
+        this.loadCurrentUser();
     }
 
     ngOnInit() {
+        // On écoute le changement de l'utilisateur courant
         this.authService.currentUser$.subscribe(user => {
             if (user) {
-                // Retire les anciennes classes
+                // On réinitialise les classes CSS du body
                 document.body.classList.value = '';
+
+                // Ajoute une classe CSS selon le rôle de l'utilisateur
                 if (this.authService.isAdmin()) {
                     document.body.classList.add('ADMIN');
                 } else if (this.authService.isManager()) {
@@ -47,11 +54,13 @@ export class AppComponent implements OnInit {
             }
         });
     }
+
+    // Méthode pour récupérer l'utilisateur courant depuis l'API
     loadCurrentUser() {
-        if (sessionStorage.getItem('token')) {
+        if (sessionStorage.getItem('token')) { // Vérifie si un token est présent
             this.userService.getCurrentUser().subscribe({
-                next: user => this.authService.setCurrentUser(user),
-                error: () => this.authService.setCurrentUser(null)
+                next: user => this.authService.setCurrentUser(user), // Stocke l'utilisateur si succès
+                error: () => this.authService.setCurrentUser(null) // Sinon, remet à null
             });
         }
     }

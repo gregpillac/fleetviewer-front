@@ -1,6 +1,4 @@
-
 // Custom Theming for Angular Material
-// For more information: https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
 html {
@@ -13,9 +11,9 @@ html {
     typography: Roboto,
     density: 0,
   ));
-}/* You can add global styles to this file, and also import other style files */
+}
 
-:root { /* Default */
+:root { 
     --main-color: #202020;
     --bg-color: #fff;
     --text-color: #000000;
@@ -24,21 +22,21 @@ html {
     --logo-contrast-color: #fff;
 }
 
-body.ADMIN { /* Admin */
+body.ADMIN {
     --main-color: #0048ff;
 }
 
-body.MANAGER { /* Manager */
+body.MANAGER {
     --main-color: #7b00ff;
 }
 
-body.ADMIN, body.MANAGER, {
+body.ADMIN, body.MANAGER {
     // Logo
     --logo-bright-color: #fff;
     --logo-contrast-color: #fff;
 }
 
-body.USER { /* User */
+body.USER {
     --main-color: #202020;
 }
 
@@ -48,22 +46,112 @@ body.USER { /* User */
   box-sizing: border-box;
 }
 
-html, body { margin: 0; padding: 0; height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
 
-.neosolix-svg {
-  path {
-    fill: #252525;
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--bg-color);
+}
+
+.neosolix-svg path {
+  fill: #252525;
+}
+
+.fleetviewer-svg .bright-color {
+  fill: #D6D6D6;
+}
+
+.fleetviewer-svg .contrast-color {
+  fill: #8B8B8B;
+}
+
+/* Styles Responsive */
+.container {
+  padding: 20px;
+}
+
+.card {
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--main-color);
+  color: white;
+}
+
+td {
+  border: 1px solid #ddd;
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+  /* Tables adaptent plus facilement aux grandes tailles */
+  .container {
+    padding: 15px;
   }
 }
 
-.fleetviewer-svg {
-  .bright-color {
-    fill: #D6D6D6;
+@media (max-width: 992px) {
+  /* Sur les tablettes et écrans moyens */
+  .card {
+    padding: 15px;
   }
-  .contrast-color {
-    fill: #8B8B8B;
+  
+  .table-responsive {
+    margin-top: 20px;
+  }
 
+  th, td {
+    font-size: 14px;
   }
 }
 
+@media (max-width: 768px) {
+  /* Sur les écrans de mobile */
+  .container {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 10px;
+  }
+
+  .table-responsive {
+    overflow-x: scroll;
+  }
+
+  th, td {
+    font-size: 12px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Sur les petits écrans */
+  th, td {
+    font-size: 10px;
+    padding: 5px;
+  }
+}

@@ -1,0 +1,65 @@
+/* Conteneur de la table pour permettre le défilement horizontal */
+.table-container {
+    max-width: 100%;
+    overflow-x: auto;  /* Permet un défilement horizontal */
+    padding: 1rem;
+  }
+  
+  /* Application des styles sur la table */
+  table.mat-elevation-z8 {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  table.mat-elevation-z8 th, table.mat-elevation-z8 td {
+    padding: 12px 16px;
+    text-align: left;
+    border: 1px solid #ddd; /* Bordure légère entre les cellules */
+    font-size: 1rem;
+  }
+  
+  table.mat-elevation-z8 th {
+    background-color: #f4f4f4;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  table.mat-elevation-z8 td {
+    background-color: #fff;
+  }
+  
+  table.mat-elevation-z8 tr:hover {
+    background-color: #f1f1f1; /* Survol des lignes */
+  }
+  
+  /* Réduire la taille des cellules pour les petits écrans */
+  @media (max-width: 768px) {
+    table.mat-elevation-z8 th, table.mat-elevation-z8 td {
+      padding: 8px 12px;
+      font-size: 0.9rem;  /* Réduit la taille de police */
+    }
+  }
+  
+  /* Style pour les cellules vides ou non renseignées */
+  table.mat-elevation-z8 td:empty {
+    font-style: italic;
+    color: #888;
+  }
+  
+  /* Pour les colonnes longues, on peut faire en sorte que le texte soit coupé proprement */
+  table.mat-elevation-z8 td {
+    word-wrap: break-word;
+    white-space: normal;
+  }
+  
+  /* Ajouter un effet de focus pour les entrées dans la table */
+  table.mat-elevation-z8 th, table.mat-elevation-z8 td {
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  table.mat-elevation-z8 th:hover,
+  table.mat-elevation-z8 td:hover {
+    background-color: #f7f7f7;
+  }
+  

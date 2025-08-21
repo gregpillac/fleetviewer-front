@@ -1,6 +1,7 @@
-dashboard-container {
+.dashboard-container {
   display: flex;
   height: 100%;
+  flex-wrap: wrap;
 }
 
 .sidebar {
@@ -9,25 +10,95 @@ dashboard-container {
   padding: 1rem;
   color: white;
   position: fixed;
-}
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
 
-.sidebar nav a {
-  display: block;
-  color: white;
-  text-decoration: none;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-}
+  nav a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
 
-.sidebar nav a.active {
-  background-color: #34495e;
+  nav a.active {
+    background-color: #34495e;
+  }
+
+  /* Réduire la largeur de la sidebar sur mobile */
+  @media (max-width: 768px) {
+    width: 60px; /* Réduire la largeur de la sidebar */
+    padding: 1rem 0;
+    
+    nav a {
+      text-align: center;
+      padding: 0.75rem;
+    }
+  }
+
+  /* Menu Hamburger - Le bouton qui ouvre/ferme la sidebar */
+  @media (max-width: 576px) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: none; /* Par défaut, le menu est caché */
+    z-index: 101;
+
+    &.open {
+      display: block;
+    }
+
+    nav a {
+      padding: 1rem;
+      text-align: left;
+      font-size: 1rem;
+    }
+  }
 }
 
 .dashboard-content {
   flex: 1;
   padding: 2rem;
   background-color: #f8f9fa;
-  display: flex;
-  justify-content: center;
+  margin-left: 220px; /* Décalage pour la sidebar */
+  transition: margin-left 0.3s ease;
+  
+  /* Responsiveness pour le contenu principal */
+  @media (max-width: 768px) {
+    margin-left: 60px; /* Réduit l'espace lorsque la sidebar est étroite */
+  }
+
+  @media (max-width: 576px) {
+    margin-left: 0; /* Laisse la place à la sidebar hamburger */
+  }
 }
+
+/* Cacher la sidebar en mobile et afficher un menu hamburger */
+.hamburger-menu {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 110;
+  cursor: pointer;
+}
+
+@media (max-width: 576px) {
+  .hamburger-menu {
+    display: block;
+  }
+
+  .sidebar {
+    display: none; /* Cache la sidebar sur mobile */
+  }
+
+  .sidebar.open {
+    display: block; /* Affiche la sidebar quand le bouton est cliqué */
+  }
+}
+
