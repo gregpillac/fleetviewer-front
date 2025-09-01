@@ -10,3 +10,5 @@ export interface Person {
   address?: Address;
   place?: Place;
 }
+
+export type CreatePerson = Omit<Person, 'id'>;

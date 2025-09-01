@@ -1,0 +1,75 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="mat-elevation-z8 user-form">
+
+    <h3 class="title">
+        {{ mode === 'create' ? 'Ajouter un utilisateur' : 'Modifier l\'utilisateur' }}
+    </h3>
+
+
+    <!-- Person -->
+    <mat-form-field appearance="outline">
+        <mat-label>Prénom</mat-label>
+        <input matInput formControlName="firstName">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="lastName">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Téléphone</mat-label>
+        <input matInput formControlName="phone">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Site</mat-label>
+        <mat-select formControlName="place">
+            <mat-option *ngFor="let p of places" [value]="p">{{ p.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+
+    <mat-divider class="divider"></mat-divider>
+
+    <!-- Account -->
+    <div class="create-account">
+        <mat-checkbox formControlName="createAccount">
+            {{ mode === 'create' ? 'Associer un compte' : 'Modifier le compte' }}
+        </mat-checkbox>
+    </div>
+
+    <ng-container *ngIf="form.get('createAccount')!.value">
+        <mat-form-field appearance="outline">
+            <mat-label>Identifiant</mat-label>
+            <input matInput formControlName="username">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Role</mat-label>
+            <mat-select formControlName="role">
+                <mat-option *ngFor="let r of roles" [value]="r">{{ r.id }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password">
+        </mat-form-field>
+
+        <div class="slide-toggle">
+            <mat-slide-toggle formControlName="enabled">Activer le compte</mat-slide-toggle>
+        </div>
+    </ng-container>
+
+    <div class="buttons">
+        <button mat-button type="button" (click)="cancel()">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+            {{ mode === 'create' ? 'Ajouter' : 'Enregistrer' }}
+        </button>
+    </div>
+</form>

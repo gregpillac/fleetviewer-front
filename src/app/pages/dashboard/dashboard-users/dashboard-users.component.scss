@@ -13,14 +13,6 @@ ag-grid-angular {
     min-width: 0;
 }
 
-.ag-action-btn {
-    border: 0;
-    background: none;
-    cursor: pointer;
-    margin-right: 4px;
-    font-size: 1.15em;
-}
-
 .table-actions button {
     background: #f4f6fa;
     border: 1px solid #c5c6c9;
@@ -51,7 +43,6 @@ ag-grid-angular {
     display: none;
 }
 
-/* Optionnel : ajouter ton propre texte via :before */
 .ag-paging-panel .ag-paging-page-size .ag-picker-field {
     position: relative;
 }
@@ -64,3 +55,4 @@ ag-grid-angular {
     color: #444;
     font-size: 0.98em;
 }
+

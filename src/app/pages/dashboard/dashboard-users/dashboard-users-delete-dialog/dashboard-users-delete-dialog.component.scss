@@ -1,0 +1,36 @@
+/* Titre du dialog */
+.dlg-title {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+/* Contenu du dialog */
+.dlg-content {
+    margin-top: 4px;
+
+    p {
+        margin: 0 0 8px 0;
+        line-height: 1.45;
+    }
+}
+
+/* Petit texte d’aide */
+.dlg-hint {
+    margin-top: 8px;
+    color: #6b7280; /* gris neutre lisible */
+    font-size: 0.95rem;
+}
+
+/* Zone des actions (boutons) */
+.dlg-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 8px;
+}
+
+/* Optionnel : harmoniser la hauteur/padding des boutons */
+.dlg-actions .mat-mdc-button-base {
+    min-height: 36px;
+    padding: 0 14px;
+}

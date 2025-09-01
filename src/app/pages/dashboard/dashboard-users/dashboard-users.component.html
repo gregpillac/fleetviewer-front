@@ -1,25 +1,40 @@
 <div class="users-content">
     <h1>Les utilisateurs</h1>
 
-    <div class="table-actions" style="display:flex; justify-content: space-between; align-items: center; margin-bottom:1rem;">
-        <button class="reset-btn" (click)="onResetFilters()">
-            <span>🧹</span> Réinitialiser les filtres
+    <ng-container *ngIf="!formMode">
+        <!-- Toolbar liste-->
+        <div  class="table-actions" style="display:flex; justify-content: space-between; align-items: center; margin-bottom:1rem;">
+            <button class="reset-btn" (click)="onResetFilters()">
+                <span>🧹</span> Réinitialiser les filtres
+            </button>
+            <button class="add-btn" (click)="openCreateUser()">
+            <span>➕</span> Ajouter un utilisateur
         </button>
-        <button class="add-btn" (click)="onAddUser()">
-        <span>➕</span> Ajouter un utilisateur
-    </button>
-    </div>
+        </div>
 
-    <ag-grid-angular #agGrid
-        (gridReady)="onGridReady($event)"
-        style="width: 100%; height: 600px;"
-        [columnDefs]="columnDefs"
-        [rowData]="users"
-        [pagination]="true"
-        [paginationPageSize]="25"
-        [paginationPageSizeSelector]="[10, 25, 50, 100]"
-        [animateRows]="true"
-        [localeText]="localeText">
-    </ag-grid-angular>
+        <!-- Liste (AG Grid) -->
+        <ag-grid-angular #agGrid
+            (gridReady)="onGridReady($event)"
+            style="width: 100%; height: 600px;"
+                         class="ag-theme-alpine"
+            [columnDefs]="columnDefs"
+            [rowData]="persons"
+            [pagination]="true"
+            [paginationPageSize]="25"
+            [paginationPageSizeSelector]="[10, 25, 50, 100]"
+            [animateRows]="true"
+            [localeText]="localeText">
+        </ag-grid-angular>
+    </ng-container>
+
+    <ng-container *ngIf="formMode">
+        <!-- Formulaire -->
+        <app-dashboard-users-form [mode]="formMode"
+                                  [person]="editingPerson"
+                                  [user]="editingUser"
+                                  (closed)="onFormClosed($event)">
+        </app-dashboard-users-form>
+    </ng-container>
+
 </div>
 

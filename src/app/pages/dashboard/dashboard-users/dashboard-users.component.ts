@@ -1,63 +1,83 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../../services/user/user.service';
 import {User} from '../../../models/user.model';
-import {AgGridModule} from 'ag-grid-angular';
-import type {ColDef, ValueGetterParams} from 'ag-grid-community';
+import {AgGridAngular, AgGridModule} from 'ag-grid-angular';
+import {ColDef, GridApi, provideGlobalGridOptions, ValueGetterParams} from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import { locale_fr } from '../ag-grid-locale/locale_fr'
-import {switchMap} from 'rxjs';
+import {filter, forkJoin, switchMap} from 'rxjs';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Person} from '../../../models/person.model';
+import {PersonService} from '../../../services/person/person.service';
+import {DashboardUsersFormComponent} from './dashboard-users-form/dashboard-users-form.component';
+import {NgIf} from '@angular/common';
+import {
+    DashboardUsersDeleteDialogComponent
+} from './dashboard-users-delete-dialog/dashboard-users-delete-dialog.component';
+
 
 ModuleRegistry.registerModules([ AllCommunityModule ]);
-
+provideGlobalGridOptions({theme: "legacy"});
+type ViewMode = 'list' | 'create' | 'edit';
+type Mode = 'create' | 'edit';
 
 @Component({
     selector: 'app-dashboard-users',
-    imports: [AgGridModule],
+    imports: [AgGridAngular, DashboardUsersFormComponent, NgIf, MatDialogModule],
     templateUrl: './dashboard-users.component.html',
     styleUrl: './dashboard-users.component.scss'
 })
 export class DashboardUsersComponent implements OnInit {
     @ViewChild('agGrid') agGrid: any;
     localeText = locale_fr;
-
-    users: User[] = [];
-
-    columnDefs: ColDef<User, any>[] = [
+    columnDefs: ColDef[] = [
         {
-            headerName: 'Identifiant',
+            headerName: 'Prénom & Nom',
+            field: 'name',
             filter: 'agTextColumnFilter',
-            field: 'username',
-        },
-        {
-            headerName: 'Nom',
-            filter: 'agTextColumnFilter',
-            valueGetter: (params: ValueGetterParams<User, any, any>) =>
+            sortable: true,
+            valueGetter: (params: ValueGetterParams<Person, any, any>) =>
                 this.getFullName(params.data)
         },
         {
             headerName: 'Email',
+            field: 'email',
             filter: 'agTextColumnFilter',
+            sortable: true,
             valueGetter: (params: ValueGetterParams) =>
-                params.data.person?.email ?? '(non renseigné)'
+                params.data?.email ?? '(non renseigné)'
         },
         {
             headerName: 'Téléphone',
+            field: 'phone',
             filter: 'agTextColumnFilter',
+            sortable: true,
             valueGetter: (params: ValueGetterParams) =>
-                params.data.person?.phone ?? '(non renseigné)'
+                params.data?.phone ?? '(non renseigné)'
         },
         {
             headerName: 'Site',
+            field: 'place',
             filter: 'agTextColumnFilter',
+            sortable: true,
             valueGetter: (params: ValueGetterParams) =>
-                params.data.person?.place?.name ?? '(non renseigné)'
+                params.data?.place?.name ?? '(non renseigné)'
+        },
+        {
+            headerName: 'Compte associé',
+            field: 'username',
+            filter: 'agTextColumnFilter',
+            sortable: true,
+            valueGetter: (p) => this.usersByPersonId.get(p.data.id)?.username ?? '—'
         },
         {
             headerName: 'Rôle',
+            field: 'role',
             filter: 'agTextColumnFilter',
-            valueGetter: (params: ValueGetterParams) =>
-                params.data.role?.id ?? '(non renseigné)',
+            sortable: true,
+            valueGetter: (p) => this.usersByPersonId.get(p.data.id)?.role?.id ?? '—',
             valueFormatter: (params) => {
                 switch (params.value) {
                     case 'ROLE_ADMIN': return 'Administrateur';
@@ -67,65 +87,116 @@ export class DashboardUsersComponent implements OnInit {
                     default: return params.value;
                 }
             },
-            comparator: (valueA: string, valueB: string) => {
-                const order = ['ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER', 'ROLE_DEFAULT'];
-
-                // Trouver l'index dans l'ordre
-                const indexA = order.indexOf(valueA);
-                const indexB = order.indexOf(valueB);
-
-                // Si la valeur n'est pas dans la liste, on met à la fin
-                const safeA = indexA === -1 ? order.length : indexA;
-                const safeB = indexB === -1 ? order.length : indexB;
-
-                return safeA - safeB;
+            comparator: (a: string, b: string) => {
+                const order = ['ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER', 'ROLE_DEFAULT', '—'];
+                const ia = order.indexOf(a), ib = order.indexOf(b);
+                return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
             },
             sort: 'asc'
         },
         {
             headerName: 'Actions',
-            sortable: false,
             filter: false,
+            sortable: false,
             pinned: 'right',
-            cellRenderer: function(params: any) {
-                const user = params.data;
+            minWidth: 220,
+            cellRenderer: (params: any) => {
+                const person = params.data as Person;
+                const user = this.usersByPersonId.get(person.id) || null;
+
                 return `
-                    <button class="ag-action-btn" data-id="${user.id}" data-action="edit"    title="Modifier">✏️</button>
-                    <button class="ag-action-btn" data-id="${user.id}" data-action="delete"  title="Supprimer">🗑️</button>
-                    <button class="ag-action-btn" data-id="${user.id}" data-action="toggle"  title="${user.enabled ? 'Désactiver' : 'Activer'}">
-                    ${user.enabled ? '🚫' : '✅'}
-                    </button>
-                `;
+                        <div class="ag-actions">
+                            <button class="ag-action-btn" data-person-id="${person.id}" data-action="edit" title="Modifier">✏️</button>
+                            ${ user ? `
+                            <button class="ag-action-btn" data-person-id="${person.id}" data-action="toggle" title="${user.enabled ? 'Désactiver' : 'Activer'}">
+                              ${user.enabled ? '🚫' : '✅'}
+                            </button>
+                            ` : '' }
+
+                            <button class="ag-action-btn" data-person-id="${person.id}" data-action="delete" title="${user ? 'Supprimer' : 'Supprimer l\'utilisateur'}">
+                                ${user ? '🗑️ ▾' : '🗑️'}
+                            </button>
+                        </div>
+                    `;
             }
         }
     ];
 
+    persons: Person[] = [];
+    users: User[] = [];
+    usersByPersonId = new Map<number, User>();
+
+    view: ViewMode = 'list';
+    editingPerson: Person | null = null;
+    editingUser: User | null = null;
+
     constructor(
-        private userService: UserService
+        private personService: PersonService,
+        private userService: UserService,
+        private snack: MatSnackBar,
+        private dialog: MatDialog
     ) {}
 
     ngOnInit() {
-        this.userService.getUsers().subscribe(users => {
-            const rolePriority: { [key: string]: number } = { 'ROLE_ADMIN': 1, 'ROLE_MANAGER': 2, 'ROLE_USER': 3 };
+        this.refreshData();
+    }
 
-            this.users = users.sort((a, b) => {
-                return rolePriority[a.role.id] - rolePriority[b.role.id];
-            });
+    // Expose seulement 'create' | 'edit' (ou null) pour le template, afin d'éviter que 'list' soit passé à [mode]
+    get formMode(): Mode | null {
+        return this.view === 'list' ? null : this.view; // ← ici le type est réduit à Mode
+    }
+
+    onGridReady(params: any) {
+        params.api.addEventListener('cellClicked', (event: any) => {
+            const target = event.event.target as HTMLElement;
+            if (!target.classList.contains('ag-action-btn')) return;
+            const personId = Number(target.getAttribute('data-person-id'));
+            const action = target.getAttribute('data-action')!;
+            const person = this.persons.find(p => p.id === personId);
+            const user = this.usersByPersonId.get(personId) || null;
+
+            if (!person) return;
+            if (action === 'edit') this.openEditUser(person);
+            if (action === 'toggle' && user) this.toggleUser(user);
+            if (action === 'delete') this.handleDeleteClick(person);
         });
     }
 
-    getFullName(user: any) {
-        return user.person
-            ? `${user.person.firstName ?? ''} ${user.person.lastName ?? ''}`.trim()
+    // Recharge personnes + utilisateurs et met à jour la grille
+    private refreshData(): void {
+        forkJoin([
+            this.personService.getPersons(),
+            this.userService.getUsers()
+        ]).subscribe(([persons, users]) => {
+            this.persons = persons;
+            this.users = users;
+            this.usersByPersonId = new Map(users.map(u => [u.person.id, u]));
+            this.persons = [...this.persons]; // force la rééval des valueGetters
+        });
+    }
+
+    getFullName(person: any) {
+        return person
+            ? `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim()
             : '';
     }
 
-    editUser(user: User)    {
-        alert(`Edit ${user}`);
+    openCreateUser() {
+        this.view = 'create';
+        this.editingPerson = null;
+        this.editingUser = null;
     }
 
-    deleteUser(user: User)  {
-        alert(`Delete ${user}`);
+    openEditUser(person: Person) {
+        this.view = 'edit';
+        this.editingPerson = person;
+        this.editingUser = this.usersByPersonId.get(person.id) ?? null; // via ta Map
+    }
+
+    // Le formulaire enfant “ferme” la vue et indique s’il y a eu sauvegarde
+    onFormClosed(saved: boolean) {
+        this.view = 'list';
+        if (saved) this.refreshData();
     }
 
     toggleUser(user: User)  {
@@ -133,35 +204,86 @@ export class DashboardUsersComponent implements OnInit {
         const newStatus = !user.enabled
 
         if (confirm(
-            `Êtes-vous certain de vouloir ${newStatus ? "" : "dés"}activer le compte utilisateur de
-            ${this.getFullName(user)} ?`))
+            `Êtes-vous certain de vouloir ${newStatus ? "" : "dés"}activer le compte utilisateur de ${this.getFullName(user.person)} ?`))
         {
             this.userService.updateStatus(user.id, newStatus).pipe(
                 switchMap(() => this.userService.getUsers())
             ).subscribe({
-                next: (users) => { this.users = users; },
-                error: console.error
+
+                next: (users) => {
+                    this.users = users;
+                    this.usersByPersonId = new Map(users.map(u => [u.person.id, u])); // <-- rebuild map
+                    this.persons = [...this.persons]; // <-- recharge la liste
+                    this.snack.open('Statut mis à jour', 'OK', { duration: 1500 });
+                },
+                error: () => this.snack.open('Échec de la mise à jour', 'OK', { duration: 2500 })
             });
         }
     }
 
-    onGridReady(params: any) {
-        params.api.addEventListener('cellClicked', (event: any) => {
-            const target = event.event.target as HTMLElement;
-            if (target.classList.contains('ag-action-btn')) {
-                const id = Number(target.getAttribute('data-id'));
-                const action = target.getAttribute('data-action');
-                const user = this.users.find(u => u.id == id);
-                if (!user) return; // ne rien faire si aucun user trouvé
-                if (action === 'edit')    this.editUser(user);
-                if (action === 'delete')  this.deleteUser(user);
-                if (action === 'toggle')  this.toggleUser(user);
+    // Clic sur le boutton Supprimer
+    handleDeleteClick(person: Person) {
+        const user = this.usersByPersonId.get(person.id) ?? null;
+
+        console.log('test');
+
+        if(!user) {
+            this.deleteUser(person);
+        } else {
+            this.openDeleteDialog(person);
+        }
+    }
+
+    openDeleteDialog(pers: Person) {
+        const person = this.persons.find(p => p.id === pers.id);
+        if (!person) return;
+        const user = this.usersByPersonId.get(pers.id) ?? null;
+
+        const ref = this.dialog.open(DashboardUsersDeleteDialogComponent, {
+            width: '420px',
+            data: { person, user }
+        });
+
+        ref.afterClosed().subscribe((choice: 'account' | 'person' | undefined) => {
+            if (!choice) return;
+            if (choice === 'account') {
+                this.deleteAccount(pers);
+            } else {
+                this.deleteUser(pers);
             }
         });
     }
 
-    onAddUser() {
-        alert('Ajouter un utilisateur');
+    // supprimer le compte (lié à la personne)
+    deleteAccount(person: Person) {
+        if (person.id == null) return;
+        const user = this.usersByPersonId.get(person.id);
+        if (!user) { this.snack.open('Aucun compte lié', 'OK', { duration: 1500 }); return; }
+
+        if(confirm(`Êtes-vous sûr de vouloir supprimer le compte ${user.username}`)) {
+            this.userService.delete(user.id).subscribe({
+                next: () => {
+                    this.refreshData();
+                    this.snack.open('Compte supprimé', 'OK', { duration: 1500 });
+                },
+                error: () => this.snack.open('Échec suppression du compte', 'OK', { duration: 2500 })
+            });
+        }
+    }
+
+    // supprimer la personne (le compte sautera via cascade DB)
+    deleteUser(person: Person) {
+        if (person.id == null) return;
+
+        if(confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur ${this.getFullName(person)}`)) {
+            this.personService.delete(person.id).subscribe({
+                next: () => {
+                    this.refreshData();
+                    this.snack.open('Utilisateur supprimé', 'OK', { duration: 1500 });
+                },
+                error: () => this.snack.open('Échec suppression de l\'utilisateur', 'OK', { duration: 2500 })
+            });
+        }
     }
 
     onResetFilters() {

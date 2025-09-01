@@ -1,0 +1,40 @@
+.user-form {
+    padding:16px;
+    display:grid;
+    grid-template-columns:
+      repeat(2, minmax(260px, 1fr));
+    gap:12px;
+}
+
+.title {
+    grid-column:1/-1;
+    margin:0;
+}
+
+.divider {
+    grid-column:1/-1;
+}
+
+.create-account {
+    grid-column:1/-1;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.slide-toggle {
+    display:flex;
+    align-items:center;
+}
+
+.buttons {
+    grid-column:1/-1;
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:8px;
+
+    button {
+
+    }
+}

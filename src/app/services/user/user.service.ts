@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
-import {User} from '../../models/user.model';
+import {CreateUser, User} from '../../models/user.model';
 import {Observable} from 'rxjs';
 
 @Injectable({
@@ -32,7 +32,7 @@ export class UserService {
         return this.http.put(`${this.apiUrl}/me/password`, {currentPassword, newPassword});
     }
 
-    create(user: User): Observable<User> {
+    create(user: CreateUser): Observable<User> {
         return this.http.post<User>(`${this.apiUrl}`, user);
     }
 
@@ -52,4 +52,7 @@ export class UserService {
         return this.http.get(`${this.apiUrl}/generate-username`, { params, responseType: 'text' });
     }
 
+    delete(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
 }
