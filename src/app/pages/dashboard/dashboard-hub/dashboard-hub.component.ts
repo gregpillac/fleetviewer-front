@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {User} from '../../../models/user.model';
-import {UserService} from '../../../services/user/user.service';
+import {Person} from '../../../models/person.model';
+import {PersonService} from '../../../services/person/person.service';
 
 @Component({
   selector: 'app-dashboard-hub',
@@ -10,21 +10,21 @@ import {UserService} from '../../../services/user/user.service';
   styleUrl: './dashboard-hub.component.scss'
 })
 export class DashboardHubComponent implements OnInit {
-  users: User[] = [];
+  persons: Person[] = [];
 
   constructor(
     private router: Router,
-    private userService: UserService
+    private personService: PersonService
   ) {}
 
   ngOnInit() {
-    this.userService.getUsers().subscribe(users => {
-      this.users = users;
+    this.personService.getPersons().subscribe(persons => {
+      this.persons = persons;
     })
   }
 
   navTo(path: string): void {
-    this.router.navigate([`/dashboard/${path}`]);
+    this.router.navigate([`/dashboard/${path}`]).then();
   }
 
 }

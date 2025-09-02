@@ -1,36 +1,37 @@
-/* Titre du dialog */
-.dlg-title {
-    margin: 0 0 8px 0;
-    font-weight: 600;
-}
+/* En-tête du dialog avec titre + croix */
+.dlg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    border-bottom: 1px solid #e5e7eb;
 
-/* Contenu du dialog */
-.dlg-content {
-    margin-top: 4px;
+    .dlg-title {
+        margin: 0;
+        font-weight: 500;
+        font-size: 1.2rem;
+        color: #1f1f1f;
+    }
 
-    p {
-        margin: 0 0 8px 0;
-        line-height: 1.45;
+    .close-btn {
+        color: #6b7280;
     }
 }
 
-/* Petit texte d’aide */
-.dlg-hint {
-    margin-top: 8px;
-    color: #6b7280; /* gris neutre lisible */
-    font-size: 0.95rem;
+
+/* Contenu */
+.dlg-content {
+    margin: 12px 0;
+
+    b {
+        font-weight: 500 !important;
+    }
 }
 
-/* Zone des actions (boutons) */
+/* Boutons d’action : côte à côte à droite */
 .dlg-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    padding-top: 8px;
-}
-
-/* Optionnel : harmoniser la hauteur/padding des boutons */
-.dlg-actions .mat-mdc-button-base {
-    min-height: 36px;
-    padding: 0 14px;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
 }

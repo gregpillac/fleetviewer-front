@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { of, switchMap } from 'rxjs';
-import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {MatFormField, MatInput, MatInputModule, MatLabel} from '@angular/material/input';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {MatButton} from '@angular/material/button';
 import {MatOption} from '@angular/material/core';
@@ -16,6 +16,8 @@ import {Place} from '../../../../models/place.model';
 import {PersonService} from '../../../../services/person/person.service';
 import {UserService} from '../../../../services/user/user.service';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonToggle} from '@angular/material/button-toggle';
 
 type Mode = 'create' | 'edit';
 
@@ -27,7 +29,8 @@ type Mode = 'create' | 'edit';
         FormsModule,
         ReactiveFormsModule,
         MatInput,
-        MatCheckbox,
+        MatInputModule,
+        MatFormFieldModule,
         MatButton,
         MatOption,
         MatSelect,
@@ -75,7 +78,10 @@ export class DashboardUsersFormComponent implements OnInit {
             email:     [''],
             phone:     [''],
             place:     [null as Place | null],
-            address:   [null as Address | null],
+            address1:  [''],
+            address2:  [''],
+            city:      [''],
+            postalCode:   [''],
 
 
             // User (optionnel en create)
@@ -83,18 +89,21 @@ export class DashboardUsersFormComponent implements OnInit {
             username: [''],
             role:     [null as Role | null],
             enabled:  [true],
-            password: [''], // requis seulement en create + createAccount=true
+            password: [''],
         });
 
         // Préremplir en édition
         if (this.mode === 'edit' && this.person) {
             this.form.patchValue({
-                firstName: this.person.firstName,
-                lastName:  this.person.lastName,
-                email:     this.person.email ?? '',
-                phone:     this.person.phone ?? '',
-                place:     this.person.place ?? null,
-                address:   this.person.address ?? null,
+                firstName:  this.person.firstName,
+                lastName:   this.person.lastName,
+                email:      this.person.email ?? '',
+                phone:      this.person.phone ?? '',
+                place:      this.person.place ?? null,
+                line1:   this.person.address?.addressFirstLine ?? null,
+                line2:   this.person.address?.addressSecondLine ?? null,
+                city:       this.person.address?.city ?? null,
+                postalCode: this.person.address?.postalCode ?? null,
             });
 
             // Si l’utilisateur a un compte, préremplir la partie compte
@@ -114,7 +123,7 @@ export class DashboardUsersFormComponent implements OnInit {
         this.form.get('createAccount')!.valueChanges.subscribe((checked: boolean) => {
             const setReq = (name: string, req: boolean) => {
                 const c = this.form.get(name);
-                if (!c) return;                       // évite le crash si le contrôle n’existe pas
+                if (!c) return; // évite le crash si le contrôle n’existe pas
                 c.setValidators(req ? [Validators.required] : []);
                 c.updateValueAndValidity({ emitEvent: false });
             };
@@ -138,7 +147,12 @@ export class DashboardUsersFormComponent implements OnInit {
                 email: rawValue.email ?? undefined,
                 phone: rawValue.phone ?? undefined,
                 place: rawValue.place,
-                address: rawValue.address
+                address: {
+                    addressFirstLine: rawValue.line1,
+                    addressSecondLine: rawValue.line2,
+                    city: rawValue.city,
+                    postalCode: rawValue.postalCode,
+                }
             }).pipe(
                 // 2) Si demandé, créer le compte lié
                 switchMap(createdPerson => {
@@ -167,7 +181,12 @@ export class DashboardUsersFormComponent implements OnInit {
             email: rawValue.email ?? undefined,
             phone: rawValue.phone ?? undefined,
             place: rawValue.place,
-            address: rawValue.address
+            address: {
+                addressFirstLine: rawValue.line1,
+                addressSecondLine: rawValue.line2,
+                city: rawValue.city,
+                postalCode: rawValue.postalCode,
+            }
         });
 
         const flow$ = this.user

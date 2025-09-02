@@ -1,5 +1,9 @@
-<h2 mat-dialog-title class="dlg-title">Suppression</h2>
-<button class="close" mat-button (click)="close()"><mat-icon>close</mat-icon></button>
+<div class="dlg-header">
+    <h2 class="dlg-title">Supprimer</h2>
+    <button class="close-btn" mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
 
 <div mat-dialog-content class="dlg-content">
     <p>
@@ -7,20 +11,16 @@
     </p>
 </div>
 
-
 <div mat-dialog-actions class="dlg-actions">
     <button
         mat-stroked-button
-        color="warn"
         (click)="choose('account')"
         [disabled]="!hasAccount">
-        Supprimer le compte
+        Son compte
     </button>
     <button
-        mat-raised-button
-        color="warn"
+        mat-stroked-button
         (click)="choose('person')">
-        Supprimer la personne
+        L'utilisateur complet
     </button>
 </div>
-

@@ -33,14 +33,34 @@
         </mat-select>
     </mat-form-field>
 
+    <mat-form-field appearance="outline">
+        <mat-label>Adresse</mat-label>
+        <input matInput formControlName="address1">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Complément</mat-label>
+        <input matInput formControlName="address2">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Ville</mat-label>
+        <input matInput formControlName="city">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Code postal</mat-label>
+        <input matInput formControlName="postalCode">
+    </mat-form-field>
+
 
     <mat-divider class="divider"></mat-divider>
 
     <!-- Account -->
     <div class="create-account">
-        <mat-checkbox formControlName="createAccount">
+        <mat-slide-toggle formControlName="createAccount">
             {{ mode === 'create' ? 'Associer un compte' : 'Modifier le compte' }}
-        </mat-checkbox>
+        </mat-slide-toggle>
     </div>
 
     <ng-container *ngIf="form.get('createAccount')!.value">

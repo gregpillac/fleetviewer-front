@@ -1,8 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../../services/user/user.service';
 import {User} from '../../../models/user.model';
-import {AgGridAngular, AgGridModule} from 'ag-grid-angular';
-import {ColDef, GridApi, provideGlobalGridOptions, ValueGetterParams} from 'ag-grid-community';
+import {AgGridAngular} from 'ag-grid-angular';
+import {ColDef, GridApi, GridReadyEvent, provideGlobalGridOptions, ValueGetterParams} from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import { locale_fr } from '../ag-grid-locale/locale_fr'
@@ -121,6 +121,7 @@ export class DashboardUsersComponent implements OnInit {
             }
         }
     ];
+    gridApi!: GridApi;
 
     persons: Person[] = [];
     users: User[] = [];
@@ -146,7 +147,9 @@ export class DashboardUsersComponent implements OnInit {
         return this.view === 'list' ? null : this.view; // ← ici le type est réduit à Mode
     }
 
-    onGridReady(params: any) {
+    onGridReady(params: GridReadyEvent) {
+        this.gridApi = params.api; // GridApi (filtrage, refresh…)
+
         params.api.addEventListener('cellClicked', (event: any) => {
             const target = event.event.target as HTMLElement;
             if (!target.classList.contains('ag-action-btn')) return;
@@ -287,11 +290,13 @@ export class DashboardUsersComponent implements OnInit {
     }
 
     onResetFilters() {
-        // Reset tous les filtres de la grille
+        // Reset tous les filtres / tris de la grille
         if (this.agGrid && this.agGrid.api) {
             this.agGrid.api.setFilterModel(null);
-            this.agGrid.api.setSortModel(null);
             this.agGrid.api.onFilterChanged();
+            this.agGrid.api.applyColumnState({
+                defaultState: { sort: null } // supprime le tri sur toutes les colonnes
+            });
         }
     }
 }
