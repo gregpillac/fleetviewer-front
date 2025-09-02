@@ -9,3 +9,4 @@ export interface Address {
   gpsCoords?: string;
 }
 
+export type CreateAddress = Omit<Address, 'id'>;

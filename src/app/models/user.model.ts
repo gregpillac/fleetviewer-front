@@ -10,5 +10,4 @@ export interface User {
   person: Person;
 }
 
-
 export type CreateUser = Omit<User, 'id'>;
