@@ -4,7 +4,6 @@ import {AuthService} from '../../services/auth/auth.service';
 import {CommonModule} from '@angular/common';
 import {SvgIconComponent} from "angular-svg-icon";
 import {Router} from '@angular/router';
-import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-login',
@@ -45,8 +44,18 @@ export class LoginComponent implements OnInit {
       const credentials = this.loginForm.value;
 
       this.authService.login(credentials).subscribe({
-        next: (res) => {
-          this.router.navigate(['/']);
+        next: () => {
+            switch (this.authService.getCurrentUser()?.role.id) {
+                case 'ROLE_ADMIN':
+                case 'ROLE_MANAGER':
+                    this.router.navigate(['dashboard/ride']);
+                    break;
+                case 'ROLE_USER':
+                case 'ROLE_DEFAULT':
+                    this.router.navigate(['dashboard/ride']);
+                    break;
+                default: this.router.navigate(['/login']);
+            }
           },
         error: (err) => {
           this.errorMessage = 'Echec de connexion: ' + (err.error?.message || err.statusText);
