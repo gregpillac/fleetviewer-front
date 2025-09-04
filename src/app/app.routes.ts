@@ -8,6 +8,9 @@ import {DashboardHubComponent} from './pages/dashboard/dashboard-hub/dashboard-h
 import {DashboardUsersComponent} from './pages/dashboard/dashboard-users/dashboard-users.component';
 import {DashboardVehiclesComponent} from './pages/dashboard/dashboard-vehicles/dashboard-vehicles.component';
 import {AccountComponent} from './pages/account/account.component';
+import {
+    DashboardUsersFormComponent
+} from './pages/dashboard/dashboard-users/dashboard-users-form/dashboard-users-form.component';
 
 export const routes: Routes = [
   { title: 'FleetViewer - Accueil',path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
@@ -16,6 +19,8 @@ export const routes: Routes = [
   { title: 'FleetViewer - Dashboard Supervision', path: 'dashboard', component: DashboardComponent, canActivate: [canActivateWithRole(['ROLE_ADMIN', 'ROLE_MANAGER'])], children: [
     { path: '', component: DashboardHubComponent }, // hub d'accueil
     { path: 'users', component: DashboardUsersComponent },
+    { path: 'users/new', component: DashboardUsersFormComponent },
+    { path: 'users/:id', component: DashboardUsersFormComponent },
     { path: 'vehicles', component: DashboardVehiclesComponent },
   ]},
   { title: 'Test',path: 'test', component: HomeComponent },

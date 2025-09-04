@@ -1,40 +1,38 @@
+/* Conteneur du formulaire */
 .user-form {
-    padding:16px;
-    display:grid;
-    grid-template-columns:
-      repeat(2, minmax(260px, 1fr));
-    gap:12px;
+    padding: 16px;
 }
 
-.title {
-    grid-column:1/-1;
-    margin:0;
+/* Grille responsive pour les champs */
+.user-form .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 1→4 colonnes selon la place */
+    gap: 12px;
 }
 
-.divider {
-    grid-column:1/-1;
+/* Les champs occupent 100% de leur cellule */
+.user-form mat-form-field {
+    width: 100%;
 }
 
-.create-account {
-    grid-column:1/-1;
-    display:flex;
-    align-items:center;
-    gap:8px;
+/* Zone boutons alignée à droite */
+.user-form .buttons {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
 }
 
-.slide-toggle {
-    display:flex;
-    align-items:center;
+/* Slide toggles bien alignés */
+.user-form .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.buttons {
-    grid-column:1/-1;
-    display:flex;
-    justify-content:flex-end;
-    gap:8px;
-    margin-top:8px;
-
-    button {
-
+/* Optionnel : sur petits écrans, passe en 1 colonne stricte */
+@media (max-width: 640px) {
+    .user-form .grid {
+        grid-template-columns: 1fr;
     }
 }

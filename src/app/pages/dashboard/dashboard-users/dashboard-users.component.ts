@@ -1,302 +1,271 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {UserService} from '../../../services/user/user.service';
-import {User} from '../../../models/user.model';
-import {AgGridAngular} from 'ag-grid-angular';
-import {ColDef, GridApi, GridReadyEvent, provideGlobalGridOptions, ValueGetterParams} from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
-import { AllCommunityModule } from 'ag-grid-community';
-import { locale_fr } from '../ag-grid-locale/locale_fr'
-import {filter, forkJoin, switchMap} from 'rxjs';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {Person} from '../../../models/person.model';
-import {PersonService} from '../../../services/person/person.service';
-import {DashboardUsersFormComponent} from './dashboard-users-form/dashboard-users-form.component';
-import {NgIf} from '@angular/common';
-import {
-    DashboardUsersDeleteDialogComponent
-} from './dashboard-users-delete-dialog/dashboard-users-delete-dialog.component';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-ModuleRegistry.registerModules([ AllCommunityModule ]);
-provideGlobalGridOptions({theme: "legacy"});
-type ViewMode = 'list' | 'create' | 'edit';
-type Mode = 'create' | 'edit';
+import { Person } from '../../../models/person.model';
+import { User } from '../../../models/user.model';
+import { PersonService } from '../../../services/person/person.service';
+import { UserService } from '../../../services/user/user.service';
+import { DashboardUsersDeleteDialogComponent } from './dashboard-users-delete-dialog/dashboard-users-delete-dialog.component';
+import {MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTooltip} from '@angular/material/tooltip';
+
+type Row = Person & {
+    account?: User | null;
+    roleLabel?: string;
+};
 
 @Component({
     selector: 'app-dashboard-users',
-    imports: [AgGridAngular, DashboardUsersFormComponent, NgIf, MatDialogModule],
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatIconModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatProgressBarModule,
+        MatPaginatorModule,
+        MatSort,
+        MatTooltip
+    ],
     templateUrl: './dashboard-users.component.html',
-    styleUrl: './dashboard-users.component.scss'
+    styleUrl: './dashboard-users.component.scss',
+    providers: [
+        { provide: MatPaginatorIntl, useFactory: frenchMatPaginatorIntl }
+    ]
 })
 export class DashboardUsersComponent implements OnInit {
-    @ViewChild('agGrid') agGrid: any;
-    localeText = locale_fr;
-    columnDefs: ColDef[] = [
-        {
-            headerName: 'Prénom & Nom',
-            field: 'name',
-            filter: 'agTextColumnFilter',
-            sortable: true,
-            valueGetter: (params: ValueGetterParams<Person, any, any>) =>
-                this.getFullName(params.data)
-        },
-        {
-            headerName: 'Email',
-            field: 'email',
-            filter: 'agTextColumnFilter',
-            sortable: true,
-            valueGetter: (params: ValueGetterParams) =>
-                params.data?.email ?? '(non renseigné)'
-        },
-        {
-            headerName: 'Téléphone',
-            field: 'phone',
-            filter: 'agTextColumnFilter',
-            sortable: true,
-            valueGetter: (params: ValueGetterParams) =>
-                params.data?.phone ?? '(non renseigné)'
-        },
-        {
-            headerName: 'Site',
-            field: 'place',
-            filter: 'agTextColumnFilter',
-            sortable: true,
-            valueGetter: (params: ValueGetterParams) =>
-                params.data?.place?.name ?? '(non renseigné)'
-        },
-        {
-            headerName: 'Compte associé',
-            field: 'username',
-            filter: 'agTextColumnFilter',
-            sortable: true,
-            valueGetter: (p) => this.usersByPersonId.get(p.data.id)?.username ?? '—'
-        },
-        {
-            headerName: 'Rôle',
-            field: 'role',
-            filter: 'agTextColumnFilter',
-            sortable: true,
-            valueGetter: (p) => this.usersByPersonId.get(p.data.id)?.role?.id ?? '—',
-            valueFormatter: (params) => {
-                switch (params.value) {
-                    case 'ROLE_ADMIN': return 'Administrateur';
-                    case 'ROLE_MANAGER': return 'Manager';
-                    case 'ROLE_USER': return 'Utilisateur';
-                    case 'ROLE_DEFAULT': return 'Restreint';
-                    default: return params.value;
-                }
-            },
-            comparator: (a: string, b: string) => {
-                const order = ['ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER', 'ROLE_DEFAULT', '—'];
-                const ia = order.indexOf(a), ib = order.indexOf(b);
-                return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
-            },
-            sort: 'asc'
-        },
-        {
-            headerName: 'Actions',
-            filter: false,
-            sortable: false,
-            pinned: 'right',
-            minWidth: 220,
-            cellRenderer: (params: any) => {
-                const person = params.data as Person;
-                const user = this.usersByPersonId.get(person.id) || null;
-
-                return `
-                        <div class="ag-actions">
-                            <button class="ag-action-btn" data-person-id="${person.id}" data-action="edit" title="Modifier">✏️</button>
-                            ${ user ? `
-                            <button class="ag-action-btn" data-person-id="${person.id}" data-action="toggle" title="${user.enabled ? 'Désactiver' : 'Activer'}">
-                              ${user.enabled ? '🚫' : '✅'}
-                            </button>
-                            ` : '' }
-
-                            <button class="ag-action-btn" data-person-id="${person.id}" data-action="delete" title="${user ? 'Supprimer' : 'Supprimer l\'utilisateur'}">
-                                ${user ? '🗑️ ▾' : '🗑️'}
-                            </button>
-                        </div>
-                    `;
-            }
+    private _paginator!: MatPaginator;
+    @ViewChild(MatPaginator) set matPaginator(p: MatPaginator) {
+        if (p) {
+            this._paginator = p;
+            this.dataSource.paginator = p;
         }
-    ];
-    gridApi!: GridApi;
+    }
+    // tailles de page
+    pageSize = 25;
+    pageSizeOptions = [10, 25, 50, 100];
 
-    persons: Person[] = [];
-    users: User[] = [];
-    usersByPersonId = new Map<number, User>();
+    // Table
+    displayedColumns = ['name', 'email', 'phone', 'place', 'username', 'role', 'actions'];
+    dataSource = new MatTableDataSource<Row>([]);
 
-    view: ViewMode = 'list';
-    editingPerson: Person | null = null;
-    editingUser: User | null = null;
+    // État
+    loading = true;
 
     constructor(
         private personService: PersonService,
         private userService: UserService,
-        private snack: MatSnackBar,
+        private router: Router,
         private dialog: MatDialog
     ) {}
 
-    ngOnInit() {
-        this.refreshData();
+    ngOnInit(): void {
+        // prédicat de filtrage (multi-colonnes)
+        this.dataSource.filterPredicate = (row, filter) => {
+            const t = (v: any) => (v ?? '').toString().toLowerCase();
+            const haystack = [
+                `${row.firstName ?? ''} ${row.lastName ?? ''}`,
+                row.email,
+                row.phone,
+                row.place?.name,
+                row.account?.username,
+                row.roleLabel,
+            ]
+                .map(t)
+                .join(' ');
+            return haystack.includes(t(filter));
+        };
+
+        this.fetchRows();
     }
 
-    // Expose seulement 'create' | 'edit' (ou null) pour le template, afin d'éviter que 'list' soit passé à [mode]
-    get formMode(): Mode | null {
-        return this.view === 'list' ? null : this.view; // ← ici le type est réduit à Mode
-    }
+    // --------- Data ---------
+    private fetchRows(): void {
+        this.loading = true;
+        forkJoin({
+            persons: this.personService.getPersons(),
+            users: this.userService.getUsers(),
+        }).subscribe({
+            next: ({ persons, users }) => {
+                const byPersonId = new Map(users.map((u) => [u.person.id, u]));
+                const rows: Row[] = persons.map((p) => {
+                    const account = byPersonId.get(p.id) ?? null;
+                    return {
+                        ...p,
+                        account,
+                        roleLabel: this.roleLabel(account?.role?.id),
+                    };
+                });
+                rows.sort(this.compareRows);
+                this.dataSource.data = rows;
 
-    onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api; // GridApi (filtrage, refresh…)
-
-        params.api.addEventListener('cellClicked', (event: any) => {
-            const target = event.event.target as HTMLElement;
-            if (!target.classList.contains('ag-action-btn')) return;
-            const personId = Number(target.getAttribute('data-person-id'));
-            const action = target.getAttribute('data-action')!;
-            const person = this.persons.find(p => p.id === personId);
-            const user = this.usersByPersonId.get(personId) || null;
-
-            if (!person) return;
-            if (action === 'edit') this.openEditUser(person);
-            if (action === 'toggle' && user) this.toggleUser(user);
-            if (action === 'delete') this.handleDeleteClick(person);
+                this.loading = false;
+            },
+            error: () => {
+                this.dataSource.data = [];
+                this.loading = false;
+            },
         });
     }
 
-    // Recharge personnes + utilisateurs et met à jour la grille
-    private refreshData(): void {
-        forkJoin([
-            this.personService.getPersons(),
-            this.userService.getUsers()
-        ]).subscribe(([persons, users]) => {
-            this.persons = persons;
-            this.users = users;
-            this.usersByPersonId = new Map(users.map(u => [u.person.id, u]));
-            this.persons = [...this.persons]; // force la rééval des valueGetters
+    applyFilter(value: string) {
+        this.dataSource.filter = (value || '').trim().toLowerCase();
+        if (this._paginator) this._paginator.firstPage();
+    }
+
+    // --------- Actions ---------
+    goToCreateUser() {
+        this.router.navigate(['dashboard/users', 'new']);
+    }
+
+    editUser(row: Row) {
+        this.router.navigate(['dashboard/users', row.id]);
+    }
+
+    toggleUser(user: User) {
+        const newStatus = !user.enabled;
+        const actionLabel = newStatus ? 'activer' : 'désactiver';
+        const fullName = `${user.person?.firstName ?? ''} ${user.person?.lastName ?? ''}`.trim();
+
+        if (!confirm(`Voulez-vous ${actionLabel} le compte de ${fullName || 'cet utilisateur'} ?`)) return;
+
+        this.userService.updateStatus(user.id, newStatus).subscribe({
+            next: () => {
+                // maj en place + “tick” la datasource pour refléter l’UI
+                user.enabled = newStatus;
+                this.dataSource.data = [...this.dataSource.data];
+            },
+            error: () => alert('Échec de la mise à jour du statut du compte.'),
         });
     }
 
-    getFullName(person: any) {
-        return person
-            ? `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim()
-            : '';
+    onDeleteClick(row: Row) {
+        if (!row.account) this.deleteUser(row);
+        else this.openDeleteDialog(row);
     }
 
-    openCreateUser() {
-        this.view = 'create';
-        this.editingPerson = null;
-        this.editingUser = null;
-    }
-
-    openEditUser(person: Person) {
-        this.view = 'edit';
-        this.editingPerson = person;
-        this.editingUser = this.usersByPersonId.get(person.id) ?? null; // via ta Map
-    }
-
-    // Le formulaire enfant “ferme” la vue et indique s’il y a eu sauvegarde
-    onFormClosed(saved: boolean) {
-        this.view = 'list';
-        if (saved) this.refreshData();
-    }
-
-    toggleUser(user: User)  {
-        // Inverser le statut
-        const newStatus = !user.enabled
-
-        if (confirm(
-            `Êtes-vous certain de vouloir ${newStatus ? "" : "dés"}activer le compte utilisateur de ${this.getFullName(user.person)} ?`))
-        {
-            this.userService.updateStatus(user.id, newStatus).pipe(
-                switchMap(() => this.userService.getUsers())
-            ).subscribe({
-
-                next: (users) => {
-                    this.users = users;
-                    this.usersByPersonId = new Map(users.map(u => [u.person.id, u])); // <-- rebuild map
-                    this.persons = [...this.persons]; // <-- recharge la liste
-                    this.snack.open('Statut mis à jour', 'OK', { duration: 1500 });
-                },
-                error: () => this.snack.open('Échec de la mise à jour', 'OK', { duration: 2500 })
-            });
-        }
-    }
-
-    // Clic sur le boutton Supprimer
-    handleDeleteClick(person: Person) {
-        const user = this.usersByPersonId.get(person.id) ?? null;
-
-        console.log('test');
-
-        if(!user) {
-            this.deleteUser(person);
-        } else {
-            this.openDeleteDialog(person);
-        }
-    }
-
-    openDeleteDialog(pers: Person) {
-        const person = this.persons.find(p => p.id === pers.id);
-        if (!person) return;
-        const user = this.usersByPersonId.get(pers.id) ?? null;
-
+    openDeleteDialog(row: Row) {
         const ref = this.dialog.open(DashboardUsersDeleteDialogComponent, {
             width: '420px',
-            data: { person, user }
+            data: { person: row, user: row.account },
         });
 
         ref.afterClosed().subscribe((choice: 'account' | 'person' | undefined) => {
             if (!choice) return;
-            if (choice === 'account') {
-                this.deleteAccount(pers);
-            } else {
-                this.deleteUser(pers);
-            }
+            if (choice === 'account') this.deleteAccount(row);
+            else this.deleteUser(row);
         });
     }
 
-    // supprimer le compte (lié à la personne)
-    deleteAccount(person: Person) {
-        if (person.id == null) return;
-        const user = this.usersByPersonId.get(person.id);
-        if (!user) { this.snack.open('Aucun compte lié', 'OK', { duration: 1500 }); return; }
+    deleteAccount(row: Row) {
+        const user = row.account;
+        if (!user) return;
 
-        if(confirm(`Êtes-vous sûr de vouloir supprimer le compte ${user.username}`)) {
-            this.userService.delete(user.id).subscribe({
-                next: () => {
-                    this.refreshData();
-                    this.snack.open('Compte supprimé', 'OK', { duration: 1500 });
-                },
-                error: () => this.snack.open('Échec suppression du compte', 'OK', { duration: 2500 })
-            });
+        if (!confirm(`Supprimer le compte ${user.username} ?`)) return;
+
+        this.userService.delete(user.id).subscribe({
+            next: () => {
+                row.account = null;
+                row.roleLabel = '—';
+                this.resort(); // remet l’ordre par rôles
+            },
+            error: () => alert('Échec de la suppression du compte.'),
+        });
+    }
+
+    deleteUser(row: Row) {
+        const fullName = `${row.firstName ?? ''} ${row.lastName ?? ''}`.trim() || 'cet utilisateur';
+        if (!confirm(`Supprimer définitivement ${fullName} ?`)) return;
+
+        this.personService.delete(row.id).subscribe({
+            next: () => {
+                this.dataSource.data = this.dataSource.data.filter((r) => r.id !== row.id);
+            },
+            error: () => alert("Échec de la suppression de l'utilisateur."),
+        });
+    }
+
+
+    // --------- Comparateur des rôles pour le tri de la datasource ---------
+    private roleRank(row: Row): number {
+        const id = row.account?.role?.id ?? 'NONE'; // "Aucun"
+        switch (id) {
+            case 'ROLE_ADMIN':   return 0;
+            case 'ROLE_MANAGER': return 1;
+            case 'ROLE_USER':    return 2;
+            case 'ROLE_DEFAULT': return 3;
+            case 'NONE':         return 4;
+            default:             return 99;
         }
     }
 
-    // supprimer la personne (le compte sautera via cascade DB)
-    deleteUser(person: Person) {
-        if (person.id == null) return;
+    private compareRows = (a: Row, b: Row) => {
+        const ra = this.roleRank(a), rb = this.roleRank(b);
+        if (ra !== rb) return ra - rb;
 
-        if(confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur ${this.getFullName(person)}`)) {
-            this.personService.delete(person.id).subscribe({
-                next: () => {
-                    this.refreshData();
-                    this.snack.open('Utilisateur supprimé', 'OK', { duration: 1500 });
-                },
-                error: () => this.snack.open('Échec suppression de l\'utilisateur', 'OK', { duration: 2500 })
-            });
-        }
+        // tie-breakers : Nom puis Prénom (ordre alpha FR, case-insensitive)
+        const lnA = (a.lastName  ?? '').toLowerCase();
+        const lnB = (b.lastName  ?? '').toLowerCase();
+        if (lnA !== lnB) return lnA.localeCompare(lnB, 'fr');
+
+        const fnA = (a.firstName ?? '').toLowerCase();
+        const fnB = (b.firstName ?? '').toLowerCase();
+        return fnA.localeCompare(fnB, 'fr');
+    };
+
+    private resort() {
+        this.dataSource.data = [...this.dataSource.data].sort(this.compareRows);
     }
 
-    onResetFilters() {
-        // Reset tous les filtres / tris de la grille
-        if (this.agGrid && this.agGrid.api) {
-            this.agGrid.api.setFilterModel(null);
-            this.agGrid.api.onFilterChanged();
-            this.agGrid.api.applyColumnState({
-                defaultState: { sort: null } // supprime le tri sur toutes les colonnes
-            });
+    // --------- Helpers ---------
+    fullName(p: Person) {
+        return `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim();
+    }
+
+    roleLabel(roleId?: string): string {
+        switch (roleId) {
+            case 'ROLE_ADMIN':
+                return 'Administrateur';
+            case 'ROLE_MANAGER':
+                return 'Manager';
+            case 'ROLE_USER':
+                return 'Utilisateur';
+            case 'ROLE_DEFAULT':
+                return 'Restreint';
+            default:
+                return '—';
         }
     }
 }
+
+// Labels FR
+export function frenchMatPaginatorIntl(): MatPaginatorIntl {
+    const intl = new MatPaginatorIntl();
+    intl.itemsPerPageLabel = 'Éléments par page';
+    intl.nextPageLabel = 'Page suivante';
+    intl.previousPageLabel = 'Page précédente';
+    intl.firstPageLabel = 'Première page';
+    intl.lastPageLabel = 'Dernière page';
+    intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+        if (length === 0 || pageSize === 0) return `0 sur ${length}`;
+        const start = page * pageSize;
+        const end = Math.min(start + pageSize, length);
+        return `${start + 1} – ${end} sur ${length}`;
+    };
+    return intl;
+}
+

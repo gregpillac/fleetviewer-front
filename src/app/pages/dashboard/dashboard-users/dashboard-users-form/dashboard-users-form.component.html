@@ -1,95 +1,161 @@
-<form [formGroup]="form" (ngSubmit)="submit()" class="mat-elevation-z8 user-form">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="mat-elevation-z4 user-form">
 
-    <h3 class="title">
-        {{ mode === 'create' ? 'Ajouter un utilisateur' : 'Modifier l\'utilisateur' }}
-    </h3>
+    <h2 class="title">
+        {{ isEdit ? 'Modifier l’utilisateur' : 'Ajouter un utilisateur' }}
+    </h2>
 
+    <!-- PERSON -->
+    <div class="grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Prénom</mat-label>
+            <input matInput formControlName="firstName">
+            <mat-error *ngIf="hasError('firstName','required')">
+                Le prénom est requis
+            </mat-error>
+        </mat-form-field>
 
-    <!-- Person -->
-    <mat-form-field appearance="outline">
-        <mat-label>Prénom</mat-label>
-        <input matInput formControlName="firstName">
-        <mat-error>test</mat-error>
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Nom</mat-label>
+            <input matInput formControlName="lastName">
+            <mat-error *ngIf="hasError('lastName','required')">
+                Le nom est requis
+            </mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-        <mat-label>Nom</mat-label>
-        <input matInput formControlName="lastName">
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email">
+            <mat-error *ngIf="hasError('email','required')">
+                L’email est requis
+            </mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email">
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Téléphone</mat-label>
+            <input matInput formControlName="phone">
+            <mat-error *ngIf="hasError('phone','required')">
+                Le téléphone est requis
+            </mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-        <mat-label>Téléphone</mat-label>
-        <input matInput formControlName="phone">
-    </mat-form-field>
+        <!--<mat-form-field appearance="outline">
+            <mat-label>Site</mat-label>
+            <mat-select formControlName="place">
+                <mat-option *ngFor="let p of places" [value]="p">{{ p.name }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="hasError('place','required')">
+                Le site est requis
+            </mat-error>
+        </mat-form-field>-->
 
-    <mat-form-field appearance="outline">
-        <mat-label>Site (disable)</mat-label>
-        <mat-select formControlName="place">
-            <mat-option *ngFor="let p of places" [value]="p">{{ p.name }}</mat-option>
-        </mat-select>
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Adresse (n° et rue)</mat-label>
+            <input matInput formControlName="line1">
+            <mat-error *ngIf="hasError('line1','requiredIfStarted')">
+                N° et rue requis si vous souhaitez renseigner une adresse
+            </mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-        <mat-label>Adresse</mat-label>
-        <input matInput formControlName="line1">
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Complément d’adresse</mat-label>
+            <input matInput formControlName="line2">
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-        <mat-label>Complément d'adresse</mat-label>
-        <input matInput formControlName="line2">
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Ville</mat-label>
+            <input matInput formControlName="city">
+            <mat-error *ngIf="hasError('city','requiredIfStarted')">
+                Ville requise si vous souhaitez renseigner une adresse
+            </mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-        <mat-label>Ville</mat-label>
-        <input matInput formControlName="city">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-        <mat-label>Code postal</mat-label>
-        <input matInput formControlName="postalCode">
-    </mat-form-field>
-
-    <mat-divider class="divider"></mat-divider>
-
-    <!-- Account -->
-    <div class="create-account">
-        <mat-slide-toggle formControlName="isAccount">
-            {{ mode === 'create' ? 'Associer un compte' : 'Modifier le compte' }}
-        </mat-slide-toggle>
+        <mat-form-field appearance="outline">
+            <mat-label>Code postal</mat-label>
+            <input matInput formControlName="postalCode">
+            <mat-error *ngIf="hasError('postalCode','requiredIfStarted')">
+                Code postal requis si vous souhaitez renseigner une adresse
+            </mat-error>
+        </mat-form-field>
     </div>
 
-    <ng-container *ngIf="form.get('isAccount')!.value">
-        <mat-form-field appearance="outline">
-            <mat-label>Identifiant</mat-label>
-            <input matInput formControlName="username">
-        </mat-form-field>
+    <mat-divider class="my-4"></mat-divider>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Role</mat-label>
-            <mat-select formControlName="role">
-                <mat-option *ngFor="let r of roles" [value]="r">{{ r.id }}</mat-option>
-            </mat-select>
-        </mat-form-field>
+    <!-- ACCOUNT -->
+    <div *ngIf="!hasExistingAccount; else accountEdit">
+        <mat-slide-toggle formControlName="attachAccount">
+            Associer un compte
+        </mat-slide-toggle>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password">
-        </mat-form-field>
+        <div class="grid" *ngIf="form.get('attachAccount')!.value">
+            <mat-form-field appearance="outline">
+                <mat-label>Identifiant</mat-label>
+                <input matInput formControlName="username" required>
+                <mat-error *ngIf="hasError('username','required')">
+                    L’identifiant est requis
+                </mat-error>
+            </mat-form-field>
 
-        <div class="slide-toggle">
-            <mat-slide-toggle formControlName="enabled">Activer le compte</mat-slide-toggle>
+            <mat-form-field appearance="outline">
+                <mat-label>Rôle</mat-label>
+                <mat-select formControlName="role" required>
+                    <mat-option *ngFor="let r of roles" [value]="r">{{ r.id }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="hasError('role','required')">
+                    Le rôle est requis
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Mot de passe</mat-label>
+                <input matInput type="password" formControlName="password" required>
+                <mat-error *ngIf="hasError('password','required')">
+                    Le mot de passe est requis
+                </mat-error>
+            </mat-form-field>
+
+            <div class="row">
+                <mat-slide-toggle formControlName="enabled">Activer le compte</mat-slide-toggle>
+            </div>
         </div>
-    </ng-container>
+    </div>
+
+    <ng-template #accountEdit>
+        <h3>Compte existant</h3>
+        <div class="grid">
+            <mat-form-field appearance="outline">
+                <mat-label>Identifiant</mat-label>
+                <input matInput formControlName="username" required>
+                <mat-error *ngIf="hasError('username','required')">
+                    L’identifiant est requis
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Rôle</mat-label>
+                <mat-select formControlName="role" [compareWith]="compareRole" required>
+                    <mat-option *ngFor="let r of roles" [value]="r">{{ r.id }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="hasError('role','required')">
+                    Le rôle est requis
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nouveau mot de passe (optionnel)</mat-label>
+                <input matInput type="password" formControlName="password">
+                <!-- pas d’erreur ici, le mot de passe est optionnel en édition -->
+            </mat-form-field>
+
+            <div class="row">
+                <mat-slide-toggle formControlName="enabled">Compte activé</mat-slide-toggle>
+            </div>
+        </div>
+    </ng-template>
 
     <div class="buttons">
-        <button mat-button type="button" (click)="cancel()">Cancel</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-            {{ mode === 'create' ? 'Ajouter' : 'Enregistrer' }}
+        <button mat-stroked-button type="button" (click)="returnDashboard()">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || saving">
+            {{ isEdit ? 'Enregistrer' : 'Ajouter' }}
         </button>
     </div>
 </form>

@@ -1,40 +1,126 @@
 <div class="users-content">
-    <ng-container *ngIf="!formMode">
-        <h1>Les utilisateurs</h1>
 
-        <!-- Toolbar liste-->
-        <div  class="table-actions" style="display:flex; justify-content: space-between; align-items: center; margin-bottom:1rem;">
-            <button class="reset-btn" (click)="onResetFilters()">
-                <span>🧹</span> Réinitialiser les filtres
+    <!-- Toolbar -->
+    <div class="table-toolbar">
+        <h1>
+            Utilisateurs
+            <ng-container *ngIf="!loading && dataSource.filteredData.length as n">({{ n }})</ng-container>
+        </h1>
+
+        <div class="toolbar-actions">
+            <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+                <mat-label>Rechercher</mat-label>
+                <input
+                    matInput
+                    #searchInput
+                    (keyup)="applyFilter(searchInput.value)"
+                    placeholder="Nom, email, téléphone, site, compte, rôle…" />
+                <button
+                    mat-icon-button
+                    matSuffix
+                    *ngIf="searchInput.value"
+                    aria-label="Effacer la recherche"
+                    (click)="searchInput.value=''; applyFilter('')">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" (click)="goToCreateUser()">
+                <mat-icon>add</mat-icon>
+                <span>Ajouter</span>
             </button>
-            <button class="add-btn" (click)="openCreateUser()">
-            <span>➕</span> Ajouter un utilisateur
-        </button>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container mat-elevation-z2">
+        <div class="table-scroll">
+            <table mat-table [dataSource]="dataSource" class="users-table">
+
+                <!-- Nom -->
+                <ng-container matSort matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>Prénom & Nom</th>
+                    <td mat-cell *matCellDef="let r">{{ fullName(r) }}</td>
+                </ng-container>
+
+                <!-- Email -->
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef>Email</th>
+                    <td mat-cell *matCellDef="let r">{{ r.email || '—' }}</td>
+                </ng-container>
+
+                <!-- Téléphone -->
+                <ng-container matColumnDef="phone">
+                    <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+                    <td mat-cell *matCellDef="let r">{{ r.phone || '—' }}</td>
+                </ng-container>
+
+                <!-- Site -->
+                <ng-container matColumnDef="place">
+                    <th mat-header-cell *matHeaderCellDef>Site de réf.</th>
+                    <td mat-cell *matCellDef="let r">{{ r.place?.name || '—' }}</td>
+                </ng-container>
+
+                <!-- Compte -->
+                <ng-container matColumnDef="username">
+                    <th mat-header-cell *matHeaderCellDef>Compte</th>
+                    <td mat-cell *matCellDef="let r">{{ r.account?.username || '—' }}</td>
+                </ng-container>
+
+                <!-- Rôle -->
+                <ng-container matColumnDef="role">
+                    <th mat-header-cell *matHeaderCellDef>Rôle</th>
+                    <td mat-cell *matCellDef="let r">{{ r.roleLabel }}</td>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="col-actions">Actions</th>
+                    <td mat-cell *matCellDef="let r" class="cell-actions">
+                        <div class="btn-actions">
+                            <button
+                                *ngIf="r.account"
+                                mat-icon-button
+                                color="warn"
+                                (click)="toggleUser(r.account!)">
+                                <mat-icon [matTooltip]="(r.account.enabled ? 'Désactiver' : 'Activer') + ' le compte' ">{{ r.account.enabled ? 'block' : 'check_circle' }}</mat-icon>
+                            </button>
+                            <button mat-icon-button color="primary" (click)="editUser(r)">
+                                <mat-icon [matTooltip]="'Modifier ' + fullName(r)">edit</mat-icon>
+                            </button>
+
+                            <button mat-icon-button color="warn" (click)="onDeleteClick(r)">
+                                <mat-icon [matTooltip]="r.account ? 'Supprimer (2 options)' : 'Supprimer ' + fullName(r)">delete</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row        *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <!-- Loader -->
+            <mat-progress-bar
+                *ngIf="loading"
+                mode="indeterminate"
+                color="primary"
+                class="table-loader">
+            </mat-progress-bar>
         </div>
 
-        <!-- Liste (AG Grid) -->
-        <ag-grid-angular #agGrid
-            (gridReady)="onGridReady($event)"
-            style="width: 100%; height: 600px;"
-                         class="ag-theme-alpine"
-            [columnDefs]="columnDefs"
-            [rowData]="persons"
-            [pagination]="true"
-            [paginationPageSize]="25"
-            [paginationPageSizeSelector]="[10, 25, 50, 100]"
-            [animateRows]="true"
-            [localeText]="localeText">
-        </ag-grid-angular>
-    </ng-container>
+        <!-- Empty state -->
+        <div *ngIf="!loading && dataSource.filteredData.length === 0" class="empty">
+            Il n'y a aucun utilisateur.
+        </div>
 
-    <ng-container *ngIf="formMode">
-        <!-- Formulaire -->
-        <app-dashboard-users-form [mode]="formMode"
-                                  [person]="editingPerson"
-                                  [user]="editingUser"
-                                  (closed)="onFormClosed($event)">
-        </app-dashboard-users-form>
-    </ng-container>
-
+        <!-- Paginator -->
+        <mat-paginator
+            [pageIndex]="0"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions"
+            showFirstLastButtons
+            aria-label="Pagination des utilisateurs">
+        </mat-paginator>
+    </div>
 </div>
-

@@ -4,11 +4,14 @@ dashboard-container {
 }
 
 .dashboard-content {
-    padding: 2rem;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
     width: 100%;
+    position: relative;
+    margin: 0 auto;
+    padding: 2rem;
 }
 
 .app-nav {
