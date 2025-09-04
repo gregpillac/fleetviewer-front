@@ -10,6 +10,7 @@ import {DashboardVehiclesComponent} from './pages/dashboard/dashboard-vehicles/d
 import {AccountComponent} from './pages/account/account.component';
 import {VehicleComponent} from './pages/vehicle/vehicle.component';
 import {RideSearchComponent} from './pages/ride-search/ride-search.component';
+import {DashboardUsersFormComponent} from './pages/dashboard/dashboard-users/dashboard-users-form/dashboard-users-form.component';
 
 export const routes: Routes = [
     { title: 'FleetViewer - Accueil',path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
@@ -17,15 +18,17 @@ export const routes: Routes = [
     { title: 'FleetViewer - Mon compte',path: 'account', component: AccountComponent, canActivate: [canActivateWithRole()] },
     { title: 'FleetViewer - Dashboard Supervision', path: 'dashboard', component: DashboardComponent, canActivate: [canActivateWithRole(['ROLE_ADMIN', 'ROLE_MANAGER'])],
         children: [
-            { path: '', component: DashboardHubComponent }, // hub d'accueil
-            { title: 'FleetViewer - Faire une demande de trajet',path: 'search-ride', component: RideSearchComponent},
-            { path: 'users', component: DashboardUsersComponent },
-            { path: 'vehicles', component: DashboardVehiclesComponent },
-            { path: 'vehicles/create', component: VehicleComponent },
-            { path: 'vehicles/:id', component: VehicleComponent }
+            { path: '', component: DashboardHubComponent }, // hub d'accueil pour les dashboard
+            { title: ' | Utilisateurs', path: 'users', component: DashboardUsersComponent },
+            { title: ' | Ajouter un utilisateur', path: 'users/new', component: DashboardUsersFormComponent },
+            { title: ' | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent },
+            { title: ' | Véhicules', path: 'vehicles', component: DashboardVehiclesComponent },
+            { title: ' | Ajouter un véhicule', path: 'vehicles/create', component: VehicleComponent },
+            { title: ' | Modifier un véhicule', path: 'vehicles/:id', component: VehicleComponent }
         ]
     },
-    { title: 'Test',path: 'test', component: HomeComponent },
+    { title: 'FleetViewer - Demande de trajet',path: 'search-ride', component: RideSearchComponent},
+
     { title: 'FleetViewer - Page introuvable', path: 'not-found', component: NotFoundComponent, canActivate: [canActivateWithRole()] },
     { path: '**', redirectTo: 'not-found' },
 ];

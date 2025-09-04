@@ -7,6 +7,8 @@ export interface Person {
   lastName: string;
   email?: string;
   phone?: string;
-  address?: Address;
-  place?: Place;
+  address?: Address | null;
+    place?: Place;
 }
+
+export type CreatePerson = Omit<Person, 'id'>;

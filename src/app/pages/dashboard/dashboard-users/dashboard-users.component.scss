@@ -1,0 +1,122 @@
+/* Toolbar */
+.table-toolbar {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+
+    h1 {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .search-field {
+        min-width: 260px;
+        width: clamp(260px, 36vw, 420px);
+
+        /* Couleurs de la bordure pour le champ .search-field */
+        --mdc-outlined-text-field-outline-color: #d1d1d1; // état normal
+        --mdc-outlined-text-field-hover-outline-color: #5f6368; // survol
+    }
+
+}
+
+
+/* Table */
+.table-container {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #d1d1d1;
+
+    table {
+        background-color: white;
+    }
+
+    .mat-mdc-header-row {
+        background: #f8f7fb;
+    }
+    .mat-mdc-header-cell {
+        font-weight: 500;
+    }
+
+    /* Supprimer les traits entre les lignes */
+    .mat-mdc-cell,
+    .mat-mdc-footer-cell {
+        border-bottom: 0 !important;
+    }
+    .mat-mdc-header-cell {
+        border-bottom: 2px solid rgba(0,0,0,.12);
+    }
+
+    .mat-mdc-row:nth-child(odd) { background: #fbfbfb; }
+
+
+
+}
+
+.table-scroll {
+    max-height: 50vh;
+    min-height: 50vh;
+    overflow: auto;
+    position: relative;
+}
+
+.users-table {
+    width: 100%;
+    min-width: 900px;
+
+    /* Bordure verticale (header + cellules) */
+    .col-actions,
+    .cell-actions {
+        border-left: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .col-actions {
+        width: 130px;
+        text-align: center;
+    }
+
+    .cell-actions {
+        .btn-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+    }
+}
+
+/* Loader en bas de la table */
+.table-loader {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+}
+
+/* Empty state */
+.empty {
+    padding: 16px;
+    text-align: center;
+    color: rgba(0,0,0,.6);
+    position: relative;
+    top: -25vh;
+}
+
+
+mat-paginator {
+    border-top: 1px solid rgba(0,0,0,.06);
+}
+

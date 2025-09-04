@@ -1,0 +1,37 @@
+/* En-tête du dialog avec titre + croix */
+.dlg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    border-bottom: 1px solid #e5e7eb;
+
+    .dlg-title {
+        margin: 0;
+        font-weight: 500;
+        font-size: 1.2rem;
+        color: #1f1f1f;
+    }
+
+    .close-btn {
+        color: #6b7280;
+    }
+}
+
+
+/* Contenu */
+.dlg-content {
+    margin: 12px 0;
+
+    b {
+        font-weight: 500 !important;
+    }
+}
+
+/* Boutons d’action : côte à côte à droite */
+.dlg-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}

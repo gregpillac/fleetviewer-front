@@ -1,14 +1,6 @@
-/* ---------- Variables (thème local) ---------- */
-$sidebar-bg: #2c3e50;                                  // Fond principal de la sidebar
-$sidebar-bg-hover: rgba(255,255,255,0.08);             // Fond survol + fond panel ouvert
-$sidebar-border: rgba(255,255,255,0.06);               // Séparateurs entre panels
-$text-color: #fff;                                     // Couleur texte base
-$active-gradient: linear-gradient(90deg,#2563eb,#1d4ed8); // Fond item actif (dégradé)
-
-/* ---------- Layout racine ---------- */
-.dashboard-container {
-    display: flex;
-    height: 100%;
+dashboard-container {
+  display: flex;
+  height: 100%;
 }
 
 /* ---------- Sidebar (hôte) + tokens Material ----------

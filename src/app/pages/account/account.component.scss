@@ -1,10 +1,10 @@
 .account-container {
-  max-width: 500px;
-  margin: auto;
-  padding: 2rem;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    margin: 3rem auto auto;
 }
 
 h2 {
@@ -16,9 +16,20 @@ h2 {
   margin-bottom: 1rem;
 }
 
+.error {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    background: #fff3f3;
+    padding: 0.5em 1em;
+    margin-bottom: 1em;
+    border-radius: 4px;
+    text-align: center;
+}
+
 label {
   display: block;
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 0.3rem;
 }
 
@@ -31,15 +42,38 @@ input {
 }
 
 input[readonly] {
-  background-color: #f0f0f0;
-  color: #666;
+    background-color: #f8f8f8;
+    color: #666;
+    border: none;
+    outline: none;
+    cursor: default;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+
+    .form-group.half {
+        flex: 1;
+    }
+}
+
+.address-fieldset {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    legend {
+        font-weight: bold;
+        padding: 0 0.5rem;
+    }
 }
 
 .buttons {
   margin-top: 1.5rem;
   text-align: center;
 }
-
 
 .edit-buttons, .action-buttons {
     display: flex;
@@ -55,7 +89,7 @@ button {
 }
 
 button[type='submit'] {
-  background-color: #007bff;
+  background-color: var(--main-color);
   color: white;
 }
 
@@ -81,3 +115,4 @@ button[type='button'] {
     from { opacity: 0; transform: translateY(-20px) translateX(-50%);}
     to   { opacity: 1; transform: translateY(0) translateX(-50%);}
 }
+

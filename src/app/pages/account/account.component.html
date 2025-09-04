@@ -1,52 +1,103 @@
-<div *ngIf="user" class="account-container">
+<div class="account-container" *ngIf="!loading; else loadingTpl">
     <div *ngIf="toastMessage" class="toast-success">{{ toastMessage }}</div>
 
     <h2>Mon compte</h2>
-    <form (ngSubmit)="onSubmit()">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <!-- Identifiant -->
         <div class="form-group">
             <label>Identifiant</label>
-            <input type="text" [(ngModel)]="user.username" name="username" readonly required/>
+            <input type="text" formControlName="username" [readonly]="!isEditing" required />
         </div>
 
-        <div class="form-group">
-            <label>Prénom</label>
-            <input type="text"
-                         (ngModelChange)="onNameFieldsChange()" [(ngModel)]="user.person.firstName"
-                         name="firstName" [readonly]="!isEditing" required
-            />
+        <div formGroupName="person">
+            <!-- Ligne prénom / nom -->
+            <div class="form-row">
+                <div class="form-group half">
+                    <label>Prénom</label>
+                    <input type="text" formControlName="firstName" [readonly]="!isEditing" required />
+                    <div class="error" *ngIf="form.get('person.firstName')?.hasError('required') && form.get('person.firstName')?.touched">
+                        Le prénom est requis
+                    </div>
+                </div>
+
+                <div class="form-group half">
+                    <label>Nom</label>
+                    <input type="text" formControlName="lastName" [readonly]="!isEditing" required />
+                    <div class="error" *ngIf="form.get('person.lastName')?.hasError('required') && form.get('person.lastName')?.touched">
+                        Le nom est requis
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ligne email / téléphone -->
+            <div class="form-row">
+                <div class="form-group half">
+                    <label>Email</label>
+                    <input type="email" formControlName="email" [readonly]="!isEditing" />
+                </div>
+
+                <div class="form-group half">
+                    <label>Téléphone</label>
+                    <input type="text" formControlName="phone" [readonly]="!isEditing" />
+                </div>
+            </div>
+
+            <!-- Adresse -->
+            <fieldset formGroupName="address" class="address-fieldset">
+                <legend>Adresse</legend>
+
+                <input type="hidden" formControlName="id" />
+
+                <div class="form-group">
+                    <label>N° et rue</label>
+                    <input type="text" formControlName="addressFirstLine" [readonly]="!isEditing" />
+                </div>
+
+                <div class="form-group">
+                    <label>Complément</label>
+                    <input type="text" formControlName="addressSecondLine" [readonly]="!isEditing" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Code postal</label>
+                        <input type="text" formControlName="postalCode" [readonly]="!isEditing" />
+                    </div>
+
+                    <div class="form-group half">
+                        <label>Ville</label>
+                        <input type="text" formControlName="city" [readonly]="!isEditing" />
+                    </div>
+                </div>
+
+                <div class="error" *ngIf="addressError">{{ addressError }}</div>
+            </fieldset>
         </div>
 
-        <div class="form-group">
-            <label>Nom</label>
-            <input type="text"
-                         (ngModelChange)="onNameFieldsChange()" [(ngModel)]="user.person.lastName"
-                         name="lastName" [readonly]="!isEditing" required
-            />
-        </div>
-
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" [(ngModel)]="user.person.email" name="email" [readonly]="!isEditing"/>
-        </div>
-
-        <div class="form-group">
-            <label>Téléphone</label>
-            <input type="text" [(ngModel)]="user.person.phone" name="phone" [readonly]="!isEditing"/>
-        </div>
-
+        <!-- Boutons -->
         <div class="buttons">
             <div class="edit-buttons" *ngIf="!isEditing && !isEditingPassword">
                 <button type="button" (click)="toggleEdit()">Modifier mon profil</button>
                 <button type="button" (click)="toggleEditPassword()">Changer mon mot de passe</button>
             </div>
 
-            <div *ngIf="isEditing" class="action-buttons">
+            <div class="action-buttons"*ngIf="isEditing" >
                 <button type="submit" (click)="onSubmit()" [disabled]="showSecurityModal">Enregistrer</button>
                 <button type="button" (click)="cancelEdit()">Annuler</button>
             </div>
         </div>
     </form>
 </div>
+
+<ng-template #loadingTpl>
+    <div class="account-container">
+        <h2>Mon compte</h2>
+        <p>Chargement…</p>
+    </div>
+</ng-template>
+
+<!-- Modale sécurité -->
 <app-account-security-modal
     [show]="showSecurityModal"
     [mode]="securityMode"
@@ -54,4 +105,3 @@
     (confirm)="onSecurityConfirm($event)"
     (cancel)="cancelModal()">
 </app-account-security-modal>
-
