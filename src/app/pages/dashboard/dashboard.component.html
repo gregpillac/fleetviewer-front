@@ -7,9 +7,9 @@
       <mat-accordion [multi]="false" displayMode="flat" class="sidebar-accordion">
           <nav>
               <a routerLink="./" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Hub</a>
-              <a routerLink="./search-ride" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Rechercher un trajet</a>
-              <a>Mes trajets</a>
-              <a>Demandes de réservation</a>
+              <a routerLink="/search-ride" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Rechercher un trajet -> pas ici</a>
+              <a>Mes trajets -> pas ici</a>
+              <a>Demandes de réservation  -> plutot un dashboard reservation (avec les demandes) ?</a>
           </nav>
 
           <mat-expansion-panel>
@@ -19,8 +19,8 @@
                   </mat-panel-title>
               </mat-expansion-panel-header>
               <mat-nav-list>
-                  <a mat-list-item routerLink="./users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"> Liste des utilisateurs </a>
-                  <a mat-list-item> Créer un utilisateur </a>
+                  <a mat-list-item routerLink="./users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Liste des utilisateurs</a>
+                  <a mat-list-item routerLink="./users/new" >Créer un utilisateur</a>
               </mat-nav-list>
           </mat-expansion-panel>
 

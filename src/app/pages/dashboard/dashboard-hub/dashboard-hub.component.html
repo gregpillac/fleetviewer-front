@@ -3,9 +3,7 @@
 
 <div class="grid">
     <div class="panel" *ngFor="let d of dashboards" (click)="navTo(d.route)">
-        <h4>{{ d.title }}</h4>
-        <span>
-            {{ d.count === null ? 'Chargement...' : (d.count | i18nPlural: d.plural) }}
-        </span>
+        <span *ngIf="d.count as c" class="digit">{{ c }}</span>
+        <h4>{{ d.count === null ? 'Chargement...' : d.title }}</h4>
     </div>
 </div>

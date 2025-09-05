@@ -5,6 +5,7 @@
         </div>
 
         <nav class="menu">
+            <a routerLink="/search-ride" routerLinkActive="active">Réserver</a>
             <a routerLink="/travels" routerLinkActive="active">Mes trajets</a>
             <a *ngIf="isAdmin || isManager" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
 

@@ -19,15 +19,15 @@ export const routes: Routes = [
     { title: 'FleetViewer - Dashboard Supervision', path: 'dashboard', component: DashboardComponent, canActivate: [canActivateWithRole(['ROLE_ADMIN', 'ROLE_MANAGER'])],
         children: [
             { path: '', component: DashboardHubComponent }, // hub d'accueil pour les dashboard
-            { title: ' | Utilisateurs', path: 'users', component: DashboardUsersComponent },
-            { title: ' | Ajouter un utilisateur', path: 'users/new', component: DashboardUsersFormComponent },
-            { title: ' | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent },
-            { title: ' | Véhicules', path: 'vehicles', component: DashboardVehiclesComponent },
-            { title: ' | Ajouter un véhicule', path: 'vehicles/create', component: VehicleComponent },
-            { title: ' | Modifier un véhicule', path: 'vehicles/:id', component: VehicleComponent }
+            { title: 'FleetViewer | Utilisateurs', path: 'users', component: DashboardUsersComponent },
+            { title: 'FleetViewer | Ajouter un utilisateur', path: 'users/new', component: DashboardUsersFormComponent },
+            { title: 'FleetViewer | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent },
+            { title: 'FleetViewer | Véhicules', path: 'vehicles', component: DashboardVehiclesComponent },
+            { title: 'FleetViewer | Ajouter un véhicule', path: 'vehicles/create', component: VehicleComponent },
+            { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: VehicleComponent }
         ]
     },
-    { title: 'FleetViewer - Demande de trajet',path: 'search-ride', component: RideSearchComponent},
+    { title: 'FleetViewer - Demande de trajet',path: 'search-ride', component: RideSearchComponent, canActivate: [canActivateWithRole()] },
 
     { title: 'FleetViewer - Page introuvable', path: 'not-found', component: NotFoundComponent, canActivate: [canActivateWithRole()] },
     { path: '**', redirectTo: 'not-found' },
