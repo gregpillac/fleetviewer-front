@@ -21,10 +21,10 @@ export const routes: Routes = [
         children: [
             { path: '', component: DashboardHubComponent }, // hub d'accueil pour les dashboard
             { title: 'FleetViewer | Utilisateurs', path: 'users', component: DashboardUsersComponent },
-            { title: 'FleetViewer | Ajouter un utilisateur', path: 'users/new', component: DashboardUsersFormComponent },
+            { title: 'FleetViewer | Ajouter un utilisateur', path: 'users/add', component: DashboardUsersFormComponent },
             { title: 'FleetViewer | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent },
             { title: 'FleetViewer | Véhicules', path: 'vehicles', component: DashboardVehiclesComponent },
-            { title: 'FleetViewer | Ajouter un véhicule', path: 'vehicles/create', component: VehicleComponent },
+            { title: 'FleetViewer | Ajouter un véhicule', path: 'vehicles/add', component: VehicleComponent },
             { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: VehicleComponent }
         ]
     },

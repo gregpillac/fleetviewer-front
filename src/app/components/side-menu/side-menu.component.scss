@@ -1,0 +1,89 @@
+/* Largeurs configurables */
+$sidebar-width: 280px;
+$sidebar-collapsed: 40px;
+
+/* Conteneur principal */
+.side-menu {
+    position: relative;
+    width: $sidebar-width;
+    transition: width 200ms ease;
+    padding: 8px;
+    background: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+
+
+    &.collapsed {
+        width: $sidebar-collapsed;
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+    }
+}
+
+/* Surface complète du menu (accordéons, listes) */
+.menu-surface {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Bouton toggle (fab) */
+.fab-toggle {
+    display: none;
+}
+
+.side-menu.collapsed {
+    .menu-surface {
+        display: none; /* on masque tout le menu */
+    }
+
+    .fab-toggle {
+        display: flex;
+        border-radius: 5px;
+        width: 100%;
+        height: 40px;
+        background: #1976d2; /* bleu Material */
+        color: #fff;
+        cursor: pointer;
+        padding: 10px;
+        margin: 8px;
+    }
+}
+
+/* Titre de section "Dashboard" */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #111827;
+    font-weight: 600;
+    padding: 8px 12px;
+    margin: 4px 0;
+}
+
+/* Listes & items */
+mat-nav-list a[mat-list-item] {
+    border-radius: 8px;
+    margin: 2px 0;
+}
+a.active {
+    background: rgba(25, 118, 210, 0.12);
+}
+
+/* Icônes */
+mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Panels Material */
+.mat-expansion-panel-header {
+    border-radius: 8px;
+}
+.mat-expansion-panel {
+    background: transparent;
+    box-shadow: none !important;
+}

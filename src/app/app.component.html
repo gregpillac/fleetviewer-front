@@ -1,8 +1,22 @@
 <app-header *ngIf="showLayout"></app-header>
 
-
 <main [class.full-screen]="!showLayout">
-  <router-outlet></router-outlet>
+    <ng-container *ngIf="showLayout && (isAdmin || isManager); else classic">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <app-side-menu></app-side-menu>
+        </aside>
+
+        <!-- Contenu -->
+        <section class="content">
+            <router-outlet></router-outlet>
+        </section>
+    </ng-container>
+
+    <ng-template #classic>
+        <router-outlet></router-outlet>
+    </ng-template>
 </main>
 
 <app-footer *ngIf="showLayout"></app-footer>
+

@@ -129,7 +129,7 @@ export class DashboardUsersComponent implements OnInit {
 
     // --------- Actions ---------
     goToCreateUser() {
-        this.router.navigate(['dashboard/users', 'new']);
+        this.router.navigate(['dashboard/users', 'add']);
     }
 
     editUser(row: Row) {

@@ -48,6 +48,6 @@ export class DashboardVehiclesComponent implements OnInit {
   }
 
   goToCreateVehicle() {
-    this.router.navigate(['dashboard/vehicles/create']);
+    this.router.navigate(['dashboard/vehicles/add']);
   }
 }

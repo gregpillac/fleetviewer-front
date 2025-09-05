@@ -1,16 +1,18 @@
 import {Component, OnInit} from '@angular/core';
-import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
+import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {HeaderComponent} from './components/header/header.component';
 import {FooterComponent} from './components/footer/footer.component';
+import {SideMenuComponent} from './components/side-menu/side-menu.component';
 import {filter} from 'rxjs';
 import {CommonModule} from '@angular/common';
 import {AuthService} from './services/auth/auth.service';
 import {UserService} from './services/user/user.service';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent],
+    imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent, SideMenuComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
 })
@@ -47,6 +49,7 @@ export class AppComponent implements OnInit {
             }
         });
     }
+
     loadCurrentUser() {
         if (sessionStorage.getItem('token')) {
             this.userService.getCurrentUser().subscribe({
@@ -54,5 +57,17 @@ export class AppComponent implements OnInit {
                 error: () => this.authService.setCurrentUser(null)
             });
         }
+    }
+
+    get isAdmin(): boolean {
+        return this.authService.isAdmin();
+    }
+
+    get isManager(): boolean {
+        return this.authService.isManager();
+    }
+
+    get isUser(): boolean {
+        return this.authService.isUser();
     }
 }
