@@ -1,15 +1,37 @@
 <footer class="footer">
-  <div class="footer-content">
-    <div class="logo">
-      <svg-icon src="/neosolix/neosolix_logo.svg" svgClass="neosolix-svg"></svg-icon>
+    <div class="footer-content">
+        <div class="footer-content-above">
+            <div class="footer-logo">
+                <svg-icon src="/_static/neosolix/neosolix_logo.svg" svgClass="neosolix-svg"></svg-icon>
+            </div>
+            <ul class="footer-links">
+                <li><a routerLink="/legal/mentions-legales">Mentions légales</a></li>
+                <li><a routerLink="/legal/confidentialite">Politique de confidentialité</a></li>
+                <li><a routerLink="/legal/cgu">Condtions générales d'utilisation</a></li>
+                <li><a routerLink="/legal/cgv">Condtions générales de vente</a></li>
+            </ul>
+            <div class="footer-plans">
+                <div class="plans-title">
+                    <span>Nos formules</span>
+                    <svg-icon src="/_static/fleetviewer/fleetviewer_split.svg" svgClass="fleetviewer-svg"></svg-icon>
+                </div>
+                <ul class="plans-links">
+                    <li><a href="#">Package <span>Starter</span></a></li>
+                    <li><a href="#">Package <span>Standard</span></a></li>
+                    <li><a href="#">Package <span>Premium</span></a></li>
+                    <li><a href="#">Package <span>Ultimate</span></a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <a href="mailto:contact@neosolix.com">
+                    Contact
+                    <mat-icon>email</mat-icon>
+                </a>
+            </div>
+        </div>
+        <div class="footer-content-below">
+            <span class="copyright">© 2025 Neosolix – Tous droits réservés.</span>
+        </div>
     </div>
-    <ul class="footer-links">
-      <li><a href="#">Mentions légales</a></li>
-      <li><a href="#">Confidentialité</a></li>
-      <li><a href="#">Contact</a></li>
-    </ul>
-    <p class="copyright">
-      © 2025 Neosolix. Tous droits réservés.
-    </p>
-  </div>
 </footer>

@@ -48,11 +48,11 @@ export class LoginComponent implements OnInit {
             switch (this.authService.getCurrentUser()?.role.id) {
                 case 'ROLE_ADMIN':
                 case 'ROLE_MANAGER':
-                    this.router.navigate(['dashboard/ride']);
+                    this.router.navigate(['dashboard/']);
                     break;
                 case 'ROLE_USER':
                 case 'ROLE_DEFAULT':
-                    this.router.navigate(['dashboard/ride']);
+                    this.router.navigate(['/']); // TODO: remplacer par /ride ou autre
                     break;
                 default: this.router.navigate(['/login']);
             }

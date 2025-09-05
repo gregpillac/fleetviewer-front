@@ -1,16 +1,20 @@
 <header *ngIf="user$ | async as user" class="header">
     <div class="container">
         <div class="logo" routerLink="/">
-            <svg-icon src="/fleetviewer/fleetviewer_inline.svg" svgClass="fleetviewer-svg"></svg-icon>
+            <svg-icon src="/_static/fleetviewer/fleetviewer_inline.svg" svgClass="fleetviewer-svg"></svg-icon>
         </div>
 
         <nav class="menu">
-            <a routerLink="/search-ride" routerLinkActive="active">Réserver</a>
-            <a routerLink="/travels" routerLinkActive="active">Mes trajets</a>
-            <a *ngIf="isAdmin || isManager" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+            <ng-container *ngIf="isAdmin || isManager; else classicView">
+                <span class="menu-title">Outil d'administration et de supervision</span>
+            </ng-container>
+            <ng-template #classicView>
+                <a routerLink="/search-ride" routerLinkActive="active">Réserver</a>
+                <a routerLink="/travels" routerLinkActive="active">Mes trajets</a>
+            </ng-template>
 
             <div class="avatar-wrapper" (click)="toggleMenu()" tabindex="0" (blur)="closeMenu()">
-                <img src="/images/default_pfp.jpg" alt="Avatar utilisateur" class="avatar" />
+                <img src="/_static/images/default_pfp.jpg" alt="Avatar utilisateur" class="avatar" />
             </div>
 
             <div class="dropdown-avatar" *ngIf="menuOpen">

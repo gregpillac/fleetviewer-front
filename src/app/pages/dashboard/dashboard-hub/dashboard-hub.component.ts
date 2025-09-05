@@ -18,7 +18,6 @@ type Dashboard = {
     selector: 'app-dashboard-hub',
     imports: [
         NgForOf,
-        NgClass,
         NgIf
     ],
     templateUrl: './dashboard-hub.component.html',

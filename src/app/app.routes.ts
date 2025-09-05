@@ -11,6 +11,7 @@ import {AccountComponent} from './pages/account/account.component';
 import {VehicleComponent} from './pages/vehicle/vehicle.component';
 import {RideSearchComponent} from './pages/ride-search/ride-search.component';
 import {DashboardUsersFormComponent} from './pages/dashboard/dashboard-users/dashboard-users-form/dashboard-users-form.component';
+import {LegalComponent} from './pages/legal/legal.component';
 
 export const routes: Routes = [
     { title: 'FleetViewer - Accueil',path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
@@ -29,6 +30,7 @@ export const routes: Routes = [
     },
     { title: 'FleetViewer - Demande de trajet',path: 'search-ride', component: RideSearchComponent, canActivate: [canActivateWithRole()] },
 
+    { path: 'legal/:slug', component: LegalComponent }, // title géré automatiquement
     { title: 'FleetViewer - Page introuvable', path: 'not-found', component: NotFoundComponent, canActivate: [canActivateWithRole()] },
     { path: '**', redirectTo: 'not-found' },
 ];

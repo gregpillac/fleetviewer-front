@@ -1,0 +1,10 @@
+<section class="legal">
+    <nav class="tabs">
+        <a [routerLink]="['/legal', 'mentions-legales']" routerLinkActive="active">Mentions légales</a>
+        <a [routerLink]="['/legal', 'confidentialite']" routerLinkActive="active">Confidentialité</a>
+        <a [routerLink]="['/legal', 'cgu']" routerLinkActive="active">CGU</a>
+        <a [routerLink]="['/legal', 'cgv']" routerLinkActive="active">CGV</a>
+    </nav>
+
+    <article class="content" [innerHTML]="html"></article>
+</section>
