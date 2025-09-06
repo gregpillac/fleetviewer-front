@@ -1,0 +1,43 @@
+<div class="formules-container">
+    <h2>Nos Formules</h2>
+    <div class="cards">
+      <div class="card" *ngFor="let formule of formules" [style.borderColor]="formule.color">
+        <h3 [style.color]="formule.color">{{ formule.name }}</h3>
+
+        <section>
+          <h4>Tarifs</h4>
+          <ul>
+            <li *ngFor="let tarif of formule.tarifs">
+              {{ tarif.range }} → <strong>{{ tarif.price }}</strong>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Inclus</h4>
+          <ul>
+            <li *ngFor="let inc of formule.inclus">{{ inc }}</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Conditions</h4>
+          <ul>
+            <li *ngFor="let cond of formule.conditions">{{ cond }}</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Options</h4>
+          <ul>
+            <li *ngFor="let opt of formule.options">{{ opt }}</li>
+          </ul>
+        </section>
+
+        <p class="contact-text">
+          Pour souscrire à cette formule, merci de
+          <a href="/contact">nous contacter</a>.
+        </p>
+      </div>
+    </div>
+  </div>
