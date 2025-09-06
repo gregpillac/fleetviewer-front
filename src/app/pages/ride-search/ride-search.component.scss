@@ -1,49 +1,65 @@
-/* Container principal */
-.ride-search-container {
-    max-width: 900px;
-    width: 90%;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fafafa;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    overflow: hidden;  /* plus de scroll interne */
-    box-sizing: border-box;
-  }
-  
-  /* Supprimer le scroll interne des tabs */
-  .mat-tab-body-wrapper {
+/* Conteneur global pour centrer le formulaire */
+.form-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Style du bloc formulaire */
+.search-form {
+  width: 100%;
+  max-width: 800px;
+  padding: 24px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  overflow: hidden; /* Empêche tout débordement des éléments enfants */
+}
+
+/* Supprimer le scroll interne des tabs */
+.mat-tab-body-wrapper {
     overflow: visible !important;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* Grille responsive pour les champs */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px; /* Utiliser gap pour l'espacement est plus sûr que les marges */
+}
+
+/* Champ qui s'étend sur 2 colonnes */
+.span-2 {
+  grid-column: span 2;
+}
+
+/* Les champs de formulaire occupent toute la largeur de leur cellule */
+mat-form-field {
+  width: 100%;
+  /* La marge a été supprimée pour éviter le débordement. Le 'gap' de la grille s'en occupe. */
+}
+
+/* Zone des boutons */
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+/* Sur les petits écrans, les champs qui s'étendent sur 2 colonnes reprennent une seule colonne */
+@media (max-width: 600px) {
+  .span-2 {
+    grid-column: span 1;
   }
-  
-  .mat-tab-body {
-    overflow: visible !important;
-    height: auto !important;
-  }
-  
-  /* Formulaires */
-  .ride-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-    max-height: none;
-    overflow: visible;
-  }
-  
-  /* Champs input */
-  input {
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  /* Page globale */
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  
+}
+
+// Ajustement pour que le contenu de l'onglet ne déborde pas
+::ng-deep .mat-tab-body-content {
+  padding-top: 24px;
+  overflow: hidden; /* Empêche le débordement du contenu de l'onglet */
+}
