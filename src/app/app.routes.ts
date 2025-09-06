@@ -12,19 +12,40 @@ import { VehicleComponent } from './pages/vehicle/vehicle.component';
 import { RideSearchComponent } from './pages/ride-search/ride-search.component';
 import { DashboardUsersFormComponent } from './pages/dashboard/dashboard-users/dashboard-users-form/dashboard-users-form.component';
 import { FormulesComponent } from './pages/formules/formules.component';
-import { ContactComponent } from './pages/contact/contact.component'; // ✅ nouveau
+import { ContactComponent } from './pages/contact/contact.component';
 
 export const routes: Routes = [
-  { title: 'FleetViewer - Accueil', path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
-  { title: 'FleetViewer - Connexion', path: 'login', component: LoginComponent },
-  { title: 'FleetViewer - Mon compte', path: 'account', component: AccountComponent, canActivate: [canActivateWithRole()] },
+  // Accueil par défaut → accessible uniquement si connecté
+  { 
+    title: 'FleetViewer - Accueil', 
+    path: '', 
+    component: HomeComponent, 
+    canActivate: [canActivateWithRole()] 
+  },
+
+  // Connexion
+  { 
+    title: 'FleetViewer - Connexion', 
+    path: 'login', 
+    component: LoginComponent 
+  },
+
+  // Mon compte
+  { 
+    title: 'FleetViewer - Mon compte', 
+    path: 'account', 
+    component: AccountComponent, 
+    canActivate: [canActivateWithRole()] 
+  },
+
+  // Dashboard avec sous-routes protégées
   { 
     title: 'FleetViewer - Dashboard Supervision',
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [canActivateWithRole(['ROLE_ADMIN', 'ROLE_MANAGER'])],
     children: [
-      { path: '', component: DashboardHubComponent }, // hub d'accueil pour les dashboard
+      { path: '', component: DashboardHubComponent },
       { title: 'FleetViewer | Utilisateurs', path: 'users', component: DashboardUsersComponent },
       { title: 'FleetViewer | Ajouter un utilisateur', path: 'users/new', component: DashboardUsersFormComponent },
       { title: 'FleetViewer | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent },
@@ -33,9 +54,37 @@ export const routes: Routes = [
       { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: VehicleComponent }
     ]
   },
-  { title: 'FleetViewer - Demande de trajet', path: 'search-ride', component: RideSearchComponent, canActivate: [canActivateWithRole()] },
-  { title: 'FleetViewer - Formules', path: 'formules', component: FormulesComponent, canActivate: [canActivateWithRole()] },
-  { title: 'FleetViewer - Contact', path: 'contact', component: ContactComponent }, // ✅ nouvelle route contact
-  { title: 'FleetViewer - Page introuvable', path: 'not-found', component: NotFoundComponent, canActivate: [canActivateWithRole()] },
+
+  // Recherche de trajet
+  { 
+    title: 'FleetViewer - Demande de trajet', 
+    path: 'search-ride', 
+    component: RideSearchComponent, 
+    canActivate: [canActivateWithRole()] 
+  },
+
+  // Formules
+  { 
+    title: 'FleetViewer - Formules', 
+    path: 'formules', 
+    component: FormulesComponent, 
+    canActivate: [canActivateWithRole()] 
+  },
+
+  // Contact
+  { 
+    title: 'FleetViewer - Contact', 
+    path: 'contact', 
+    component: ContactComponent 
+  },
+
+  // Page introuvable
+  { 
+    title: 'FleetViewer - Page introuvable', 
+    path: 'not-found', 
+    component: NotFoundComponent 
+  },
+
+  // Toute autre URL redirige vers not-found
   { path: '**', redirectTo: 'not-found' }
 ];
