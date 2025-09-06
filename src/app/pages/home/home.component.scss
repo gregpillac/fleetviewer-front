@@ -7,10 +7,41 @@
     margin-bottom: 4rem;
     font-weight: normal;
   }
+
   .calendar-container {
     width: 80%;
-    margin: 0 auto; /* centre le calendrier horizontalement */
+    margin: 0 auto;
   }
+}
 
+/* Supprimer scroll interne éventuel du calendrier */
+.fullcalendar {
+  overflow: visible !important;
+}
+
+/* Survol des jours */
+.fc-daygrid-day {
+  transition: background-color 0.2s, border 0.2s;
+  cursor: pointer;
+}
+
+.fc-daygrid-day:hover {
+  background-color: rgba(0, 150, 136, 0.1); /* léger vert turquoise */
+  border-radius: 4px;
+}
+
+/* Jour cliqué / aujourd'hui */
+.fc-daygrid-day.fc-day-today, 
+.fc-daygrid-day:active {
+  background-color: rgba(0, 150, 136, 0.2); /* un peu plus marqué */
+}
+
+/* Style des événements */
+.fc-event {
+  border: none;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 

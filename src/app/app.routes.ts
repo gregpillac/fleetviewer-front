@@ -61,6 +61,7 @@ export const routes: Routes = [
     path: 'search-ride', 
     component: RideSearchComponent, 
     canActivate: [canActivateWithRole()] 
+    // → les query params (date, type) sont gérés automatiquement par RideSearchComponent
   },
 
   // Formules

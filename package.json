@@ -22,7 +22,7 @@
     "@fullcalendar/angular": "^6.1.17",
     "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
-    "@fullcalendar/interaction": "^6.1.17",
+    "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/timegrid": "^6.1.17",
     "@swimlane/ngx-datatable": "^22.0.0-alpha.1",
     "ag-grid-angular": "^34.0.1",
