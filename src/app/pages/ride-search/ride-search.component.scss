@@ -1,0 +1,49 @@
+/* Container principal */
+.ride-search-container {
+    max-width: 900px;
+    width: 90%;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fafafa;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow: hidden;  /* plus de scroll interne */
+    box-sizing: border-box;
+  }
+  
+  /* Supprimer le scroll interne des tabs */
+  .mat-tab-body-wrapper {
+    overflow: visible !important;
+  }
+  
+  .mat-tab-body {
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  /* Formulaires */
+  .ride-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  /* Champs input */
+  input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Page globale */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  

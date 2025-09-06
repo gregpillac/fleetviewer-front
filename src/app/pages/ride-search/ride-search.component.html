@@ -1,1 +1,44 @@
-<p>ride-search works!</p>
+<div class="ride-search-container">
+    <mat-tab-group>
+      <!-- Onglet Louer un véhicule -->
+      <mat-tab label="Trouver un véhicule">
+        <form class="ride-form">
+          <label for="veh-start">Date & heure de départ :</label>
+          <input type="datetime-local" id="veh-start" />
+  
+          <label for="veh-end">Date & heure d'arrivée :</label>
+          <input type="datetime-local" id="veh-end" />
+  
+          <label for="veh-start-address">Lieu de départ :</label>
+          <input type="text" id="veh-start-address" placeholder="Ex : Paris" />
+  
+          <label for="veh-end-address">Lieu d'arrivée :</label>
+          <input type="text" id="veh-end-address" placeholder="Ex : Lyon" />
+  
+          <button mat-raised-button color="primary" (click)="reserverVehicule()">
+            Trouver un véhicule
+          </button>
+        </form>
+      </mat-tab>
+  
+      <!-- Onglet Réserver un covoiturage -->
+      <mat-tab label="Covoiturage">
+        <form class="ride-form">
+          <label for="cov-start">Date & heure de départ (obligatoire) :</label>
+          <input type="datetime-local" id="cov-start" required />
+  
+          <label for="cov-end">Date & heure de retour (facultatif) :</label>
+          <input type="datetime-local" id="cov-end" />
+  
+          <label for="cov-start-address">Lieu de départ :</label>
+          <input type="text" id="cov-start-address" placeholder="Ex : Paris" />
+  
+          <label for="cov-end-address">Lieu d'arrivée :</label>
+          <input type="text" id="cov-end-address" placeholder="Ex : Lyon" />
+  
+          <button mat-raised-button color="primary">Réserver un covoiturage</button>
+        </form>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  
