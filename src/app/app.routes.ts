@@ -13,7 +13,7 @@ import {RideSearchComponent} from './pages/ride-search/ride-search.component';
 import {DashboardUsersFormComponent} from './pages/dashboard/dashboard-users/dashboard-users-form/dashboard-users-form.component';
 import {LegalComponent} from './pages/legal/legal.component';
 import { FormulesComponent } from './pages/formules/formules.component';
-import { ContactComponent } from './pages/contact/contact.component'; // ✅ nouveau
+import { ContactComponent } from './pages/contact/contact.component';
 
 export const routes: Routes = [
     { title: 'FleetViewer - Accueil',path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
