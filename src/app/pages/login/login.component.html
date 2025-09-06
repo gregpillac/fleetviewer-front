@@ -10,11 +10,10 @@
                 <div class="field">
                     <label for="username">Nom d'utilisateur</label>
                     <input id="username" formControlName="username" required />
-
-                    <!-- Message d'erreur si champ vide -->
-                    <div *ngIf="loginForm.controls['username'].hasError('required') && loginForm.controls['username'].touched" class="error">
-                        Le nom d'utilisateur est requis
-                    </div>
+                </div>
+                <!-- Message d'erreur si champ vide -->
+                <div *ngIf="loginForm.controls['username'].hasError('required') && loginForm.controls['username'].touched" class="error">
+                    Le nom d'utilisateur est requis
                 </div>
 
                 <!-- Champ Mot de passe -->
@@ -31,17 +30,16 @@
                             {{ showPassword ? '🙈' : '👁️' }}
                         </button>
                     </div>
-
-                    <!-- Message d'erreur si champ vide -->
-                    <div *ngIf="loginForm.controls['password'].hasError('required') && loginForm.controls['password'].touched" class="error">
-                        Le mot de passe est requis
-                    </div>
+                </div>
+                <!-- Message d'erreur si champ vide -->
+                <div *ngIf="loginForm.controls['password'].hasError('required') && loginForm.controls['password'].touched" class="error">
+                    Le mot de passe est requis
                 </div>
 
                 <!-- Message d'erreur global -->
-                <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-                <button class="btn-submit" type="submit">Connexion</button>
+                <p class="error-global" *ngIf="errorMessage">{{ errorMessage }}</p>
 
+                <button class="btn-submit" type="submit">Connexion</button>
                 <!-- Si besoin d'aide -->
                 <a class="not-working" routerLink="/contact">Un problème de connexion ?</a>
             </form>

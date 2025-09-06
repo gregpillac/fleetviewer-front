@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // ← ajouté pour ngModel
+import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -15,15 +15,14 @@ import { ConfirmationDialogComponent } from '../reservations/confirmation-dialog
     FormsModule,            // ← ajouté ici
     MatTabsModule,
     MatButtonModule,
-    MatDialogModule,
-    ConfirmationDialogComponent
+    MatDialogModule
   ],
   templateUrl: './ride-search.component.html',
   styleUrls: ['./ride-search.component.scss']
 })
 export class RideSearchComponent implements OnInit {
   selectedTab: number = 0;   // 0 = véhicule, 1 = covoiturage
-  formDateDepart: string = ''; 
+  formDateDepart: string = '';
   formDateRetour: string = '';
 
   constructor(private dialog: MatDialog, private route: ActivatedRoute) {}

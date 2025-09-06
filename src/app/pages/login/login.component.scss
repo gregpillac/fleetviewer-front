@@ -79,6 +79,7 @@
         }
 
         .btn-submit {
+            margin-top: 1rem;
             padding: 1rem 4rem;
             background-color: #232323;
             color: white;
@@ -95,10 +96,20 @@
         }
 
         .error {
-            color: red;
-            font-size: 0.875rem;
+            color: #d32f2f;
+            font-size: 13px;
             margin-top: -1rem;
-            margin-bottom: 1rem;
+        }
+
+        .error-global {
+            color: #d32f2f;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            background: #fff3f3;
+            padding: 0.5em 1em;
+            margin-bottom: -2em;
+            border-radius: 4px;
+            text-align: center;
         }
 
         .not-working {
