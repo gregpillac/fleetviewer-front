@@ -4,7 +4,7 @@ import {Person} from '../../../models/person.model';
 import {PersonService} from '../../../services/person/person.service';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {forkJoin} from 'rxjs';
-import {VehicleService} from '../../../services/vehicleService/vehicle.service';
+import {VehicleService} from '../../../services/vehicle/vehicle.service';
 import {Vehicle} from '../../../models/vehicle';
 
 type Dashboard = {

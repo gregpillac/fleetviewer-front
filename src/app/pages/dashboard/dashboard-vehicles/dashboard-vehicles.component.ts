@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Vehicle} from '../../../models/vehicle';
-import {VehicleService} from '../../../services/vehicleService/vehicle.service';
-import {PlaceService} from '../../../services/placeService/place.service';
+import {VehicleService} from '../../../services/vehicle/vehicle.service';
+import {PlaceService} from '../../../services/place/place.service';
 import {CommonModule} from '@angular/common';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {forkJoin} from 'rxjs';
