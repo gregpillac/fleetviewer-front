@@ -1,32 +1,62 @@
-<div class="login-wrapper">
-  <div class="logo">
-    <svg-icon src="/_static/fleetviewer/fleetviewer_offbeat.svg" svgClass="fleetviewer-svg"></svg-icon>
-  </div>
+<div class="login-page">
+    <div class="login-wrapper">
+        <div class="login-form">
+            <div class="logo">
+                <svg-icon src="/_static/fleetviewer/fleetviewer_compact.svg" svgClass="fleetviewer-svg"></svg-icon>
+            </div>
 
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <div class="field">
-      <label for="username">Nom d'utilisateur</label>
-      <input id="username" formControlName="username" required />
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="field">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input id="username" formControlName="username" required />
+                </div>
+
+                <div class="field">
+                    <label for="password">Mot de passe</label>
+                    <div class="password-field">
+                        <input
+                            [type]="showPassword ? 'text' : 'password'"
+                            id="password"
+                            formControlName="password"
+                            required
+                        />
+                        <button type="button" (click)="togglePasswordVisibility()" class="eye-toggle">
+                            {{ showPassword ? '🙈' : '👁️' }}
+                        </button>
+                    </div>
+                </div>
+
+                <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+                <button class="btn-submit" type="submit">Connexion</button>
+
+                <a class="not-working" routerLink="/contact">Un problème de connexion ?</a>
+            </form>
+        </div>
+        <div class="login-info">
+            <div class="login-info-hero" role="complementary" aria-label="Présentation de la plateforme">
+                <div class="login-info-content">
+                    <h1>Gérez votre flotte en toute simplicité</h1>
+                    <p class="tagline">
+                        Plateforme dédiée aux entreprises : réservez des véhicules, suivez l’activité et administrez votre parc en un seul endroit.
+                    </p>
+
+                    <ul class="benefits" aria-label="Fonctionnalités clés">
+                        <li>Réservation de véhicules d’entreprise</li>
+                        <li>Suivi et optimisation de l’utilisation</li>
+                        <li>Administration et gestion centralisée de la flotte</li>
+                    </ul>
+
+                    <div class="cta-row">
+                        <a class="btn btn-primary" routerLink="/formules">Voir nos formules</a>
+                        <a class="btn btn-secondary" routerLink="/contact">Nous contacter</a>
+                    </div>
+
+                    <p class="notice" role="note">
+                        Accès réservé aux utilisateurs disposant d’identifiants fournis par leur entreprise.
+                    </p>
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    <div class="field">
-      <label for="password">Mot de passe</label>
-      <div class="password-field">
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          formControlName="password"
-          required
-        />
-        <button type="button" (click)="togglePasswordVisibility()" class="eye-toggle">
-          {{ showPassword ? '🙈' : '👁️' }}
-        </button>
-      </div>
-    </div>
-
-
-    <button type="submit">Connexion</button>
-
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  </form>
 </div>

@@ -32,7 +32,7 @@ export const routes: Routes = [
     },
     { title: 'FleetViewer - Demande de trajet',path: 'search-ride', component: RideSearchComponent, canActivate: [canActivateWithRole()] },
 
-    { title: 'FleetViewer - Formules', path: 'formules', component: FormulesComponent, canActivate: [canActivateWithRole()] },
+    { title: 'FleetViewer - Formules', path: 'formules', component: FormulesComponent },
     { title: 'FleetViewer - Contact', path: 'contact', component: ContactComponent },
     { path: 'legal/:slug', component: LegalComponent }, // title géré automatiquement
     { title: 'FleetViewer - Page introuvable', path: 'not-found', component: NotFoundComponent, canActivate: [canActivateWithRole()] },

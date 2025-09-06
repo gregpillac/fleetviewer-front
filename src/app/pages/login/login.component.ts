@@ -3,12 +3,12 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {AuthService} from '../../services/auth/auth.service';
 import {CommonModule} from '@angular/common';
 import {SvgIconComponent} from "angular-svg-icon";
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, SvgIconComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, SvgIconComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

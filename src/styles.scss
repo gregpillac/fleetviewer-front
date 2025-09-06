@@ -18,7 +18,7 @@ html {
 }/* You can add global styles to this file, and also import other style files */
 
 :root { /* Default */
-    --main-color: #202020;
+    --main-color: #196dda;
     --bg-color: #fff;
     --text-color: #000000;
     // Logo
@@ -27,11 +27,9 @@ html {
 }
 
 body.ADMIN { /* Admin */
-    --main-color: #196dda;
 }
 
 body.MANAGER { /* Manager */
-    --main-color: #d62a5e;
 }
 
 body.ADMIN, body.MANAGER, {
@@ -41,7 +39,6 @@ body.ADMIN, body.MANAGER, {
 }
 
 body.USER { /* User */
-    --main-color: #202020;
 }
 
 * {
