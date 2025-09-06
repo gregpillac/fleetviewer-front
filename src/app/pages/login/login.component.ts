@@ -1,14 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthService} from '../../services/auth/auth.service';
-import {CommonModule} from '@angular/common';
-import {SvgIconComponent} from "angular-svg-icon";
-import {Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { SvgIconComponent } from "angular-svg-icon";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, SvgIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, SvgIconComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -45,18 +45,16 @@ export class LoginComponent implements OnInit {
 
       this.authService.login(credentials).subscribe({
         next: () => {
-            switch (this.authService.getCurrentUser()?.role.id) {
-                case 'ROLE_ADMIN':
-                case 'ROLE_MANAGER':
-                    this.router.navigate(['dashboard/ride']);
-                    break;
-                case 'ROLE_USER':
-                case 'ROLE_DEFAULT':
-                    this.router.navigate(['dashboard/ride']);
-                    break;
-                default: this.router.navigate(['/login']);
-            }
-          },
+          const role = this.authService.getCurrentUser()?.role.id;
+
+          if (role === 'ROLE_ADMIN' || role === 'ROLE_MANAGER') {
+            this.router.navigate(['/dashboard']); // ✅ admin/manager → dashboard
+          } else if (role === 'ROLE_USER' || role === 'ROLE_DEFAULT') {
+            this.router.navigate(['/']); // ✅ user → accueil
+          } else {
+            this.router.navigate(['/login']); // fallback
+          }
+        },
         error: (err) => {
           this.errorMessage = 'Echec de connexion: ' + (err.error?.message || err.statusText);
         }
