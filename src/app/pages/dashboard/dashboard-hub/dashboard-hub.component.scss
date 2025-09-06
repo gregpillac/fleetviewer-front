@@ -3,6 +3,7 @@
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1rem;
     margin-top: 2rem;
+    padding: 0 1rem;
 }
 
 .panel {
@@ -15,7 +16,8 @@
     text-align: center;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s;
+    transition: transform 0.2s ease,
+                background-color 0.3s ease;
 
     .digit {
         font-size: 60px;
@@ -26,4 +28,5 @@
 
 .tile:hover {
     background-color: #eaeaea;
+    transform: scale(1.05);
 }

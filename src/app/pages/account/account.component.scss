@@ -75,6 +75,7 @@ input[readonly] {
   text-align: center;
 }
 
+
 .edit-buttons, .action-buttons {
     display: flex;
     justify-content: center;
@@ -86,6 +87,7 @@ button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s ease;
 }
 
 button[type='submit'] {
@@ -109,10 +111,31 @@ button[type='button'] {
     box-shadow: 0 2px 8px #0002;
     font-size: 1.1em;
     z-index: 9999;
-    animation: toastIn 0.2s;
+    animation: toastIn 0.5s ease-out, toastOut 2s 4s forwards; /* Ajout d'une animation de disparition */
 }
 @keyframes toastIn {
     from { opacity: 0; transform: translateY(-20px) translateX(-50%);}
     to   { opacity: 1; transform: translateY(0) translateX(-50%);}
+}
+
+@keyframes toastOut {
+    from {opacity: 1;}
+    to {opacity: 0; transform: translateY(20px) translateX(-50%);}
+}
+
+/* Responsivité */
+@media (max-width: 768px) {
+  .account-container {
+    padding: 1.5rem;
+    width: 90%;
+  }
+
+  input {
+    padding: 0.8rem;
+  }
+
+  button {
+    padding: 0.5rem 0.8rem;
+  }
 }
 

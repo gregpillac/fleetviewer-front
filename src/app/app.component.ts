@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
 import {HeaderComponent} from './components/header/header.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {SideMenuComponent} from './components/side-menu/side-menu.component';
@@ -7,7 +7,6 @@ import {filter} from 'rxjs';
 import {CommonModule} from '@angular/common';
 import {AuthService} from './services/auth/auth.service';
 import {UserService} from './services/user/user.service';
-import {MatIcon} from '@angular/material/icon';
 
 @Component({
     selector: 'app-root',
@@ -25,6 +24,7 @@ export class AppComponent implements OnInit {
         private authService: AuthService,
         private userService: UserService
     ) {
+        // On écoute les changements de route
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd)
         ).subscribe((event) => {
@@ -37,8 +37,10 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.authService.currentUser$.subscribe(user => {
             if (user) {
-                // Retire les anciennes classes
+                // On réinitialise les classes CSS du body
                 document.body.classList.value = '';
+
+                // Ajoute une classe CSS selon le rôle de l'utilisateur
                 if (this.authService.isAdmin()) {
                     document.body.classList.add('ADMIN');
                 } else if (this.authService.isManager()) {
@@ -50,6 +52,7 @@ export class AppComponent implements OnInit {
         });
     }
 
+    // Méthode pour récupérer l'utilisateur courant
     loadCurrentUser() {
         if (sessionStorage.getItem('token')) {
             this.userService.getCurrentUser().subscribe({

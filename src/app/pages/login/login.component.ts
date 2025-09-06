@@ -39,9 +39,17 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      this.errorMessage = '';
-      const credentials = this.loginForm.value;
+    // Si formulaire invalide (champs vides)
+    if (this.loginForm.invalid) {
+      this.errorMessage = 'Veuillez remplir le nom d’utilisateur et le mot de passe';
+      // Marque tous les champs comme "touchés" pour afficher les messages sous les inputs
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    // Sinon → réinitialise le message d'erreur et tente la connexion
+    this.errorMessage = '';
+    const credentials = this.loginForm.value;
 
       this.authService.login(credentials).subscribe({
         next: () => {
