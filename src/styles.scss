@@ -22,7 +22,7 @@ html {
     --bg-color: #fff;
     --text-color: #000000;
     // Logo
-    --logo-bright-color: #434343;
+    --logo-bright-color: #fff;
     --logo-contrast-color: #fff;
 }
 
@@ -30,12 +30,6 @@ body.ADMIN { /* Admin */
 }
 
 body.MANAGER { /* Manager */
-}
-
-body.ADMIN, body.MANAGER, {
-    // Logo
-    --logo-bright-color: #fff;
-    --logo-contrast-color: #fff;
 }
 
 body.USER { /* User */
