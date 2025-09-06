@@ -16,7 +16,7 @@ main {
     box-sizing: inherit;
     position: relative;
     flex-grow: 1;
-    min-height: 800px;
+    min-height: 100vh;
     overflow-y: auto;
     margin-top: 64px; /* ajuste à la hauteur du header */
 }
