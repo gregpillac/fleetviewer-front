@@ -4,47 +4,44 @@
 
     <form [formGroup]="reservationForm" (ngSubmit)="onSubmit()">
       <div class="grid">
-        <!-- Départ -->
+        <!-- DATE ET HEURE DE DEBUT -->
         <mat-form-field appearance="outline">
           <mat-label>Date de départ</mat-label>
           <input matInput
-                 [matDatepicker]="pickerDepart"
-                 formControlName="startDate"
-                 (dateChange)="onDateChange($event.value)">
-          <mat-datepicker-toggle matSuffix [for]="pickerDepart"></mat-datepicker-toggle>
-          <mat-datepicker #pickerDepart></mat-datepicker>
+                 [matDatepicker]="datePickerDepart"
+                 formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="datePickerDepart"></mat-datepicker-toggle>
+          <mat-datepicker #datePickerDepart></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Heure de départ</mat-label>
           <input matInput
                  [matTimepicker]="timePickerDepart"
-                 [value]="timeFrom(form.value.startDate)"
-                 (change)="onTimeChange($event.target.value)">
+                 formControlName="startTime">
           <mat-timepicker-toggle matSuffix [for]="timePickerDepart"></mat-timepicker-toggle>
           <mat-timepicker #timePickerDepart></mat-timepicker>
         </mat-form-field>
 
-        <!-- Retour -->
+        <!-- Retour-->
         <mat-form-field appearance="outline">
-          <mat-label>Date de retour</mat-label>
-          <input matInput
-                 [matDatepicker]="pickerRetour"
-                 formControlName="endDate"
-                 (dateChange)="onDateChange($event.value)">
-            <mat-datepicker-toggle matSuffix [for]="pickerRetour"></mat-datepicker-toggle>
-          <mat-datepicker #pickerRetour></mat-datepicker>
+            <mat-label>Date de retour</mat-label>
+            <input matInput
+                   [matDatepicker]="datePickerRetour"
+                   formControlName="endDate">
+            <mat-datepicker-toggle matSuffix [for]="datePickerRetour"></mat-datepicker-toggle>
+            <mat-datepicker #datePickerRetour></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Heure de retour</mat-label>
           <input matInput
                  [matTimepicker]="timePickerRetour"
-                 [value]="timeFrom(form.value.endDate)"
-                 (change)="onTimeChange($event.target.value)">
+                 formControlName="endTime">
           <mat-timepicker-toggle matSuffix [for]="timePickerRetour"></mat-timepicker-toggle>
           <mat-timepicker #timePickerRetour></mat-timepicker>
         </mat-form-field>
+
 
         <!-- Départ & Destination -->
         <mat-form-field appearance="outline" class="span-2">

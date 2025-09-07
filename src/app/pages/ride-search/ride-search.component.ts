@@ -12,11 +12,13 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatIconModule } from "@angular/material/icon";
 import {Status} from '../../enums/Status';
+import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 
 @Component({
   selector: 'app-ride-search',
   standalone: true,
-  providers: [provideNativeDateAdapter()],
+  providers: [provideNativeDateAdapter(),
+      { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }],
   imports: [
     CommonModule,
     FormsModule,
@@ -46,16 +48,20 @@ export class RideSearchComponent implements OnInit {
   constructor(
       private fb: FormBuilder,
       private dialog: MatDialog,
-      private route: ActivatedRoute
+      private route: ActivatedRoute,
+      private dateAdapter: DateAdapter<Date>
   ) {
+      this.dateAdapter.setLocale('fr-FR');
       this.reservationForm = this.fb.group({
-          departureId: ['', Validators.required],
-          arrivalId: ['', Validators.required],
-          startDate: ['', Validators.required],
-          endDate: ['', Validators.required],
+          departureId: [null, Validators.required],
+          arrivalId: [null, Validators.required],
+          startDate: [new Date(), Validators.required],
+          startTime: [new Date(), Validators.required],
+          endDate: [new Date(), Validators.required],
+          endTime: [new Date(), Validators.required],
           status: [Status.PENDING, Validators.required],
-          vehicleId: [''],
-          driverId: ['', Validators.required]
+          vehicleId: [null],
+          driverId: [null, Validators.required]
       })
   }
 
@@ -69,28 +75,24 @@ export class RideSearchComponent implements OnInit {
 
 
   onSubmit() {
-
+      const formValue = this.reservationForm.value;
+      const startDateTime = this.combineDateAndTime(formValue.startDate, formValue.startTime);
+      const endDateTime = this.combineDateAndTime(formValue.endDate, formValue.endTime);
+      const payload = {
+          ...formValue,
+          startDateTime,
+          endDateTime
+      };
+      console.log('Payload envoyé :', payload);
   }
 
 
-    onDateChange(date: Date) {
-        const current = this.reservationForm.get('startDate')?.value;
-        if (date) {
-            const updated = new Date(date);
-            // si une heure existe déjà, on la conserve
-            if (current) {
-                updated.setHours(current.getHours(), current.getMinutes());
-            }
-            this.reservationForm.get('startDate')?.setValue(updated);
-        }
-    }
-
-    onTimeChange(time: string) {
-        const current = this.reservationForm.get('startDate')?.value || new Date();
-        const [hours, minutes] = time.split(':').map(Number);
-        current.setHours(hours, minutes, 0, 0);
-        this.reservationForm.get('startDate')?.setValue(current);
-    }
+  private combineDateAndTime(date: Date, time: any): Date | null {
+      if (!date || !time) return null;
+      const combined = new Date(date);
+      combined.setHours(time.getHours(), time.getMinutes(), 0, 0);
+      return combined;
+  }
 
 
   onReserveVehicle() {
