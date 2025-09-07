@@ -30,7 +30,6 @@ type Row = Vehicle & {
         { provide: MatPaginatorIntl, useFactory: frenchMatPaginatorIntl }
     ]
 })
-
 export class DashboardVehiclesComponent implements OnInit {
     private _paginator!: MatPaginator;
     @ViewChild(MatPaginator) set matPaginator(p: MatPaginator) {
@@ -55,6 +54,9 @@ export class DashboardVehiclesComponent implements OnInit {
     // index: vehicleId -> nb de clés
     keyCountByVehicle = new Map<number, number>();
 
+    // 👇 AJOUTS — cache des clés par véhicule + index des lieux
+    rowKeysCache = new Map<number, VehicleKey[]>(); // vehicleId -> keys
+    placesById = new Map<number, string>();         // placeId  -> name
 
     constructor(
         private vehicleService: VehicleService,
@@ -96,7 +98,11 @@ export class DashboardVehiclesComponent implements OnInit {
                     keyCountByVehicle.set(vid, (keyCountByVehicle.get(vid) ?? 0) + 1);
                 }
 
-                // Construire les rows (comme pour users)
+                // 👇 garder les lieux + index id->name pour tooltips
+                this.places = places;
+                this.placesById = new Map(places.map(p => [Number(p.id), p.name]));
+
+                // Construire les rows
                 const rows: Row[] = vehicles.map((v) => {
                     const place = places.find((p) => Number(p.id) === Number((v as any).placeId)) ?? null;
                     return {
@@ -143,14 +149,9 @@ export class DashboardVehiclesComponent implements OnInit {
         });
     }
 
-
     // --------- Helpers ---------
     fullModel(v: Vehicle) {
         return `${v.brand ?? ''} ${v.model ?? ''}`.trim();
-    }
-
-    getKeyCount(vehicleId: number): number {
-        return this.keyCountByVehicle.get(vehicleId) ?? 0;
     }
 
     private compareRows = (a: Row, b: Row) => {
@@ -170,6 +171,40 @@ export class DashboardVehiclesComponent implements OnInit {
         const plateB = (b.licensePlate ?? '').toLowerCase();
         return plateA.localeCompare(plateB, 'fr');
     };
+
+    // ---------- AJOUTS: Tooltip clés ----------
+    private placeName(id: number | null | undefined): string {
+        return (id != null && this.placesById.has(Number(id)))
+            ? (this.placesById.get(Number(id)) as string)
+            : 'Site du véhicule';
+    }
+
+    private formatKeys(keys: VehicleKey[] | undefined | null): string {
+        if (!keys || keys.length === 0) return 'Aucune clé';
+        // ordre par id croissant (même logique que l’insertion séquentielle)
+        return [...keys]
+            .sort((a, b) => Number(a.id) - Number(b.id))
+            .map(k => `[${k.tagLabel ?? '—'} - ${this.placeName(k.placeId)}]`)
+            .join(' | '); // multilignes
+    }
+
+    /** Retourne le texte du tooltip pour une row */
+    getKeysTooltip(r: Row): string {
+        const cached = this.rowKeysCache.get(r.id);
+        return this.formatKeys(cached);
+    }
+
+    /** Précharge les clés au survol si absentes du cache */
+    prefetchKeysForRow(r: Row): void {
+        if (this.rowKeysCache.has(r.id)) return;
+        if (!r.keyCount) { // pas d'appel si 0
+            this.rowKeysCache.set(r.id, []);
+            return;
+        }
+        this.keyService.getKeyByVehicle(r.id).subscribe(ks => {
+            this.rowKeysCache.set(r.id, ks || []);
+        });
+    }
 }
 
 // Labels FR

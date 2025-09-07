@@ -55,7 +55,7 @@
                     <td mat-cell *matCellDef="let r">{{ r.mileage || '—' }}</td>
                 </ng-container>
 
-                <!-- Nombre de clés du véhicule -->
+                <!-- Site -->
                 <ng-container matColumnDef="place">
                     <th mat-header-cell *matHeaderCellDef>Site de rattachement</th>
                     <td mat-cell *matCellDef="let r">{{ r.place.name }}</td>
@@ -65,8 +65,13 @@
                 <ng-container matColumnDef="keys">
                     <th mat-header-cell *matHeaderCellDef>Clé(s)</th>
                     <td mat-cell *matCellDef="let r">
-                        <div class="key-cell">
-                            <span>{{ r.keyCount  }}</span>
+                        <div class="key-cell"
+                             [matTooltip]="getKeysTooltip(r)"
+                             matTooltipClass="tooltip-multiline"
+                             matTooltipShowDelay="150"
+                             matTooltipPosition="right"
+                             (mouseenter)="prefetchKeysForRow(r)">
+                            <span>{{ r.keyCount }}</span>
                             <mat-icon>key</mat-icon>
                         </div>
                     </td>

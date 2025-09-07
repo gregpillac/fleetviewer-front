@@ -1,8 +1,10 @@
 .key-cell {
-    display: flex;
+    position: relative;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 6px;
+    cursor: help;
 
     span {
         font-weight: 500;
@@ -10,6 +12,41 @@
 
     mat-icon {
         color: #44474e;
-        cursor: pointer;
     }
 }
+
+.key-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 1;
+    max-width: 600px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    line-height: 1.25;
+    font-size: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.24);
+    pointer-events: none;
+    white-space: normal;
+}
+
+.key-tooltip::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 16px;
+    border: 6px solid transparent;
+    border-bottom-color: #111;
+}
+
+.tooltip-line { margin: 0 0 4px 0; }
+.tooltip-line:last-child { margin-bottom: 0; }
+.tooltip-line .label { font-weight: 600; }
+.tooltip-line .sep { opacity: .6; }
+.tooltip-line .place { opacity: .95; }
+.tooltip-line.muted { opacity: .7; font-style: italic; }
+.key-tooltip { bottom: calc(100% + 8px); top: auto; }
+.key-tooltip::after { top: auto; bottom: -6px; border-bottom-color: transparent; border-top-color: #111; }
+
