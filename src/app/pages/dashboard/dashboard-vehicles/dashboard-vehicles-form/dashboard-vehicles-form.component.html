@@ -1,0 +1,115 @@
+<form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()" class="vehicle-form mat-elevation-z8">
+
+    <fieldset>
+        <legend>Identification</legend>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Marque</mat-label>
+                <input matInput type="text" formControlName="brand" [readonly]="isEditMode"/>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Modèle</mat-label>
+                <input matInput formControlName="model" [readonly]="isEditMode"/>
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Immatriculation</mat-label>
+                <input matInput formControlName="licensePlate" [readonly]="isEditMode"/>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre de places</mat-label>
+                <input matInput type="number" formControlName="seats" />
+            </mat-form-field>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Caractéristiques</legend>
+
+        <mat-form-field appearance="outline" style="width:100%">
+            <mat-label>Kilométrage</mat-label>
+            <input matInput type="number" formControlName="mileage" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:100%">
+            <mat-label>Site de rattachement</mat-label>
+            <mat-select formControlName="placeId">
+                <mat-option *ngFor="let place of places" [value]="place.id">{{ place.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </fieldset>
+
+    <fieldset>
+        <legend>Conformité</legend>
+        <mat-checkbox formControlName="isRoadworthy">CT valide</mat-checkbox>
+        <mat-checkbox formControlName="isInsuranceValid">Assurance valide</mat-checkbox>
+    </fieldset>
+
+    <!-- ===================== CLÉS ===================== -->
+    <fieldset>
+        <legend>Clés</legend>
+
+        <button mat-stroked-button type="button" (click)="addKey()">Ajouter une clé</button>
+
+        <!-- plus de formArrayName + formGroupName ici : on affiche une VUE triée -->
+        <div class="keys-list" *ngIf="keysArray.length > 0">
+            <div class="key-item" *ngFor="let ctrl of sortedKeyControls; let i = index" [formGroup]="ctrl">
+
+                <div class="key-header">
+                    <h4 class="key-title">Clé #{{ i + 1 }}</h4>
+                    <button mat-button color="warn" type="button" (click)="removeKey(i)">Supprimer</button>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Libellé</mat-label>
+                        <input matInput formControlName="tagLabel"
+                               [placeholder]="'Ex: ' + (vehicleForm.get('licensePlate')?.value || '') + '_' + (i + 1)" />
+                        <mat-error *ngIf="ctrl.errors?.['keyIncomplete']">
+                            Renseignez un libellé pour cette clé.
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Emplacement</mat-label>
+                        <mat-select formControlName="placeId">
+                            <mat-option *ngFor="let place of places" [value]="place.id">
+                                {{ place.id === currentVehiclePlaceId ? '(Par défaut) ' : '' }}{{ place.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Récap trié -->
+            <div class="recap">
+                <h4>Récapitulatif des clés</h4>
+                <ul>
+                    <li *ngFor="let k of sortedKeysValue; let i = index">
+                        <strong>{{ (k.tagLabel || '').trim() || '(vide)' }}</strong>
+                        — {{ placeName(k.placeId ?? currentVehiclePlaceId) }}
+                        <ng-container [ngSwitch]="keyStatus(k)">
+                            <span *ngSwitchCase="'new'" class="badge badge-new">nouvelle</span>
+                            <span *ngSwitchCase="'modified'" class="badge badge-modified">modifiée</span>
+                            <span *ngSwitchDefault class="badge">existante</span>
+                        </ng-container>
+                    </li>
+                </ul>
+                <small>Les modifications seront appliquées après l’enregistrement du véhicule.</small>
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- ===================== ACTIONS ===================== -->
+    <div class="buttons">
+        <button mat-stroked-button type="button" (click)="returnDashboard()">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="vehicleForm.invalid">
+            {{ isEditMode ? 'Enregistrer' : 'Créer' }}
+        </button>
+    </div>
+</form>

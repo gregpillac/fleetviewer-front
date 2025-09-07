@@ -1,4 +1,4 @@
-<div class="users-content">
+<div class="dashboard-page">
 
     <!-- Toolbar -->
     <div class="table-toolbar">
@@ -35,10 +35,10 @@
     <!-- Table -->
     <div class="table-container mat-elevation-z2">
         <div class="table-scroll">
-            <table mat-table [dataSource]="dataSource" class="users-table">
+            <table mat-table [dataSource]="dataSource" class="dashboard-table">
 
                 <!-- Nom -->
-                <ng-container matSort matColumnDef="name">
+                <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef>Prénom & Nom</th>
                     <td mat-cell *matCellDef="let r">{{ fullName(r) }}</td>
                 </ng-container>

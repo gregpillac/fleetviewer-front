@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {Vehicle} from '../../models/vehicle';
+import {CreateVehicle, Vehicle} from '../../models/vehicle';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +35,7 @@ export class VehicleService {
    * @param vehicle Les données du véhicule à créer.
    * @returns Un Observable contenant le nouveau véhicule.
    */
-  createVehicle(vehicle: Vehicle): Observable<Vehicle> {
+  createVehicle(vehicle: CreateVehicle): Observable<Vehicle> {
     return this.http.post<Vehicle>(this.apiUrl, vehicle);
   }
 
@@ -54,8 +54,8 @@ export class VehicleService {
    * @param id L'identifiant du véhicule à supprimer.
    * @returns Un Observable.
    */
-  deleteVehicle(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  deleteVehicle(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
 }

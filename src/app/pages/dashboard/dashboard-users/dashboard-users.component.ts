@@ -38,7 +38,6 @@ type Row = Person & {
         MatInputModule,
         MatProgressBarModule,
         MatPaginatorModule,
-        MatSort,
         MatTooltip
     ],
     templateUrl: './dashboard-users.component.html',
@@ -62,8 +61,6 @@ export class DashboardUsersComponent implements OnInit {
     // Table
     displayedColumns = ['name', 'email', 'phone', 'place', 'username', 'role', 'actions'];
     dataSource = new MatTableDataSource<Row>([]);
-
-    // État
     loading = true;
 
     constructor(
@@ -188,7 +185,7 @@ export class DashboardUsersComponent implements OnInit {
     }
 
     deleteUser(row: Row) {
-        const fullName = `${row.firstName ?? ''} ${row.lastName ?? ''}`.trim() || 'cet utilisateur';
+        const fullName = this.fullName(row) || 'cet utilisateur';
         if (!confirm(`Supprimer définitivement ${fullName} ?`)) return;
 
         this.personService.delete(row.id).subscribe({

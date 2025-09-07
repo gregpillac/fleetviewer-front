@@ -1,4 +1,5 @@
 import {Place} from './place.model';
+import {User} from './user.model';
 
 export interface Vehicle {
   id: number;
@@ -10,5 +11,6 @@ export interface Vehicle {
   isRoadworthy: boolean;
   isInsuranceValid: boolean;
   placeId: number;
-  place?: Place;
 }
+
+export type CreateVehicle = Omit<Vehicle, 'id'>;

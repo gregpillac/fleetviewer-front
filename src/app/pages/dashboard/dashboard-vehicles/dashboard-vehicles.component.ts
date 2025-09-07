@@ -1,53 +1,190 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Vehicle} from '../../../models/vehicle';
 import {VehicleService} from '../../../services/vehicleService/vehicle.service';
 import {PlaceService} from '../../../services/placeService/place.service';
 import {CommonModule} from '@angular/common';
-import {MatTableModule} from '@angular/material/table';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {forkJoin} from 'rxjs';
 import {Place} from '../../../models/place.model';
 import {Router} from '@angular/router';
+import {VehicleKey} from '../../../models/vehicle-key';
+import {VehicleKeyService} from '../../../services/vehicle-key/vehicle-key.service';
+import {MatButton, MatIconButton} from '@angular/material/button';
+import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
+import {MatProgressBar} from '@angular/material/progress-bar';
+import {MatPaginator, MatPaginatorIntl} from '@angular/material/paginator';
+import {MatIcon} from '@angular/material/icon';
+import {MatTooltip} from '@angular/material/tooltip';
+
+type Row = Vehicle & {
+    place?: Place | null;
+    keyCount: number;
+};
 
 @Component({
-  selector: 'app-dashboard-vehicles',
-  imports: [CommonModule, MatTableModule],
-  templateUrl: './dashboard-vehicles.component.html',
-  styleUrl: './dashboard-vehicles.component.scss'
+    selector: 'app-dashboard-vehicles',
+    imports: [CommonModule, MatTableModule, MatButton, MatFormField, MatIcon, MatIconButton, MatInput, MatLabel, MatPaginator, MatProgressBar, MatSuffix, MatTooltip],
+    templateUrl: './dashboard-vehicles.component.html',
+    styleUrl: './dashboard-vehicles.component.scss',
+    providers: [
+        { provide: MatPaginatorIntl, useFactory: frenchMatPaginatorIntl }
+    ]
 })
 
 export class DashboardVehiclesComponent implements OnInit {
+    private _paginator!: MatPaginator;
+    @ViewChild(MatPaginator) set matPaginator(p: MatPaginator) {
+        if (p) {
+            this._paginator = p;
+            this.dataSource.paginator = p;
+        }
+    }
+    // tailles de page
+    pageSize = 25;
+    pageSizeOptions = [10, 25, 50, 100];
 
-  vehicles: Vehicle[] = [];
-  places: Place[] = [];
+    // Table
+    displayedColumns = ['vehicle', 'licensePlate', 'mileage', 'place', 'keys', 'actions'];
+    dataSource = new MatTableDataSource<Row>([]);
+    loading = true;
 
-  displayedColumns: string[] = ['place', 'brandModel', 'licensePlate', 'SeatNumber', 'MileAge'];
+    vehicles: Vehicle[] = [];
+    keys: VehicleKey[] = [];
+    places: Place[] = [];
+
+    // index: vehicleId -> nb de clés
+    keyCountByVehicle = new Map<number, number>();
 
 
-  constructor(
-    private vehicleService: VehicleService,
-    private placeService: PlaceService,
-    private router: Router
-  ) {}
+    constructor(
+        private vehicleService: VehicleService,
+        private keyService: VehicleKeyService,
+        private placeService: PlaceService,
+        private router: Router
+    ) {}
 
-  ngOnInit() {
-    forkJoin({
-      vehicles: this.vehicleService.getVehicles(),
-      places: this.placeService.getPlaces()
-    }).subscribe(({ vehicles, places }) => {
-      this.places = places;
-      // Associer chaque véhicule à son objet Place complet
-      this.vehicles = vehicles.map(vehicle => ({
-        ...vehicle,
-        place: places.find(p => p.id === vehicle.placeId) // placeId doit exister dans le VehicleDTO
-      }));
-    });
-  }
+    ngOnInit(): void {
+        // Filtrage multi-colonnes (marque, modèle, immat, lieu)
+        this.dataSource.filterPredicate = (row, filter) => {
+            const t = (v: any) => (v ?? '').toString().toLowerCase();
+            const haystack = [
+                `${row.brand ?? ''} ${row.model ?? ''}`,
+                row.licensePlate,
+                row.place?.name
+            ]
+                .map(t)
+                .join(' ');
+            return haystack.includes(t(filter));
+        };
 
-  onRowClick(vehicle: any) {
-    this.router.navigate(['dashboard/vehicles', vehicle.id]);
-  }
+        this.fetchRows();
+    }
 
-  goToCreateVehicle() {
-    this.router.navigate(['dashboard/vehicles/add']);
-  }
+    private fetchRows(): void {
+        this.loading = true;
+
+        forkJoin({
+            vehicles: this.vehicleService.getVehicles(),
+            keys: this.keyService.getKeys(),
+            places: this.placeService.getPlaces()
+        }).subscribe({
+            next: ({ vehicles, keys, places }) => {
+                // Index vehicleId -> count
+                const keyCountByVehicle = new Map<number, number>();
+                for (const k of keys) {
+                    const vid = Number((k as any).vehicleId);
+                    keyCountByVehicle.set(vid, (keyCountByVehicle.get(vid) ?? 0) + 1);
+                }
+
+                // Construire les rows (comme pour users)
+                const rows: Row[] = vehicles.map((v) => {
+                    const place = places.find((p) => Number(p.id) === Number((v as any).placeId)) ?? null;
+                    return {
+                        ...v,
+                        place,
+                        keyCount: keyCountByVehicle.get(Number(v.id)) ?? 0,
+                    };
+                });
+
+                rows.sort(this.compareRows);
+                this.dataSource.data = rows;
+                this.loading = false;
+            },
+            error: () => {
+                this.dataSource.data = [];
+                this.loading = false;
+            }
+        });
+    }
+
+    applyFilter(value: string) {
+        this.dataSource.filter = (value || '').trim().toLowerCase();
+        if (this._paginator) this._paginator.firstPage();
+    }
+
+    // --------- Actions ---------
+    goToCreateVehicle() {
+        this.router.navigate(['dashboard/vehicles/add']);
+    }
+
+    goToEditVehicle(vehicle: any) {
+        this.router.navigate(['dashboard/vehicles', vehicle.id]);
+    }
+
+    deleteVehicle(row: Row) {
+        const fullModel = this.fullModel(row) || 'ce véhicule';
+        if (!confirm(`Supprimer définitivement ${fullModel} ?`)) return;
+
+        this.vehicleService.deleteVehicle(row.id).subscribe({
+            next: () => {
+                this.dataSource.data = this.dataSource.data.filter((r) => r.id !== row.id);
+            },
+            error: () => alert("Échec de la suppression du véhicule."),
+        });
+    }
+
+
+    // --------- Helpers ---------
+    fullModel(v: Vehicle) {
+        return `${v.brand ?? ''} ${v.model ?? ''}`.trim();
+    }
+
+    getKeyCount(vehicleId: number): number {
+        return this.keyCountByVehicle.get(vehicleId) ?? 0;
+    }
+
+    private compareRows = (a: Row, b: Row) => {
+        const placeA = (a.place?.name ?? '').toLowerCase();
+        const placeB = (b.place?.name ?? '').toLowerCase();
+        if (placeA !== placeB) return placeA.localeCompare(placeB, 'fr');
+
+        const brandA = (a.brand ?? '').toLowerCase();
+        const brandB = (b.brand ?? '').toLowerCase();
+        if (brandA !== brandB) return brandA.localeCompare(brandB, 'fr');
+
+        const modelA = (a.model ?? '').toLowerCase();
+        const modelB = (b.model ?? '').toLowerCase();
+        if (modelA !== modelB) return modelA.localeCompare(modelB, 'fr');
+
+        const plateA = (a.licensePlate ?? '').toLowerCase();
+        const plateB = (b.licensePlate ?? '').toLowerCase();
+        return plateA.localeCompare(plateB, 'fr');
+    };
+}
+
+// Labels FR
+export function frenchMatPaginatorIntl(): MatPaginatorIntl {
+    const intl = new MatPaginatorIntl();
+    intl.itemsPerPageLabel = 'Éléments par page';
+    intl.nextPageLabel = 'Page suivante';
+    intl.previousPageLabel = 'Page précédente';
+    intl.firstPageLabel = 'Première page';
+    intl.lastPageLabel = 'Dernière page';
+    intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+        if (length === 0 || pageSize === 0) return `0 sur ${length}`;
+        const start = page * pageSize;
+        const end = Math.min(start + pageSize, length);
+        return `${start + 1} – ${end} sur ${length}`;
+    };
+    return intl;
 }

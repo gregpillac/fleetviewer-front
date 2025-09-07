@@ -1,6 +1,6 @@
 <nav class="side-menu" [class.collapsed]="collapsed">
     <!-- Bouton rond bleu quand replié (remplace toute la sidebar) -->
-    <div *ngIf="collapsed" class="fab-toggle" (click)="toggle()" matTooltip="Ouvrir le menu">
+    <div class="fab-toggle" (click)="toggle()" matTooltip="Ouvrir le menu">
         <mat-icon>chevron_right</mat-icon>
     </div>
 
@@ -10,98 +10,109 @@
         <!-- Entête avec bouton pour replier -->
         <div class="menu-header">
             <button mat-icon-button (click)="toggle()" aria-label="Replier le menu">
-                <mat-icon>chevron_left</mat-icon>
+                <mat-icon matTooltip="Replier le menu">chevron_left</mat-icon>
             </button>
-            <span class="menu-title">Navigation</span>
+            <span class="menu-title">Menu</span>
         </div>
+
+        <mat-divider></mat-divider>
 
         <!-- Accordéon -->
         <mat-accordion [multi]="false" displayMode="flat" class="accordion">
 
             <!-- Titre “Dashboard” -->
             <div class="section-title">
-                <mat-icon>dashboard</mat-icon>
                 <span>Dashboard</span>
             </div>
 
             <!-- Hub -->
-            <mat-nav-list disableRipple>
+            <mat-nav-list class="child list-one" disableRipple>
                 <a mat-list-item routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                    <mat-icon>home</mat-icon>
-                    <span>Hub</span>
+                    <div class="list-title">
+                        <mat-icon>dashboard</mat-icon>
+                        <span>Hub</span>
+                    </div>
                 </a>
             </mat-nav-list>
 
             <!-- Utilisateurs -->
-            <mat-expansion-panel>
+            <mat-expansion-panel class="child" hideToggle>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         <mat-icon>group</mat-icon>
                         <span>Utilisateurs</span>
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <mat-nav-list disableRipple>
+                <mat-nav-list class="list-expanded" disableRipple>
                     <a mat-list-item routerLink="/dashboard/users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <span>Liste des utilisateurs</span>
                     </a>
-                    <a mat-list-item routerLink="/dashboard/users/new" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                        <mat-icon>person_add</mat-icon>
-                        <span>Nouvel utilisateur</span>
+                    <a mat-list-item routerLink="/dashboard/users/add" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                        <div class="list-title">
+                            <mat-icon>person_add</mat-icon>
+                            <span>Nouvel utilisateur</span>
+                        </div>
                     </a>
                 </mat-nav-list>
             </mat-expansion-panel>
 
             <!-- Véhicules -->
-            <mat-expansion-panel>
+            <mat-expansion-panel class="child"  hideToggle>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         <mat-icon>directions_car</mat-icon>
                         <span>Véhicules</span>
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <mat-nav-list disableRipple>
+                <mat-nav-list class="list-expanded" disableRipple>
                     <a mat-list-item routerLink="/dashboard/vehicles" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <span>Liste des véhicules</span>
                     </a>
-                    <a mat-list-item routerLink="/dashboard/vehicles/create" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                        <mat-icon>add_circle</mat-icon>
-                        <span>Nouveau véhicule</span>
+                    <a mat-list-item routerLink="/dashboard/vehicles/add" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                        <div class="list-title">
+                            <mat-icon>add_circle</mat-icon>
+                            <span>Nouveau véhicule</span>
+                        </div>
                     </a>
                 </mat-nav-list>
             </mat-expansion-panel>
 
             <!-- Réservations -->
-            <mat-expansion-panel>
+            <mat-expansion-panel class="child"  hideToggle>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         <mat-icon>book</mat-icon>
                         <span>Réservations</span>
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <mat-nav-list disableRipple>
+                <mat-nav-list class="list-expanded" disableRipple>
                     <a mat-list-item routerLink="/dashboard/bookings" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <span>Liste des réservations</span>
                     </a>
                     <a mat-list-item routerLink="/dashboard/bookings/review" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                        <mat-icon>search</mat-icon>
-                        <span>Traiter les demandes</span>
+                        <div class="list-title">
+                            <mat-icon>search</mat-icon>
+                            <span>Traiter les demandes</span>
+                        </div>
                     </a>
-                    <a mat-list-item routerLink="/dashboard/bookings/new" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                        <mat-icon>add_circle</mat-icon>
-                        <span>Nouvelle réservation</span>
+                    <a mat-list-item routerLink="/dashboard/bookings/add" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                        <div class="list-title">
+                            <mat-icon>add_circle</mat-icon>
+                            <span>Nouvelle réservation</span>
+                        </div>
                     </a>
                 </mat-nav-list>
             </mat-expansion-panel>
 
-            <!-- Actions utilisateurs -->
-            <mat-nav-list disableRipple>
-                <a mat-list-item routerLink="/search-ride" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                    <mat-icon>directions_bus</mat-icon>
-                    <span>Demande de trajet</span>
-                </a>
+            <mat-divider></mat-divider>
+
+            <!-- Actions -->
+            <mat-nav-list class="list-one" disableRipple>
                 <a mat-list-item routerLink="/rides" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                    <mat-icon>location_on</mat-icon>
-                    <span>Mes trajets</span>
+                    <div class="list-title">
+                        <mat-icon>location_on</mat-icon>
+                        <span>Mes trajets</span>
+                    </div>
                 </a>
             </mat-nav-list>
 

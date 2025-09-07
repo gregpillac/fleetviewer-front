@@ -295,6 +295,11 @@ export class DashboardUsersFormComponent implements OnInit {
         });
     }
 
+    toggleAttachAccount() {
+        const current = this.form.get('attachAccount')!.value;
+        this.form.get('attachAccount')!.setValue(!current);
+    }
+
     returnDashboard() {
         this.router.navigate(['dashboard/users']);
     }

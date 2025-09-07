@@ -1,26 +1,75 @@
 /* Largeurs configurables */
 $sidebar-width: 280px;
-$sidebar-collapsed: 40px;
+$sidebar-collapsed: 0;
 
 /* Conteneur principal */
 .side-menu {
     position: relative;
     width: $sidebar-width;
-    transition: width 200ms ease;
+    transition: background-color 300ms, width 300ms ease;
     padding: 8px;
-    background: #fff;
+    background: var(--sidemenu-color);
     height: 100%;
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
 
+    /* Bouton toggle (fab) */
+    .fab-toggle {
+        position: absolute;
+        opacity: 0;
+        background: var(--sidemenu-color);
+        transition: opacity 500ms ease, background-color 800ms ease;
+        mat-icon {
+            display: none;
+        }
+    }
+
 
     &.collapsed {
+        transition: width 300ms ease;
         width: $sidebar-collapsed;
-        background: transparent;
         padding: 0;
         box-shadow: none;
+
+        .menu-surface {
+            display: none; /* on masque tout le menu */
+        }
+
+        .fab-toggle {
+            width: 40px;
+            position: inherit;
+            opacity: 1;
+            transition: opacity 500ms ease, background-color 800ms ease;
+            display: flex;
+            border-radius: 5px;
+            height: 40px;
+            background: var(--main-color);
+            color: #fff;
+            cursor: pointer;
+            padding: 10px;
+            margin: 8px;
+
+            mat-icon {
+                display: inherit;
+            }
+        }
     }
+}
+
+/* Couleur du texte dans la sidebar */
+.accordion,
+.menu-header button,
+.menu-header span,
+mat-nav-list a span,
+mat-nav-list a mat-icon,
+mat-panel-title {
+    color: #ffffff;
+}
+
+.mat-divider {
+    margin: 1rem;
+    border-top-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Surface complète du menu (accordéons, listes) */
@@ -29,27 +78,10 @@ $sidebar-collapsed: 40px;
     overflow-y: auto;
 }
 
-/* Bouton toggle (fab) */
-.fab-toggle {
-    display: none;
-}
-
-.side-menu.collapsed {
-    .menu-surface {
-        display: none; /* on masque tout le menu */
-    }
-
-    .fab-toggle {
-        display: flex;
-        border-radius: 5px;
-        width: 100%;
-        height: 40px;
-        background: #1976d2; /* bleu Material */
-        color: #fff;
-        cursor: pointer;
-        padding: 10px;
-        margin: 8px;
-    }
+.menu-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 /* Titre de section "Dashboard" */
@@ -57,19 +89,52 @@ $sidebar-collapsed: 40px;
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #111827;
-    font-weight: 600;
+    font-weight: 500;
     padding: 8px 12px;
     margin: 4px 0;
 }
 
-/* Listes & items */
-mat-nav-list a[mat-list-item] {
-    border-radius: 8px;
-    margin: 2px 0;
+/* Listes/items & Panels Material */
+
+.mat-expansion-panel, mat-nav-list {
+    background: transparent;
+    box-shadow: none !important;
+    margin: 0.5rem 0;
+    padding: 0;
 }
-a.active {
-    background: rgba(25, 118, 210, 0.12);
+
+mat-expansion-panel mat-expansion-panel-header,
+mat-expansion-panel mat-expansion-panel-header.mat-expanded,
+mat-nav-list.list-expanded a[mat-list-item],
+mat-nav-list.list-one a[mat-list-item] {
+    border-radius: 8px;
+    height: 50px;
+    font-weight: 400;
+
+    .list-title, mat-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    &:hover {
+        background: #0000001a !important;
+    }
+
+    &.active {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: none !important;
+    }
+}
+
+mat-expansion-panel.child mat-expansion-panel-header,
+mat-expansion-panel.child mat-expansion-panel-header.mat-expanded,
+mat-nav-list.child.list-one a[mat-list-item] {
+    padding: 0 2rem;
+}
+
+mat-nav-list.list-expanded a[mat-list-item] {
+    padding: 0 1rem;
 }
 
 /* Icônes */
@@ -79,11 +144,3 @@ mat-icon {
     height: 20px;
 }
 
-/* Panels Material */
-.mat-expansion-panel-header {
-    border-radius: 8px;
-}
-.mat-expansion-panel {
-    background: transparent;
-    box-shadow: none !important;
-}

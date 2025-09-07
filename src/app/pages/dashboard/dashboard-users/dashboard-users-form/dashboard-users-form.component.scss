@@ -1,38 +1,118 @@
-/* Conteneur du formulaire */
+/* Conteneur principal */
 .user-form {
-    padding: 16px;
+    max-width: 980px;
+    padding: 0 28px;
+    border-radius: 14px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
-/* Grille responsive pour les champs */
-.user-form .grid {
+/* Titres */
+.title {
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+.sub-title {
+    margin: 0 0 8px;
+    font-weight: 600;
+    color: #666;
+}
+
+/* Sections */
+.section {
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+.section > legend {
+    padding: 0 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+/* Grille fluide : 1 col sur mobile, 2 sur ≥768px, 3 sur ≥1200px si place */
+.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 1→4 colonnes selon la place */
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+@media (min-width: 768px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1200px) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* Les champs occupent 100% de leur cellule */
-.user-form mat-form-field {
+/* Les champs Material occupent toute la largeur de leur cellule */
+.grid mat-form-field,
+.section mat-form-field {
     width: 100%;
 }
 
-/* Zone boutons alignée à droite */
-.user-form .buttons {
-    margin-top: 16px;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-}
-
-/* Slide toggles bien alignés */
-.user-form .row {
+/* Ligne simple (pour les toggles isolés, etc.) */
+.row {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-/* Optionnel : sur petits écrans, passe en 1 colonne stricte */
-@media (max-width: 640px) {
-    .user-form .grid {
-        grid-template-columns: 1fr;
+/* Espacements utilitaires */
+.my-4 { margin: 16px 0; }
+
+/* États d’erreurs plus lisibles */
+mat-error {
+    font-size: 0.85rem;
+    color: #d32f2f;
+}
+
+/* Slide toggles et selects */
+mat-slide-toggle { margin-top: 4px; }
+mat-select { width: 100%; }
+
+/* Boutons d’action */
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.account-btn {
+    margin-bottom: 1rem;
+}
+
+/* Inputs et focus: léger rehaut sans casser Material */
+.user-form ::ng-deep
+.mdc-text-field--outlined.mdc-text-field--focused
+.mdc-notched-outline__leading,
+.user-form ::ng-deep
+.mdc-text-field--outlined.mdc-text-field--focused
+.mdc-notched-outline__notch,
+.user-form ::ng-deep
+.mdc-text-field--outlined.mdc-text-field--focused
+.mdc-notched-outline__trailing {
+    border-color: #3f51b5; /* couleur primaire Angular Material par défaut */
+}
+
+/* Champs adresse : line1 et line2 prennent toute la largeur */
+@media (min-width: 768px) {
+    [formControlName="line1"],
+    [formControlName="line2"] {
+        grid-column: 1 / -1; /* pleine largeur */
     }
+    [formControlName="city"],
+    [formControlName="postalCode"] {
+        grid-column: auto; /* 2 colonnes normales */
+    }
+}
+
+/* Quand account pas activé, éviter gros blanc */
+.section mat-slide-toggle + .grid { margin-top: 8px; }
+
+/* Accessibilité / focus visible pour boutons */
+.buttons button:focus-visible {
+    outline: 3px solid rgba(63,81,181,.45);
+    outline-offset: 2px;
 }

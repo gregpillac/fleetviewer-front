@@ -1,44 +1,120 @@
-<h2>Liste des véhicules</h2>
+<div class="dashboard-page">
 
-<!-- Ligne pour la création d'un vehicule-->
-<tr style="background:#e0f7fa; cursor:pointer; margin-top: 32px auto;" (click)="goToCreateVehicle()">
-  <td colspan="5" style="text-align:center; font-weight:bold;">
-    + Créer un véhicule
-  </td>
-</tr>
+    <!-- Toolbar -->
+    <div class="table-toolbar">
+        <h1>
+            Véhicules
+            <ng-container *ngIf="!loading && dataSource.filteredData.length as n">({{ n }})</ng-container>
+        </h1>
 
-<table mat-table [dataSource]="vehicles" class="mat-elevation-z8">
+        <div class="toolbar-actions">
+            <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+                <mat-label>Rechercher</mat-label>
+                <input
+                    matInput
+                    #searchInput
+                    (keyup)="applyFilter(searchInput.value)"
+                    placeholder="Nom, email, téléphone, site, compte, rôle…" />
+                <button
+                    mat-icon-button
+                    matSuffix
+                    *ngIf="searchInput.value"
+                    aria-label="Effacer la recherche"
+                    (click)="searchInput.value=''; applyFilter('')">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
 
-  <!-- Place Column -->
-  <ng-container matColumnDef="place">
-    <th mat-header-cell *matHeaderCellDef>Site de rattachement</th>
-    <td mat-cell *matCellDef="let vehicle">{{ vehicle.place?.name }}</td>
-  </ng-container>
+            <button mat-raised-button color="primary" (click)="goToCreateVehicle()">
+                <mat-icon>add</mat-icon>
+                <span>Ajouter</span>
+            </button>
+        </div>
+    </div>
 
-  <!-- Brand Column -->
-  <ng-container matColumnDef="brandModel">
-    <th mat-header-cell *matHeaderCellDef>Modele</th>
-    <td mat-cell *matCellDef="let vehicle">{{ vehicle.brand }} {{ vehicle.model }}</td>
-  </ng-container>
+    <!-- Table -->
+    <div class="table-container mat-elevation-z2">
+        <div class="table-scroll">
+            <table mat-table [dataSource]="dataSource" class="dashboard-table">
 
-  <!-- License Plate Column -->
-  <ng-container matColumnDef="licensePlate">
-    <th mat-header-cell *matHeaderCellDef>Immatriculation</th>
-    <td mat-cell *matCellDef="let vehicle">{{ vehicle.licensePlate }}</td>
-  </ng-container>
+                <!-- Marque Modèle + nombre de places -->
+                <ng-container matColumnDef="vehicle">
+                    <th mat-header-cell *matHeaderCellDef>Véhicule</th>
+                    <td mat-cell *matCellDef="let r">{{ fullModel(r) }} ({{r.seats}} places)</td>
+                </ng-container>
 
-  <!-- Seats Number Column -->
-  <ng-container matColumnDef="SeatNumber">
-    <th mat-header-cell *matHeaderCellDef>Nb de places</th>
-    <td mat-cell *matCellDef="let vehicle">{{ vehicle.seats }} places</td>
-  </ng-container>
+                <!-- Immatriculation -->
+                <ng-container matColumnDef="licensePlate">
+                    <th mat-header-cell *matHeaderCellDef>Immatriculation</th>
+                    <td mat-cell *matCellDef="let r">{{ r.licensePlate || '—' }}</td>
+                </ng-container>
 
-  <!-- MileAge Column -->
-  <ng-container matColumnDef="MileAge">
-    <th mat-header-cell *matHeaderCellDef>Kilometrage</th>
-    <td mat-cell *matCellDef="let vehicle">{{ vehicle.mileage }} kms</td>
-  </ng-container>
+                <!-- Kilométrage -->
+                <ng-container matColumnDef="mileage">
+                    <th mat-header-cell *matHeaderCellDef>Kilometrage</th>
+                    <td mat-cell *matCellDef="let r">{{ r.mileage || '—' }}</td>
+                </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClick(row)" style="cursor:pointer"></tr>
-</table>
+                <!-- Nombre de clés du véhicule -->
+                <ng-container matColumnDef="place">
+                    <th mat-header-cell *matHeaderCellDef>Site de rattachement</th>
+                    <td mat-cell *matCellDef="let r">{{ r.place.name }}</td>
+                </ng-container>
+
+                <!-- Nombre de clés du véhicule -->
+                <ng-container matColumnDef="keys">
+                    <th mat-header-cell *matHeaderCellDef>Clé(s)</th>
+                    <td mat-cell *matCellDef="let r">
+                        <div class="key-cell">
+                            <span>{{ r.keyCount  }}</span>
+                            <mat-icon>key</mat-icon>
+                        </div>
+                    </td>
+                </ng-container>
+
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="col-actions">Actions</th>
+                    <td mat-cell *matCellDef="let r" class="cell-actions">
+                        <div class="btn-actions">
+                            <button mat-icon-button color="primary" (click)="goToEditVehicle(r)">
+                                <mat-icon [matTooltip]="'Modifier ' + fullModel(r)">edit</mat-icon>
+                            </button>
+
+                            <button mat-icon-button color="warn" (click)="deleteVehicle(r)">
+                                <mat-icon [matTooltip]="'Supprimer' + fullModel(r)">delete</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row        *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <!-- Loader -->
+            <mat-progress-bar
+                *ngIf="loading"
+                mode="indeterminate"
+                color="primary"
+                class="table-loader">
+            </mat-progress-bar>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!loading && dataSource.filteredData.length === 0" class="empty">
+            Il n'y a aucun véhicule.
+        </div>
+
+        <!-- Paginator -->
+        <mat-paginator
+            [pageIndex]="0"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions"
+            showFirstLastButtons
+            aria-label="Pagination des véhicules">
+        </mat-paginator>
+    </div>
+</div>
+

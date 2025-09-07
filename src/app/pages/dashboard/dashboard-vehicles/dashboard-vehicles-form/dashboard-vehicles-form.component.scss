@@ -1,0 +1,91 @@
+.vehicle-form {
+    max-width: 800px;
+    margin: 32px auto;
+    padding: 24px;
+    border-radius: 12px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px 20px;
+}
+
+legend {
+    font-weight: 600;
+    padding: 0 8px;
+    color: #555;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.form-row mat-form-field {
+    flex: 1;
+}
+
+/* CLÉS */
+.keys-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+input:read-only {
+    cursor: not-allowed;
+}
+
+.key-item {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 12px;
+    background: #fafafa;
+}
+
+.key-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.key-title {
+    margin: 0 0 8px 0;
+}
+
+.recap {
+    margin-top: 8px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f6f8ff;
+    border: 1px solid #e3e8ff;
+
+    h4 { margin: 0 0 8px 0; }
+    ul { margin: 0 0 6px 16px; }
+}
+
+.badge {
+    margin-left: 6px;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: #e0e0e0;
+}
+.badge-new {
+    background: #c8e6c9;
+}
+.badge-modified { background: #ffe8cc; color: #b35c00; }
+
+/* Boutons d’action */
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}

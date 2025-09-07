@@ -8,7 +8,7 @@ import {DashboardHubComponent} from './pages/dashboard/dashboard-hub/dashboard-h
 import {DashboardUsersComponent} from './pages/dashboard/dashboard-users/dashboard-users.component';
 import {DashboardVehiclesComponent} from './pages/dashboard/dashboard-vehicles/dashboard-vehicles.component';
 import {AccountComponent} from './pages/account/account.component';
-import {VehicleComponent} from './pages/vehicle/vehicle.component';
+import {DashboardVehiclesFormComponent} from './pages/dashboard/dashboard-vehicles/dashboard-vehicles-form/dashboard-vehicles-form.component';
 import {RideSearchComponent} from './pages/ride-search/ride-search.component';
 import {DashboardUsersFormComponent} from './pages/dashboard/dashboard-users/dashboard-users-form/dashboard-users-form.component';
 import {LegalComponent} from './pages/legal/legal.component';
@@ -26,8 +26,8 @@ export const routes: Routes = [
             { title: 'FleetViewer | Ajouter un utilisateur', path: 'users/add', component: DashboardUsersFormComponent },
             { title: 'FleetViewer | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent },
             { title: 'FleetViewer | Véhicules', path: 'vehicles', component: DashboardVehiclesComponent },
-            { title: 'FleetViewer | Ajouter un véhicule', path: 'vehicles/add', component: VehicleComponent },
-            { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: VehicleComponent }
+            { title: 'FleetViewer | Ajouter un véhicule', path: 'vehicles/add', component: DashboardVehiclesFormComponent },
+            { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: DashboardVehiclesFormComponent }
         ]
     },
     { title: 'FleetViewer - Demande de trajet',path: 'search-ride', component: RideSearchComponent, canActivate: [canActivateWithRole()] },
