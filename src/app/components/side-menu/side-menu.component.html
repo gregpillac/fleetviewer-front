@@ -77,7 +77,7 @@
                 </mat-nav-list>
             </mat-expansion-panel>
 
-            <!-- Réservations -->
+            <!-- Réservations
             <mat-expansion-panel class="child"  hideToggle>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
@@ -102,11 +102,20 @@
                         </div>
                     </a>
                 </mat-nav-list>
-            </mat-expansion-panel>
+            </mat-expansion-panel> -->
 
             <mat-divider></mat-divider>
 
             <!-- Actions -->
+            <mat-nav-list class="list-one" disableRipple>
+                <a mat-list-item routerLink="/search-ride" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <div class="list-title">
+                        <mat-icon>location_on</mat-icon>
+                        <span>Demande de trajet</span>
+                    </div>
+                </a>
+            </mat-nav-list>
+
             <mat-nav-list class="list-one" disableRipple>
                 <a mat-list-item routerLink="/rides" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                     <div class="list-title">

@@ -1,23 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { FooterComponent } from './footer.component';
+import { AngularSvgIconModule } from 'angular-svg-icon';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('FooterComponent', () => {
-  let component: FooterComponent;
-  let fixture: ComponentFixture<FooterComponent>;
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [
+                FooterComponent,
+                HttpClientTestingModule,            // ⬅️ requis par le registry service
+                AngularSvgIconModule.forRoot(),     // ⬅️ fournit SvgIconRegistryService
+            ],
+            // En dernier recours pour ignorer des balises inconnues:
+            // schemas: [NO_ERRORS_SCHEMA],
+        }).compileComponents();
+    });
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [FooterComponent]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(FooterComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        const fixture = TestBed.createComponent(FooterComponent);
+        expect(fixture.componentInstance).toBeTruthy();
+    });
 });
