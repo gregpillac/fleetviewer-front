@@ -16,11 +16,6 @@
   overflow: hidden; /* Empêche tout débordement des éléments enfants */
 }
 
-/* Supprimer le scroll interne des tabs */
-.mat-tab-body-wrapper {
-    overflow: visible !important;
-}
-
 .title {
   text-align: center;
   margin-bottom: 24px;
@@ -41,14 +36,15 @@
 /* Les champs de formulaire occupent toute la largeur de leur cellule */
 mat-form-field {
   width: 100%;
-  /* La marge a été supprimée pour éviter le débordement. Le 'gap' de la grille s'en occupe. */
 }
 
 /* Zone des boutons */
 .buttons {
   display: flex;
-  justify-content: flex-end;
+    justify-content: flex-end;
+  gap: 16px; /* Espacement entre les boutons */
   margin-top: 24px;
+  flex-wrap: wrap; /* Permet aux boutons de passer à la ligne sur petits écrans */
 }
 
 /* Sur les petits écrans, les champs qui s'étendent sur 2 colonnes reprennent une seule colonne */
@@ -56,10 +52,4 @@ mat-form-field {
   .span-2 {
     grid-column: span 1;
   }
-}
-
-// Ajustement pour que le contenu de l'onglet ne déborde pas
-::ng-deep .mat-tab-body-content {
-  padding-top: 24px;
-  overflow: hidden; /* Empêche le débordement du contenu de l'onglet */
 }

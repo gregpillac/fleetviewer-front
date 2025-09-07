@@ -1,105 +1,58 @@
 <div class="form-container">
   <div class="mat-elevation-z4 search-form">
-    <h2 class="title">Rechercher un trajet</h2>
+    <h2 class="title">Mon trajet</h2>
 
-    <mat-tab-group [(selectedIndex)]="selectedTab" animationDuration="0ms">
-      <!-- Onglet Louer un véhicule -->
-      <mat-tab label="Trouver un véhicule">
-        <form class="ride-form" (ngSubmit)="reserverVehicule()">
-          <div class="grid">
-            <!-- Départ Véhicule -->
-            <mat-form-field appearance="outline">
-              <mat-label>Date de départ</mat-label>
-              <input matInput [matDatepicker]="pickerDepart" [(ngModel)]="vehicleDepartureDateTime" name="date-depart">
-              <mat-datepicker-toggle matSuffix [for]="pickerDepart"></mat-datepicker-toggle>
-              <mat-datepicker #pickerDepart></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Heure de départ</mat-label>
-              <input matInput [matTimepicker]="timePickerDepart" [(ngModel)]="vehicleDepartureDateTime" name="time-depart">
-              <mat-timepicker-toggle matSuffix [for]="timePickerDepart"></mat-timepicker-toggle>
-              <mat-timepicker #timePickerDepart></mat-timepicker>
-            </mat-form-field>
+    <form class="ride-form">
+      <div class="grid">
+        <!-- Départ -->
+        <mat-form-field appearance="outline">
+          <mat-label>Date de départ</mat-label>
+          <input matInput [matDatepicker]="pickerDepart" [(ngModel)]="departureDateTime" name="date-depart">
+          <mat-datepicker-toggle matSuffix [for]="pickerDepart"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDepart></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Heure de départ</mat-label>
+          <input matInput [matTimepicker]="timePickerDepart" [(ngModel)]="departureDateTime" name="time-depart">
+          <mat-timepicker-toggle matSuffix [for]="timePickerDepart"></mat-timepicker-toggle>
+          <mat-timepicker #timePickerDepart></mat-timepicker>
+        </mat-form-field>
 
-            <!-- Retour Véhicule -->
-            <mat-form-field appearance="outline">
-              <mat-label>Date d'arrivée</mat-label>
-              <input matInput [matDatepicker]="pickerRetour" [(ngModel)]="vehicleReturnDateTime" name="date-retour">
-              <mat-datepicker-toggle matSuffix [for]="pickerRetour"></mat-datepicker-toggle>
-              <mat-datepicker #pickerRetour></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Heure d'arrivée</mat-label>
-              <input matInput [matTimepicker]="timePickerRetour" [(ngModel)]="vehicleReturnDateTime" name="time-retour">
-              <mat-timepicker-toggle matSuffix [for]="timePickerRetour"></mat-timepicker-toggle>
-              <mat-timepicker #timePickerRetour></mat-timepicker>
-            </mat-form-field>
+        <!-- Retour -->
+        <mat-form-field appearance="outline">
+          <mat-label>Date de retour</mat-label>
+          <input matInput [matDatepicker]="pickerRetour" [(ngModel)]="returnDateTime" name="date-retour">
+          <mat-datepicker-toggle matSuffix [for]="pickerRetour"></mat-datepicker-toggle>
+          <mat-datepicker #pickerRetour></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Heure de retour</mat-label>
+          <input matInput [matTimepicker]="timePickerRetour" [(ngModel)]="returnDateTime" name="time-retour">
+          <mat-timepicker-toggle matSuffix [for]="timePickerRetour"></mat-timepicker-toggle>
+          <mat-timepicker #timePickerRetour></mat-timepicker>
+        </mat-form-field>
 
-            <!-- Adresses -->
-            <mat-form-field appearance="outline" class="span-2">
-              <mat-label>Lieu de départ</mat-label>
-              <input matInput placeholder="Ex : Paris">
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="span-2">
-              <mat-label>Lieu d'arrivée</mat-label>
-              <input matInput placeholder="Ex : Lyon">
-            </mat-form-field>
-          </div>
+        <!-- Départ & Destination -->
+        <mat-form-field appearance="outline" class="span-2">
+          <mat-label>Site de départ</mat-label>
+          <input matInput placeholder="Ex : Nantes">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="span-2">
+          <mat-label>Destination</mat-label>
+          <input matInput placeholder="Ex : Rennes">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="span-2">
+            <mat-label>Sélection du vehicule</mat-label>
+            <input matInput placeholder="Ex : Clio BP-701-WY">
+        </mat-form-field>
+      </div>
 
-          <div class="buttons">
-            <button mat-raised-button color="primary" type="submit">Trouver un véhicule</button>
-          </div>
-        </form>
-      </mat-tab>
+      <div class="buttons">
+        <button mat-raised-button color="primary" type="button" (click)="onSearchCarpool()">Chercher un covoiturage</button>
+        <button mat-raised-button color="primary" type="button" (click)="onMakeReservationRequest()">Demander un vehicule</button>
+        <button mat-raised-button color="primary" type="button" (click)="onReserveVehicle()">Réserver un véhicule</button>
+      </div>
+    </form>
 
-      <!-- Onglet Réserver un covoiturage -->
-      <mat-tab label="Covoiturage">
-        <form class="ride-form" (ngSubmit)="reserverCovoiturage()">
-          <div class="grid">
-            <!-- Départ Covoiturage -->
-            <mat-form-field appearance="outline">
-              <mat-label>Date de départ</mat-label>
-              <input matInput [matDatepicker]="pickerCovDepart" [(ngModel)]="carpoolDepartureDateTime" name="date-depart-cov" required>
-              <mat-datepicker-toggle matSuffix [for]="pickerCovDepart"></mat-datepicker-toggle>
-              <mat-datepicker #pickerCovDepart></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Heure de départ</mat-label>
-              <input matInput [matTimepicker]="timePickerCovDepart" [(ngModel)]="carpoolDepartureDateTime" name="time-depart-cov" required>
-              <mat-timepicker-toggle matSuffix [for]="timePickerCovDepart"></mat-timepicker-toggle>
-              <mat-timepicker #timePickerCovDepart></mat-timepicker>
-            </mat-form-field>
-
-            <!-- Retour Covoiturage -->
-            <mat-form-field appearance="outline">
-              <mat-label>Date de retour</mat-label>
-              <input matInput [matDatepicker]="pickerCovRetour" [(ngModel)]="carpoolReturnDateTime" name="date-retour-cov">
-              <mat-datepicker-toggle matSuffix [for]="pickerCovRetour"></mat-datepicker-toggle>
-              <mat-datepicker #pickerCovRetour></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Heure de retour</mat-label>
-              <input matInput [matTimepicker]="timePickerCovRetour" [(ngModel)]="carpoolReturnDateTime" name="time-retour-cov">
-              <mat-timepicker-toggle matSuffix [for]="timePickerCovRetour"></mat-timepicker-toggle>
-              <mat-timepicker #timePickerCovRetour></mat-timepicker>
-            </mat-form-field>
-
-            <!-- Adresses -->
-            <mat-form-field appearance="outline" class="span-2">
-              <mat-label>Lieu de départ</mat-label>
-              <input matInput placeholder="Ex : Paris">
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="span-2">
-              <mat-label>Lieu d'arrivée</mat-label>
-              <input matInput placeholder="Ex : Lyon">
-            </mat-form-field>
-          </div>
-
-          <div class="buttons">
-            <button mat-raised-button color="primary" type="submit">Réserver un covoiturage</button>
-          </div>
-        </form>
-      </mat-tab>
-    </mat-tab-group>
   </div>
 </div>

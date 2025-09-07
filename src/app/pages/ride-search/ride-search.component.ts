@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // ← ajouté pour ngModel
-import { MatTabsModule } from '@angular/material/tabs';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -10,24 +9,23 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatTimepickerModule } from '@angular/material/timepicker'; // Module du nouveau timepicker
-import {MatIconModule} from "@angular/material/icon";
+import { MatTimepickerModule } from '@angular/material/timepicker';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-ride-search',
   standalone: true,
-  providers: [provideNativeDateAdapter()], // Ajout du provider pour le datepicker
+  providers: [provideNativeDateAdapter()],
   imports: [
     CommonModule,
     FormsModule,
-    MatTabsModule,
     MatButtonModule,
     MatDialogModule,
     ConfirmationDialogComponent,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    MatTimepickerModule, // Ajout du module timepicker
+    MatTimepickerModule,
     MatIconModule
   ],
   templateUrl: './ride-search.component.html',
@@ -35,54 +33,60 @@ import {MatIconModule} from "@angular/material/icon";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RideSearchComponent implements OnInit {
-  selectedTab: number = 0;
 
-  // Modèles pour l'onglet "Trouver un véhicule"
-  vehicleDepartureDateTime: Date = new Date();
-  vehicleReturnDateTime: Date = new Date();
-
-  // Modèles pour l'onglet "Covoiturage"
-  carpoolDepartureDateTime: Date = new Date();
-  carpoolReturnDateTime: Date = new Date();
+  departureDateTime: Date = new Date();
+  returnDateTime: Date = new Date();
 
   constructor(private dialog: MatDialog, private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['date']) {
-        const prefilledDate = new Date(params['date']);
-        this.vehicleDepartureDateTime = prefilledDate;
-        this.carpoolDepartureDateTime = prefilledDate;
-      }
-      if (params['type']) {
-        this.selectedTab = params['type'] === 'vehicle' ? 0 : 1;
+        this.departureDateTime = new Date(params['date']);
       }
     });
   }
 
-  reserverVehicule() {
-    console.log('Véhicule - Départ:', this.vehicleDepartureDateTime?.toISOString());
-    console.log('Véhicule - Retour:', this.vehicleReturnDateTime?.toISOString());
+  onReserveVehicle() {
+    this.checkAlternativeCarPool();
 
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '400px',
-      data: {
-        message: 'Un trajet en covoiturage similaire existe. Voulez-vous continuer avec le véhicule ?'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log("✅ Réservation de véhicule confirmée !");
-      } else {
-        console.log("🚗 Voir le covoiturage");
-      }
-    });
+    console.log('Action: Réserver un véhicule');
+    console.log('Départ:', this.departureDateTime?.toISOString());
+    console.log('Retour:', this.returnDateTime?.toISOString());
   }
 
-  reserverCovoiturage() {
-    console.log('Covoiturage - Départ:', this.carpoolDepartureDateTime?.toISOString());
-    console.log('Covoiturage - Retour:', this.carpoolReturnDateTime?.toISOString());
-    console.log("Réservation covoiturage sélectionnée");
+  onMakeReservationRequest() {
+    this.checkAlternativeCarPool();
+
+    console.log('Action: Faire une demande de réservation');
+    console.log('Départ:', this.departureDateTime?.toISOString());
+    console.log('Retour:', this.returnDateTime?.toISOString());
+    // Logique pour la demande de réservation à implémenter
+  }
+
+  onSearchCarpool() {
+    console.log('Action: Chercher un covoiturage');
+    console.log('Départ:', this.departureDateTime?.toISOString());
+    console.log('Retour:', this.returnDateTime?.toISOString());
+    // Logique pour la recherche de covoiturage à implémenter
+  }
+
+  checkAlternativeCarPool() {
+      // Logique pour la recherche de trajet correspondant à implémenter
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          width: '400px',
+          data: {
+              message: 'Un trajet en covoiturage similaire existe. Voulez-vous co-voiturer ?'
+          }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+              console.log("✅ Action confirmée !");
+              // Logique pour la recherche de trajet correspondant à implémenter
+          } else {
+              console.log("🚗 Redirect to autre action");
+          }
+      });
   }
 }
