@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Place } from '../../../../models/place.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VehicleService } from '../../../../services/vehicleService/vehicle.service';
-import { PlaceService } from '../../../../services/placeService/place.service';
+import { VehicleService } from '../../../../services/vehicle/vehicle.service';
+import { PlaceService } from '../../../../services/place/place.service';
 import { VehicleKeyService } from '../../../../services/vehicle-key/vehicle-key.service';
 import { VehicleKey, CreateVehicleKey } from '../../../../models/vehicle-key';
 

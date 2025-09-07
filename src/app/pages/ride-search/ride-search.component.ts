@@ -90,7 +90,12 @@ export class RideSearchComponent implements OnInit {
   ngOnInit() {
       this.placeService.getPlaces().subscribe(places => this.places = places);
       this.vehicleService.getVehicles().subscribe(vehicles => this.vehicles = vehicles);
-      this.personService.getPersons().subscribe(persons => this.persons = persons);
+      if (this.isAdmin || this.isManager) {
+          this.personService.getPersons().subscribe({
+              next: persons => this.persons = persons,
+              error: err => console.error('Chargement des personnes refusé (403)', err)
+          });
+      }
   }
 
 
