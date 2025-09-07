@@ -45,30 +45,42 @@
 
         <!-- Départ & Destination -->
         <mat-form-field appearance="outline" class="span-2">
-          <mat-label>Site de départ</mat-label>
-          <input matInput placeholder="Ex : Nantes" formControlName="departureId">
+            <mat-label>Site de départ</mat-label>
+            <mat-select formControlName="departureId">
+                <mat-option *ngFor="let place of places" [value]="place.id">{{ place.name }}</mat-option>
+            </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="span-2">
-          <mat-label>Destination</mat-label>
-          <input matInput placeholder="Ex : Rennes" formControlName="arrivalId">
+            <mat-label>Destination</mat-label>
+            <mat-select formControlName="arrivalId">
+                <mat-option *ngFor="let place of places" [value]="place.id">{{ place.name }}</mat-option>
+            </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="span-2">
+        <mat-form-field appearance="outline" class="span-2" *ngIf="isAdmin || isManager">
             <mat-label>Sélection du vehicule</mat-label>
-            <input matInput placeholder="Ex : Clio BP-701-WY" formControlName="vehicleId">
+            <mat-select formControlName="vehicleId">
+                <mat-option *ngFor="let vehicle of vehicles" [value]="vehicle.id">{{vehicle.brand}} {{vehicle.model}} {{vehicle.licensePlate}}</mat-option>
+            </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Conducteur</mat-label>
-            <input matInput placeholder="Conducteur" formControlName="driverId">
+        <mat-form-field appearance="outline" *ngIf="isAdmin || isManager">
+            <mat-label>Bénéficiaire</mat-label>
+            <input matInput placeholder="Bénéficiaire" formControlName="driverId">
         </mat-form-field>
       </div>
 
       <div class="buttons">
-        <button mat-raised-button color="primary" type="submit" (click)="onSearchCarpool()">Chercher un covoiturage</button>
-        <button mat-raised-button color="primary" type="submit" (click)="onMakeReservationRequest()">Demander un vehicule</button>
-        <button mat-raised-button color="primary" type="submit" (click)="onReserveVehicle()">Réserver un véhicule</button>
+        <button mat-raised-button color="primary" type="submit" (click)="onSearchCarpool()">
+            Chercher un covoiturage
+        </button>
+        <button mat-raised-button color="primary" type="submit" (click)="onMakeReservationRequest()" *ngIf="isUser">
+            Demander un vehicule
+        </button>
+        <button mat-raised-button color="primary" type="submit" (click)="onReserveVehicle()" *ngIf="isAdmin || isManager">
+            Réserver un véhicule
+        </button>
       </div>
     </form>
 

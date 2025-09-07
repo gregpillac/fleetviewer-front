@@ -1,38 +1,48 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
-import { ConfirmationDialogComponent } from '../reservations/confirmation-dialog/confirmation-dialog.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatTimepickerModule } from '@angular/material/timepicker';
-import { MatIconModule } from "@angular/material/icon";
+import {MatButtonModule} from '@angular/material/button';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {ActivatedRoute} from '@angular/router';
+import {ConfirmationDialogComponent} from '../reservations/confirmation-dialog/confirmation-dialog.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {DateAdapter, MAT_DATE_LOCALE, MatOption, provideNativeDateAdapter} from '@angular/material/core';
+import {MatTimepickerModule} from '@angular/material/timepicker';
+import {MatIconModule} from "@angular/material/icon";
 import {Status} from '../../enums/Status';
-import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import {ReservationService} from '../../services/reservation.service';
 import {Reservation} from '../../models/reservation';
+import {Place} from '../../models/place.model';
+import {PlaceService} from '../../services/place/place.service';
+import {MatSelect} from '@angular/material/select';
+import {VehicleService} from '../../services/vehicle/vehicle.service';
+import {Vehicle} from '../../models/vehicle';
+import {AuthService} from '../../services/auth/auth.service';
+import {Role} from '../../enums/Role';
+import {PersonService} from '../../services/person/person.service';
+import {Person} from '../../models/person.model';
 
 @Component({
   selector: 'app-ride-search',
   standalone: true,
   providers: [provideNativeDateAdapter(),
       { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }],
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatTimepickerModule,
-    MatIconModule,
-    ReactiveFormsModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatDatepickerModule,
+        MatTimepickerModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        MatOption,
+        MatSelect
+    ],
   templateUrl: './ride-search.component.html',
   styleUrls: ['./ride-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,15 +50,20 @@ import {Reservation} from '../../models/reservation';
 export class RideSearchComponent implements OnInit {
 
   reservationForm: FormGroup;
-  statusValues = Object.values(Status);
+  places: Place[] = [];
+  vehicles: Vehicle[] = [];
+  persons: Person[] = [];
+
   driverId: number = 0;
 
-  departureDateTime: Date = new Date();
-  returnDateTime: Date = new Date();
 
   constructor(
       private fb: FormBuilder,
+      private auth: AuthService,
       private reservationService: ReservationService,
+      private placeService: PlaceService,
+      private vehicleService: VehicleService,
+      private personService: PersonService,
       private dialog: MatDialog,
       private route: ActivatedRoute,
       private dateAdapter: DateAdapter<Date>
@@ -67,24 +82,15 @@ export class RideSearchComponent implements OnInit {
       })
   }
 
+  get isAdmin(): boolean {return this.auth.isAdmin()};
+  get isManager(): boolean {return this.auth.isManager()};
+  get isUser(): boolean {return this.auth.isUser()};
+
+
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      if (params['date']) {
-        this.departureDateTime = new Date(params['date']);
-      }
-    });
-  }
-
-
-  onSubmit() {
-      const formValue = this.reservationForm.value;
-      const startDateTime = this.combineDateAndTime(formValue.startDate, formValue.startTime);
-      const endDateTime = this.combineDateAndTime(formValue.endDate, formValue.endTime);
-      const payload = {
-          ...formValue,
-          startDateTime,
-          endDateTime
-      };
+      this.placeService.getPlaces().subscribe(places => this.places = places);
+      this.vehicleService.getVehicles().subscribe(vehicles => this.vehicles = vehicles);
+      this.personService.getPersons().subscribe(persons => this.persons = persons);
   }
 
 
@@ -95,63 +101,81 @@ export class RideSearchComponent implements OnInit {
       return combined;
   }
 
-    /**
-     * Sérialiser un Date JS en LocalDateTime (texte) attendu par Spring:
-     * Exemple: 2025-09-07T14:05:00   (PAS de Z, PAS d'offset)
-     */
-    private pad(n: number): string {
-        return n < 10 ? `0${n}` : `${n}`;
-    }
+  /**
+   * Sérialiser un Date JS en LocalDateTime (texte) attendu par Spring:
+   * Exemple: 2025-09-07T14:05:00   (PAS de Z, PAS d'offset)
+   */
+  private pad(n: number): string {
+      return n < 10 ? `0${n}` : `${n}`;
+  }
 
-    private toLocalLdtString(d: Date): string {
-        const y = d.getFullYear();
-        const M = this.pad(d.getMonth() + 1);
-        const D = this.pad(d.getDate());
-        const h = this.pad(d.getHours());
-        const m = this.pad(d.getMinutes());
-        const s = this.pad(d.getSeconds());
-        return `${y}-${M}-${D}T${h}:${m}:${s}`;
-    }
-
-
-  onReserveVehicle() {
-    this.checkAlternativeCarPool();
-    console.log('Action: Réserver un véhicule');
+  private toLocalLdtString(d: Date): string {
+      const y = d.getFullYear();
+      const M = this.pad(d.getMonth() + 1);
+      const D = this.pad(d.getDate());
+      const h = this.pad(d.getHours());
+      const m = this.pad(d.getMinutes());
+      const s = this.pad(d.getSeconds());
+      return `${y}-${M}-${D}T${h}:${m}:${s}`;
   }
 
 
-  onMakeReservationRequest() {
-
-      // this.checkAlternativeCarPool();
+  onReserveVehicle() {
+    //this.checkAlternativeCarPool();
       const r = this.reservationForm.value;
-
       const start = this.combineDateAndTime(r.startDate, r.startTime);
       const end   = this.combineDateAndTime(r.endDate,   r.endTime);
 
       if (!start || !end) {
-          console.error('Date/heure manquantes'); // TODO: afficher un message d'erreur dans l'UI
-          return;
+          console.error('La date/heure de début doit être ≤ fin');
+          return
       }
       if (start > end) {
           console.error('La date/heure de début doit être ≤ fin');
-          return;
+          return
       }
-
-      // cast numériques si les inputs renvoient des strings
-      const vehicleId: number | undefined =
-          r.vehicleId !== null && r.vehicleId !== undefined && r.vehicleId !== ''
-              ? Number(r.vehicleId)
-              : undefined;
-
-      const payload: Reservation = {
+      const payload: Reservation =  {
           departureId: Number(r.departureId),
           arrivalId: Number(r.arrivalId),
           startDate: this.toLocalLdtString(start),
           endDate:   this.toLocalLdtString(end),
-          reservationStatus: (r.reservationStatus ?? 'PENDING') as Status,
-          vehicleId,               // peut être null → Jackson le mappera en null
+          reservationStatus: Status.CONFIRMED,
+          vehicleId: Number(r.vehicleId),               // peut être null → Jackson le mappera en null
           driverId: Number(r.driverId)
-      };
+      } as Reservation;
+
+      this.reservationService.createReservation(payload).subscribe({
+          next: (res) => { console.log('Réservation créée', res); // TODO: feedback UI / navigation
+          },
+          error: (err) => { console.error('Erreur création réservation', err); // TODO: afficher erreurs de validation renvoyées par le back
+          }
+      });
+  }
+
+
+  onMakeReservationRequest() {
+      //this.checkAlternativeCarPool();
+      const r = this.reservationForm.value;
+      const start = this.combineDateAndTime(r.startDate, r.startTime);
+      const end   = this.combineDateAndTime(r.endDate,   r.endTime);
+
+      if (!start || !end) {
+          console.error('La date/heure de début doit être ≤ fin');
+          return
+      }
+      if (start > end) {
+          console.error('La date/heure de début doit être ≤ fin');
+          return
+      }
+      const payload: Reservation =  {
+          departureId: Number(r.departureId),
+          arrivalId: Number(r.arrivalId),
+          startDate: this.toLocalLdtString(start),
+          endDate:   this.toLocalLdtString(end),
+          reservationStatus: Status.CONFIRMED,
+          vehicleId: Number(r.vehicleId),               // peut être null → Jackson le mappera en null
+          driverId: Number(r.driverId)
+      } as Reservation;
 
       this.reservationService.createReservation(payload).subscribe({
           next: (res) => { console.log('Réservation créée', res); // TODO: feedback UI / navigation
