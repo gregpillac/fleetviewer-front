@@ -23,6 +23,8 @@ import {AuthService} from '../../services/auth/auth.service';
 import {Role} from '../../enums/Role';
 import {PersonService} from '../../services/person/person.service';
 import {Person} from '../../models/person.model';
+import {filter, take} from 'rxjs/operators';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-ride-search',
@@ -78,7 +80,7 @@ export class RideSearchComponent implements OnInit {
           endTime: [new Date(), Validators.required],
           status: [Status.PENDING, Validators.required],
           vehicleId: [null],
-          driverId: [null, Validators.required]
+          driverId: [1, Validators.required]
       })
   }
 
@@ -90,6 +92,14 @@ export class RideSearchComponent implements OnInit {
   ngOnInit() {
       this.placeService.getPlaces().subscribe(places => this.places = places);
       this.vehicleService.getVehicles().subscribe(vehicles => this.vehicles = vehicles);
+
+      this.auth.currentUser$
+          .pipe( filter((u): u is User => !!u),
+              take(1))
+          .subscribe(user => {
+              this.reservationForm.patchValue({ driverId: user.person.id });
+          });
+
       if (this.isAdmin || this.isManager) {
           this.personService.getPersons().subscribe({
               next: persons => this.persons = persons,
@@ -177,8 +187,7 @@ export class RideSearchComponent implements OnInit {
           arrivalId: Number(r.arrivalId),
           startDate: this.toLocalLdtString(start),
           endDate:   this.toLocalLdtString(end),
-          reservationStatus: Status.CONFIRMED,
-          vehicleId: Number(r.vehicleId),               // peut être null → Jackson le mappera en null
+          reservationStatus: Status.PENDING,
           driverId: Number(r.driverId)
       } as Reservation;
 
