@@ -1,16 +1,18 @@
 import { TestBed } from '@angular/core/testing';
-
-import { VehicleKeyService } from './vehicle-key.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { VehicleKeyService } from './vehicle-key.service'
 
 describe('VehicleKeyService', () => {
-  let service: VehicleKeyService;
+    let service: VehicleKeyService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(VehicleKeyService);
-  });
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule], // garde-le si le service fait du HTTP
+        });
+        service = TestBed.inject(VehicleKeyService);
+    });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
 });

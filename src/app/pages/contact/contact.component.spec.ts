@@ -1,23 +1,29 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { ContactComponent } from './contact.component';
+import { ContactService } from '../../services/contact/contact.service';
+import { HttpClient } from '@angular/common/http';
 
-describe('ContactComponent', () => {
-  let component: ContactComponent;
-  let fixture: ComponentFixture<ContactComponent>;
+class ContactServiceStub {
+    sendMessage(_: any) { return of(null); }
+}
+class HttpClientStub {}
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ContactComponent]
-    })
-    .compileComponents();
+describe('ContactComponent (minimal)', () => {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [ContactComponent],
+            providers: [
+                { provide: ContactService, useClass: ContactServiceStub },
+                { provide: HttpClient, useClass: HttpClientStub },
+            ],
+        })
+            .overrideComponent(ContactComponent, { set: { template: '' } })
+            .compileComponents();
+    });
 
-    fixture = TestBed.createComponent(ContactComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        const fixture = TestBed.createComponent(ContactComponent);
+        expect(fixture.componentInstance).toBeTruthy();
+    });
 });

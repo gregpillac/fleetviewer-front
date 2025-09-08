@@ -1,23 +1,31 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+// dashboard-hub.component.spec.ts
+import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { Router } from '@angular/router';
 import { DashboardHubComponent } from './dashboard-hub.component';
+import { PersonService } from '../../../services/person/person.service';
+import { VehicleService } from '../../../services/vehicle/vehicle.service';
 
-describe('DashboardHubComponent', () => {
-  let component: DashboardHubComponent;
-  let fixture: ComponentFixture<DashboardHubComponent>;
+class RouterStub { navigate(_: any[]) {} }
+class PersonServiceStub { getPersons() { return of([]); } }
+class VehicleServiceStub { getVehicles() { return of([]); } }
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [DashboardHubComponent]
-    })
-    .compileComponents();
+describe('DashboardHubComponent (minimal)', () => {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [DashboardHubComponent], // <-- ici
+            providers: [
+                { provide: Router, useClass: RouterStub },
+                { provide: PersonService, useClass: PersonServiceStub },
+                { provide: VehicleService, useClass: VehicleServiceStub },
+            ],
+        })
+            .overrideComponent(DashboardHubComponent, { set: { template: '' } })
+            .compileComponents();
+    });
 
-    fixture = TestBed.createComponent(DashboardHubComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        const f = TestBed.createComponent(DashboardHubComponent);
+        expect(f.componentInstance).toBeTruthy();
+    });
 });

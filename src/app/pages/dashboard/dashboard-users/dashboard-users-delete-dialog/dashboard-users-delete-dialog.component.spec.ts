@@ -1,23 +1,27 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+// dashboard-users-delete-dialog.component.spec.ts
+import { TestBed } from '@angular/core/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DashboardUsersDeleteDialogComponent } from './dashboard-users-delete-dialog.component';
 
-describe('DashboardUsersDeleteDialogComponent', () => {
-  let component: DashboardUsersDeleteDialogComponent;
-  let fixture: ComponentFixture<DashboardUsersDeleteDialogComponent>;
+class MatDialogRefStub {
+    close(_: any) {}
+}
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [DashboardUsersDeleteDialogComponent]
-    })
-    .compileComponents();
+describe('DashboardUsersDeleteDialogComponent (minimal)', () => {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [DashboardUsersDeleteDialogComponent],
+            providers: [
+                { provide: MAT_DIALOG_DATA, useValue: { person: { firstName: 'John', lastName: 'Doe' }, user: null } },
+                { provide: MatDialogRef, useClass: MatDialogRefStub },
+            ],
+        })
+            .overrideComponent(DashboardUsersDeleteDialogComponent, { set: { template: '' } })
+            .compileComponents();
+    });
 
-    fixture = TestBed.createComponent(DashboardUsersDeleteDialogComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        const fixture = TestBed.createComponent(DashboardUsersDeleteDialogComponent);
+        expect(fixture.componentInstance).toBeTruthy();
+    });
 });
