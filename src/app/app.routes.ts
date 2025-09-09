@@ -14,6 +14,9 @@ import {DashboardUsersFormComponent} from './pages/dashboard/dashboard-users/das
 import {LegalComponent} from './pages/legal/legal.component';
 import { FormulesComponent } from './pages/formules/formules.component';
 import { ContactComponent } from './pages/contact/contact.component';
+import {
+    DashboardReservationsComponent
+} from './pages/dashboard/dashboard-reservations/dashboard-reservations.component';
 
 export const routes: Routes = [
     { title: 'FleetViewer - Accueil',path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
@@ -27,7 +30,8 @@ export const routes: Routes = [
             { title: 'FleetViewer | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent },
             { title: 'FleetViewer | Véhicules', path: 'vehicles', component: DashboardVehiclesComponent },
             { title: 'FleetViewer | Ajouter un véhicule', path: 'vehicles/add', component: DashboardVehiclesFormComponent },
-            { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: DashboardVehiclesFormComponent }
+            { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: DashboardVehiclesFormComponent },
+            { title: 'FleetViewer | Réservations', path: 'reservations', component: DashboardReservationsComponent }
         ]
     },
     { title: 'FleetViewer - Demande de trajet',path: 'search-ride', component: RideSearchComponent, canActivate: [canActivateWithRole()] },

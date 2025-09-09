@@ -1,0 +1,95 @@
+/* Bloc billet */
+.period-ticket {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 8px;
+    border: 1px solid #e6ebf1;
+    border-radius: 10px;
+    background: #fbfcfe;
+    position: relative;
+    font-feature-settings: "tnum" 1; /* chiffres à chasse fixe */
+}
+
+/* Côtés départ/arrivée */
+.period-side {
+    min-width: 132px; /* pour l’alignement stable */
+    display: flex;
+    flex-direction: column; /* date au-dessus de l'heure */
+    align-items: flex-start;
+    line-height: 1.15;
+
+    .date {
+        font-weight: 600;
+        font-size: 0.90rem;
+        color: #1f2d3d;
+        background: #eef3ff;
+        border: 1px solid #d8e4ff;
+        padding: 2px 6px;
+        border-radius: 6px;
+        white-space: nowrap;
+        text-transform: lowercase; /* lundi, mardi, ... */
+    }
+
+    .time {
+        margin-top: 4px;
+        font-size: 1.12rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: 0.2px;
+    }
+}
+
+/* Timeline centrale */
+.timeline {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 auto;
+    height: 18px;
+
+    .bar {
+        display: block;            /* 👈 évite inline width auto */
+        flex: 1 1 auto;            /* 👈 s’étire */
+        min-width: 24px;           /* 👈 évite 0px */
+        height: 3px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #c8d9ff 0%, #8bb1ff 100%);
+        box-shadow: inset 0 0 0 1px rgba(69, 107, 189, 0.08);
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #1976d2; /* bleu Material */
+        box-shadow: 0 0 0 2px #e7f1ff;
+    }
+
+    .duration {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0 10px;
+        height: 22px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #2b3a42;
+        background: #f4f7fb;
+        border: 1px solid #e4eaf3;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+}
+
+/* Responsive : rétrécir un peu les blocs sur petits écrans */
+@media (max-width: 960px) {
+    .period-side { min-width: 112px; }
+    .period-side .date { font-size: 0.85rem; }
+    .period-side .time { font-size: 1rem; }
+    .timeline .duration { font-size: 0.70rem; }
+}

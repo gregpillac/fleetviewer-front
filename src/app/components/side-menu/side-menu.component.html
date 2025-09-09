@@ -77,7 +77,7 @@
                 </mat-nav-list>
             </mat-expansion-panel>
 
-            <!-- Réservations
+            <!-- Réservations -->
             <mat-expansion-panel class="child"  hideToggle>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
@@ -86,23 +86,23 @@
                     </mat-panel-title>
                 </mat-expansion-panel-header>
                 <mat-nav-list class="list-expanded" disableRipple>
-                    <a mat-list-item routerLink="/dashboard/bookings" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <a mat-list-item routerLink="/dashboard/reservations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <span>Liste des réservations</span>
                     </a>
-                    <a mat-list-item routerLink="/dashboard/bookings/review" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <a mat-list-item routerLink="/dashboard/reservations/pending" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <div class="list-title">
                             <mat-icon>search</mat-icon>
                             <span>Traiter les demandes</span>
                         </div>
                     </a>
-                    <a mat-list-item routerLink="/dashboard/bookings/add" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <a mat-list-item routerLink="/dashboard/reservations/add" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <div class="list-title">
                             <mat-icon>add_circle</mat-icon>
                             <span>Nouvelle réservation</span>
                         </div>
                     </a>
                 </mat-nav-list>
-            </mat-expansion-panel> -->
+            </mat-expansion-panel>
 
             <mat-divider></mat-divider>
 
