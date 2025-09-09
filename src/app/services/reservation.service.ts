@@ -42,4 +42,8 @@ export class ReservationService {
     deleteReservation(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
+
+    getCompatibleReservations(reservation: Reservation):Observable<Reservation[]> {
+        return this.http.post<Reservation[]>(`${this.apiUrl}/compatibles`, reservation);
+    }
 }

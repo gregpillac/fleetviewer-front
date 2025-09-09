@@ -135,6 +135,8 @@ export class RideSearchComponent implements OnInit {
   }
 
 
+
+  // Action ADMIN ou MANAGER permettant de reserver directement un vehicule
   onReserveVehicle() {
     //this.checkAlternativeCarPool();
       const r = this.reservationForm.value;
@@ -167,7 +169,7 @@ export class RideSearchComponent implements OnInit {
       });
   }
 
-
+  // Action USER permettant de demander l'attribution d un vehicule
   onMakeReservationRequest() {
       //this.checkAlternativeCarPool();
       const r = this.reservationForm.value;
@@ -191,10 +193,21 @@ export class RideSearchComponent implements OnInit {
           driverId: Number(r.driverId)
       } as Reservation;
 
-      this.reservationService.createReservation(payload).subscribe({
-          next: (res) => { console.log('Réservation créée', res); // TODO: feedback UI / navigation
-          },
-          error: (err) => { console.error('Erreur création réservation', err); // TODO: afficher erreurs de validation renvoyées par le back
+      // check si il y des trajets confirmés et compatibles (meme depart/arrivee/jour)
+      this.reservationService.getCompatibleReservations(payload).subscribe(compatibleReservations => {
+          if (compatibleReservations.length > 0) {
+              // si oui, proposer de co-voiturer (dialog)
+              // TODO: affichage dialog avec possibilité de co-voiturer
+              this.checkAlternativeCarPool();
+              console.log('Il y a des trajets compatibles', compatibleReservations);
+          } else {
+              // si non, creer la demande de réservation (status=PENDING)
+              this.reservationService.createReservation(payload).subscribe({
+                  next: (res) => { console.log('Réservation créée', res); // TODO: feedback UI / navigation
+                  },
+                  error: (err) => { console.error('Erreur création réservation', err); // TODO: afficher erreurs de validation renvoyées par le back
+                  }
+              });
           }
       });
   }
