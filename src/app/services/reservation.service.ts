@@ -17,4 +17,7 @@ export class ReservationService {
         return this.http.post<Reservation>(this.apiUrl, reservation);
     }
 
+    getCompatibleReservations(reservation: Reservation):Observable<Reservation[]> {
+        return this.http.post<Reservation[]>(`${this.apiUrl}/compatibles`, reservation);
+    }
 }
