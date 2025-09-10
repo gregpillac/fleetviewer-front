@@ -69,8 +69,4 @@ export class AppComponent implements OnInit {
     get isManager(): boolean {
         return this.authService.isManager();
     }
-
-    get isUser(): boolean {
-        return this.authService.isUser();
-    }
 }

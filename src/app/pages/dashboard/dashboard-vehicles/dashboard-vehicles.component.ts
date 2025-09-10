@@ -15,6 +15,7 @@ import {MatProgressBar} from '@angular/material/progress-bar';
 import {MatPaginator, MatPaginatorIntl} from '@angular/material/paginator';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltip} from '@angular/material/tooltip';
+import {AuthService} from '../../../services/auth/auth.service';
 
 type Row = Vehicle & {
     place?: Place | null;
@@ -43,7 +44,8 @@ export class DashboardVehiclesComponent implements OnInit {
     pageSizeOptions = [10, 25, 50, 100];
 
     // Table
-    displayedColumns = ['vehicle', 'licensePlate', 'mileage', 'place', 'keys', 'actions'];
+    displayedColumns!: string[];
+    placeHolderFilter!: string;
     dataSource = new MatTableDataSource<Row>([]);
     loading = true;
 
@@ -62,8 +64,17 @@ export class DashboardVehiclesComponent implements OnInit {
         private vehicleService: VehicleService,
         private keyService: VehicleKeyService,
         private placeService: PlaceService,
+        private authService: AuthService,
         private router: Router
-    ) {}
+    ) {
+        if(this.isAdmin) {
+            this.displayedColumns = ['vehicle', 'licensePlate', 'mileage', 'place', 'keys', 'actions'];
+            this.placeHolderFilter = "Véhicule, immatriculation, site…";
+        } else {
+            this.displayedColumns = ['vehicle', 'licensePlate', 'mileage', 'keys', 'actions'];
+            this.placeHolderFilter = "Véhicule, immatriculation…";
+        }
+    }
 
     ngOnInit(): void {
         // Filtrage multi-colonnes (marque, modèle, immat, lieu)
@@ -72,7 +83,7 @@ export class DashboardVehiclesComponent implements OnInit {
             const haystack = [
                 `${row.brand ?? ''} ${row.model ?? ''}`,
                 row.licensePlate,
-                row.place?.name
+                this.isManager ? null : row.place?.name,
             ]
                 .map(t)
                 .join(' ');
@@ -86,7 +97,7 @@ export class DashboardVehiclesComponent implements OnInit {
         this.loading = true;
 
         forkJoin({
-            vehicles: this.vehicleService.getVehicles(),
+            vehicles: this.isAdmin ? this.vehicleService.getVehicles() : this.vehicleService.getVehiclesByPlace(this.currentUserPlace),
             keys: this.keyService.getKeys(),
             places: this.placeService.getPlaces()
         }).subscribe({
@@ -204,6 +215,18 @@ export class DashboardVehiclesComponent implements OnInit {
         this.keyService.getKeyByVehicle(r.id).subscribe(ks => {
             this.rowKeysCache.set(r.id, ks || []);
         });
+    }
+
+    get isAdmin(): boolean {
+        return this.authService.isAdmin();
+    }
+
+    get isManager(): boolean {
+        return this.authService.isManager();
+    }
+
+    get currentUserPlace(): string {
+        return this.authService.getCurrentUser()?.person?.place?.name ?? '';
     }
 }
 

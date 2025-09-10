@@ -17,6 +17,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { forkJoin, of, from, concat } from 'rxjs';
 import { catchError, switchMap, tap, concatMap, toArray, last, mapTo } from 'rxjs/operators';
+import {AuthService} from '../../../../services/auth/auth.service';
 
 type KeyFormValue = {
     id: number | null;
@@ -68,14 +69,22 @@ export class DashboardVehiclesFormComponent implements OnInit {
         private router: Router,
         private vehicleService: VehicleService,
         private placeService: PlaceService,
-        private vehicleKeyService: VehicleKeyService
+        private vehicleKeyService: VehicleKeyService,
+        private authService: AuthService
     ) {}
 
     ngOnInit() {
         this.initForm();
 
-        this.placeService.getPlaces().subscribe(places => this.places = places);
-
+        this.placeService.getPlaces().subscribe(places => {
+            this.places = places;
+            // si manager, on force la valeur et on désactive
+            if (this.isManager) {
+                const userPlace = this.currentUserPlaceId;
+                this.vehicleForm.get('placeId')!.setValue(userPlace);
+                this.vehicleForm.get('placeId')!.disable(); // verrouille le champ
+            }
+        });
         // Édition : charge véhicule + clés
         this.route.paramMap.subscribe(params => {
             const id = params.get('id');
@@ -118,7 +127,7 @@ export class DashboardVehiclesFormComponent implements OnInit {
             brand: ['', Validators.required],
             model: ['', Validators.required],
             licensePlate: ['', Validators.required],
-            seats: [1, [Validators.required, Validators.min(1)]],
+            seats: [1, [Validators.required, Validators.min(1), Validators.max(9)]],
             isRoadworthy: [true, Validators.required],
             isInsuranceValid: [true, Validators.required],
             mileage: [0, [Validators.required, Validators.min(0)]],
@@ -325,5 +334,17 @@ export class DashboardVehiclesFormComponent implements OnInit {
 
     get sortedKeysValue(): { id?: number|null; tagLabel?: string|null; placeId?: number|null }[] {
         return this.sortedKeyControls.map(c => c.value);
+    }
+
+    get isAdmin(): boolean {
+        return this.authService.isAdmin();
+    }
+
+    get isManager(): boolean {
+        return this.authService.isManager();
+    }
+
+    get currentUserPlaceId(): number | null {
+        return this.authService.getCurrentUser()?.person?.place?.id ?? null;
     }
 }

@@ -14,9 +14,10 @@ import {DashboardUsersFormComponent} from './pages/dashboard/dashboard-users/das
 import {LegalComponent} from './pages/legal/legal.component';
 import { FormulesComponent } from './pages/formules/formules.component';
 import { ContactComponent } from './pages/contact/contact.component';
+import {DashboardReservationsComponent} from './pages/dashboard/dashboard-reservations/dashboard-reservations.component';
 import {
-    DashboardReservationsComponent
-} from './pages/dashboard/dashboard-reservations/dashboard-reservations.component';
+    PendingReservationsComponent
+} from './pages/dashboard/dashboard-reservations/pending-reservations/pending-reservations.component';
 
 export const routes: Routes = [
     { title: 'FleetViewer - Accueil',path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
@@ -26,15 +27,17 @@ export const routes: Routes = [
         children: [
             { path: '', component: DashboardHubComponent }, // hub d'accueil pour les dashboard
             { title: 'FleetViewer | Utilisateurs', path: 'users', component: DashboardUsersComponent },
-            { title: 'FleetViewer | Ajouter un utilisateur', path: 'users/add', component: DashboardUsersFormComponent },
-            { title: 'FleetViewer | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent },
+            { title: 'FleetViewer | Ajouter un utilisateur', path: 'users/add', component: DashboardUsersFormComponent, canActivate: [canActivateWithRole(['ROLE_ADMIN'])] },
+            { title: 'FleetViewer | Modifier un utilisateur', path: 'users/:id', component: DashboardUsersFormComponent, canActivate: [canActivateWithRole(['ROLE_ADMIN'])] },
             { title: 'FleetViewer | Véhicules', path: 'vehicles', component: DashboardVehiclesComponent },
             { title: 'FleetViewer | Ajouter un véhicule', path: 'vehicles/add', component: DashboardVehiclesFormComponent },
             { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: DashboardVehiclesFormComponent },
-            { title: 'FleetViewer | Réservations', path: 'reservations', component: DashboardReservationsComponent }
+            { title: 'FleetViewer | Réservations', path: 'reservations', component: DashboardReservationsComponent },
+            { title: 'FleetViewer | Traiter les demandes', path: 'reservations/demandes', component: PendingReservationsComponent },
+            { title: 'FleetViewer | Nouvelle réservation', path: 'reservations/add', component: RideSearchComponent }
         ]
     },
-    { title: 'FleetViewer - Demande de trajet',path: 'search-ride', component: RideSearchComponent, canActivate: [canActivateWithRole()] },
+    { title: 'FleetViewer - Demande de réservation',path: 'search-ride', component: RideSearchComponent, canActivate: [canActivateWithRole()] },
 
     { title: 'FleetViewer - Formules', path: 'formules', component: FormulesComponent },
     { title: 'FleetViewer - Contact', path: 'contact', component: ContactComponent },

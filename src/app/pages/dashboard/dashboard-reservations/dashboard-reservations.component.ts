@@ -19,6 +19,8 @@ import { VehicleService } from '../../../services/vehicle/vehicle.service';
 import { Reservation } from '../../../models/reservation';
 import { Person } from '../../../models/person.model';
 import { Vehicle } from '../../../models/vehicle';
+import {AuthService} from '../../../services/auth/auth.service';
+import {Place} from '../../../models/place.model';
 
 type Row = Reservation & {
     driver?: Person | null;
@@ -26,7 +28,6 @@ type Row = Reservation & {
     driverLabel?: string;
     vehicleLabel?: string;
     statusLabel?: string;
-    periodLabel?: string;
 };
 
 @Component({
@@ -77,6 +78,7 @@ export class DashboardReservationsComponent implements OnInit {
         private reservationService: ReservationService,
         private personService: PersonService,
         private vehicleService: VehicleService,
+        private authService: AuthService,
         private router: Router,
         private datePipe: DatePipe
     ) {}
@@ -85,7 +87,7 @@ export class DashboardReservationsComponent implements OnInit {
         this.dataSource.filterPredicate = (row, filter) => {
             const t = (v: any) => (v ?? '').toString().toLowerCase();
             const haystack = [
-                row.vehicleLabel, row.driverLabel, row.statusLabel, row.periodLabel
+                row.vehicleLabel, row.driverLabel, row.statusLabel
             ].map(t).join(' ');
             return haystack.includes(t(filter));
         };
@@ -101,43 +103,64 @@ export class DashboardReservationsComponent implements OnInit {
             next: (reservations) => {
                 const rs = reservations ?? [];
 
-                // IDs uniques
+                // 1) Collecte des IDs (cast -> number)
                 const driverIds = Array.from(new Set(
-                    rs.map(r => (r as any).driverId ?? (r as any).driver_id)
-                        .filter((x: any): x is number => Number.isFinite(x))
+                    rs.map(r => Number((r as any).driverId ?? (r as any).driver_id))
+                        .filter(n => Number.isFinite(n))
                 ));
                 const vehicleIds = Array.from(new Set(
-                    rs.map(r => (r as any).vehicleId ?? (r as any).vehicle_id)
-                        .filter((x: any): x is number => Number.isFinite(x))
+                    rs.map(r => Number((r as any).vehicleId ?? (r as any).vehicle_id))
+                        .filter(n => Number.isFinite(n))
                 ));
 
                 const driverIdsToFetch  = driverIds.filter(id => !this.personCache.has(id));
                 const vehicleIdsToFetch = vehicleIds.filter(id => !this.vehicleCache.has(id));
 
+                // 2) On rend forkJoin "infaillible" (renvoie des maps vides au pire)
+                const safePersons$  = this.fetchPersonsByIds(driverIdsToFetch).pipe(catchError(() => of(new Map<number, Person>())));
+                const safeVehicles$ = this.fetchVehiclesByIds(vehicleIdsToFetch).pipe(catchError(() => of(new Map<number, Vehicle>())));
+
                 forkJoin({
-                    personsMap:  this.fetchPersonsByIds(driverIdsToFetch),
-                    vehiclesMap: this.fetchVehiclesByIds(vehicleIdsToFetch),
+                    personsMap:  safePersons$,
+                    vehiclesMap: safeVehicles$
                 }).subscribe({
                     next: ({ personsMap, vehiclesMap }) => {
                         personsMap.forEach((p, id) => this.personCache.set(id, p));
                         vehiclesMap.forEach((v, id) => this.vehicleCache.set(id, v));
 
-                        const rows: Row[] = rs.map((r) => {
-                            const driverId  = (r as any).driverId  ?? (r as any).driver_id;
-                            const vehicleId = (r as any).vehicleId ?? (r as any).vehicle_id;
+                        // 3) Filtrage par site si manager
+                        const userPlaceId = this.currentUserPlace?.id; // peut être null
+                        const filtered = (this.isAdmin || userPlaceId == null)
+                            ? rs
+                            : rs.filter(r => {
+                                const vid = Number((r as any).vehicleId ?? (r as any).vehicle_id);
+                                if (!Number.isFinite(vid)) return false;
+                                const v = this.vehicleCache.get(vid);
+                                return !!v && Number(v.placeId) === Number(userPlaceId);
+                            });
 
-                            const driver  = this.personCache.get(driverId)  ?? null;
-                            const vehicle = this.vehicleCache.get(vehicleId) ?? null;
-                            const period = this.buildPeriodView(r);
+                        // 4) Construction des rows
+                        const rows: Row[] = filtered.map((r) => {
+                            const driverId  = Number((r as any).driverId  ?? (r as any).driver_id);
+                            const vehicleId = Number((r as any).vehicleId ?? (r as any).vehicle_id);
+
+                            const driver  = Number.isFinite(driverId)  ? (this.personCache.get(driverId)  ?? null) : null;
+                            const vehicle = Number.isFinite(vehicleId) ? (this.vehicleCache.get(vehicleId) ?? null) : null;
+                            const period  = this.buildPeriodView(r);
+
+                            const rawStatus = (r as any).reservationStatus
+                                ?? (r as any).reservation_status
+                                ?? (r as any).status;
+                            const status = (rawStatus ?? '').toString().trim();
 
                             return {
                                 ...r,
                                 ...period,
                                 driver,
                                 vehicle,
-                                driverLabel: this.personLabel(driver) || (driverId ? `#${driverId}` : '—'),
-                                vehicleLabel: this.vehicleLabel(vehicle) || (vehicleId ? `#${vehicleId}` : '—'),
-                                statusLabel: this.statusLabel((r as any).reservationStatus ?? (r as any).reservation_status)
+                                driverLabel: this.personLabel(driver) || (Number.isFinite(driverId) ? `#${driverId}` : '—'),
+                                vehicleLabel: this.vehicleLabel(vehicle) || (Number.isFinite(vehicleId) ? `#${vehicleId}` : '—'),
+                                statusLabel: this.statusLabel(status)
                             };
                         });
 
@@ -145,26 +168,37 @@ export class DashboardReservationsComponent implements OnInit {
                         this.dataSource.data = rows;
                         this.loading = false;
                     },
+
+                    // 5) Fallback : pas de caches → impossible de déduire le placeId sans vehicle
+                    //    => soit on affiche tout (plus simple), soit on masque et on affiche un message.
                     error: () => {
-                        const rows: Row[] = rs.map((r) => {
-                            const driverId  = (r as any).driverId  ?? (r as any).driver_id;
-                            const vehicleId = (r as any).vehicleId ?? (r as any).vehicle_id;
+                        // Afficher tout avec labels fallback
+                        const rows: Row[] = (reservations ?? []).map((r) => {
+                            const driverId  = Number((r as any).driverId  ?? (r as any).driver_id);
+                            const vehicleId = Number((r as any).vehicleId ?? (r as any).vehicle_id);
+
+                            const rawStatus = (r as any).reservationStatus
+                                ?? (r as any).reservation_status
+                                ?? (r as any).status;
+                            const status = (rawStatus ?? '').toString().trim();
+
                             return {
                                 ...r,
                                 driver: null,
                                 vehicle: null,
-                                driverLabel: driverId ? `#${driverId}` : '—',
-                                vehicleLabel: vehicleId ? `#${vehicleId}` : '—',
-                                statusLabel: this.statusLabel((r as any).reservationStatus ?? (r as any).reservation_status),
-                                periodLabel: this.periodLabel(r),
+                                driverLabel: Number.isFinite(driverId)  ? `#${driverId}` : '—',
+                                vehicleLabel: Number.isFinite(vehicleId) ? `#${vehicleId}` : '—',
+                                statusLabel: this.statusLabel(status)
                             };
                         });
+
                         rows.sort(this.compareRows);
                         this.dataSource.data = rows;
                         this.loading = false;
                     }
                 });
             },
+
             error: () => {
                 this.dataSource.data = [];
                 this.loading = false;
@@ -264,31 +298,13 @@ export class DashboardReservationsComponent implements OnInit {
         return parts.join(' · ') || '—';
     }
 
-    private periodLabel(r: any): string {
-        const start = new Date(r.startDate ?? r.start_date);
-        const end   = new Date(r.endDate   ?? r.end_date);
-
-        const sameDay = start.toDateString() === end.toDateString();
-
-        const fmtDateLong = (d: Date) =>
-            this.datePipe.transform(d, 'd MMMM y', 'fr-FR') ?? '';
-
-        const fmtTime = (d: Date) =>
-            this.datePipe.transform(d, 'HH:mm') ?? '';
-
-        if (sameDay) {
-            return `${fmtDateLong(start)} · ${fmtTime(start)} – ${fmtTime(end)}`;
-        }
-        return `${fmtDateLong(start)} ${fmtTime(start)} – ${fmtDateLong(end)} ${fmtTime(end)}`;
-    }
-
     private buildPeriodView(r: any) {
         const start = new Date(r.startDate ?? r.start_date);
         const end   = new Date(r.endDate   ?? r.end_date);
 
-        // FR longue: "lundi 15 septembre 2025"
+        // FR format court: "15/09/2025"
         const fmtDateLong = (d: Date) =>
-            this.datePipe.transform(d, 'EEEE d MMMM y', 'fr-FR') ?? '';
+            this.datePipe.transform(d, 'dd/MM/yyyy', 'fr-FR') ?? '';
 
         // Heures: "08:30"
         const fmtTime = (d: Date) =>
@@ -298,7 +314,21 @@ export class DashboardReservationsComponent implements OnInit {
         const h = Math.floor(durationMs / 3_600_000);
         const m = Math.floor((durationMs % 3_600_000) / 60_000);
         const pad = (n: number) => n.toString().padStart(2, '0');
-        const durationLabel = `${h} h ${pad(m)}`;
+
+        let durationLabel: string;
+
+        if (h % 24 === 0 && m === 0) {
+            // Durée exacte en jours
+            const days = h / 24;
+            durationLabel = `${days} j`;
+        } else if (h >= 24) {
+            // Plus d'un jour mais pas "pile" -> on affiche +N j
+            const days = Math.floor(h / 24);
+            durationLabel = `+ ${days} j`;
+        } else {
+            // Moins de 24h → format heures et minutes
+            durationLabel = `${h} h ${pad(m)}`;
+        }
 
         return {
             periodStartDateLong: fmtDateLong(start),
@@ -311,13 +341,25 @@ export class DashboardReservationsComponent implements OnInit {
 
     statusLabel(status?: string): string {
         switch ((status ?? '').toUpperCase()) {
-            case 'PENDING':     return 'En attente';
-            case 'APPROVED':    return 'Validée';
+            case 'PENDING':     return 'En attente de validation';
+            case 'CONFIRMED':    return 'Confirmée';
             case 'REJECTED':    return 'Refusée';
             case 'CANCELLED':   return 'Annulée';
-            case 'UNAVAILABLE': return 'Indisponibilité';
+            case 'UNAVAILABLE': return 'Indisponible';
             default:            return '—';
         }
+    }
+
+    get isAdmin(): boolean {
+        return this.authService.isAdmin();
+    }
+
+    get isManager(): boolean {
+        return this.authService.isManager();
+    }
+
+    get currentUserPlace(): Place | null {
+        return this.authService.getCurrentUser()?.person?.place ?? null;
     }
 }
 

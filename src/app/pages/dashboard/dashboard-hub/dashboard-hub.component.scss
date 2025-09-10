@@ -1,18 +1,25 @@
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
+    gap: 3rem;
     margin-top: 2rem;
-    padding: 0 1rem;
+    max-width: 1000px;
+    padding: 1rem;
+}
+
+h2 {
+    text-align: center;
 }
 
 .panel {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap: 10px;
     background-color: #ffffff;
     border-radius: 8px;
-    padding: 1.5rem;
+    padding: 1.5rem 3rem;
     text-align: center;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -24,9 +31,28 @@
         font-weight: 600;
         color: #3a3a3a;
     }
+
+    div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        color: #1a4268;
+
+        span {
+            font-size: 25px;
+        }
+
+        mat-icon {
+            font-size: 40px;
+            height: 40px;
+            width: 40px;
+        }
+    }
 }
 
-.tile:hover {
+.panel:hover {
     background-color: #eaeaea;
     transform: scale(1.05);
 }
+

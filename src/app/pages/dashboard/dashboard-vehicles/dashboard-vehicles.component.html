@@ -3,8 +3,8 @@
     <!-- Toolbar -->
     <div class="table-toolbar">
         <h1>
-            Véhicules
-            <ng-container *ngIf="!loading && dataSource.filteredData.length as n">({{ n }})</ng-container>
+            <span>{{ isAdmin ? 'Véhicules' : 'Véhicules | ' + currentUserPlace }}</span>
+            <span *ngIf="!loading && dataSource.filteredData.length as n"> ({{ n }})</span>
         </h1>
 
         <div class="toolbar-actions">
@@ -14,7 +14,7 @@
                     matInput
                     #searchInput
                     (keyup)="applyFilter(searchInput.value)"
-                    placeholder="Véhicule, immatriculation, site…" />
+                    [placeholder]="placeHolderFilter" />
                 <button
                     mat-icon-button
                     matSuffix
@@ -56,7 +56,7 @@
                 </ng-container>
 
                 <!-- Site -->
-                <ng-container matColumnDef="place">
+                <ng-container matColumnDef="place" *ngIf="isAdmin">
                     <th mat-header-cell *matHeaderCellDef>Site de rattachement</th>
                     <td mat-cell *matCellDef="let r">{{ r.place.name }}</td>
                 </ng-container>

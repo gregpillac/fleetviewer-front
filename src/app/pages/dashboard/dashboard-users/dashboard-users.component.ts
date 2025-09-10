@@ -19,6 +19,7 @@ import { DashboardUsersDeleteDialogComponent } from './dashboard-users-delete-di
 import {MatPaginator, MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTooltip} from '@angular/material/tooltip';
+import {AuthService} from '../../../services/auth/auth.service';
 
 type Row = Person & {
     account?: User | null;
@@ -59,16 +60,26 @@ export class DashboardUsersComponent implements OnInit {
     pageSizeOptions = [10, 25, 50, 100];
 
     // Table
-    displayedColumns = ['name', 'email', 'phone', 'place', 'username', 'role', 'actions'];
+    displayedColumns!: string[];
+    placeHolderFilter!: string;
     dataSource = new MatTableDataSource<Row>([]);
     loading = true;
 
     constructor(
         private personService: PersonService,
         private userService: UserService,
+        private authService: AuthService,
         private router: Router,
         private dialog: MatDialog
-    ) {}
+    ) {
+        if(this.isAdmin) {
+            this.displayedColumns = ['name', 'email', 'phone', 'place', 'username', 'role', 'actions'];
+            this.placeHolderFilter = "Nom, email, téléphone, site, compte, rôle…";
+        } else {
+            this.displayedColumns = ['name', 'email', 'phone', 'username', 'role'];
+            this.placeHolderFilter = "Nom, email, téléphone, compte, rôle…";
+        }
+    }
 
     ngOnInit(): void {
         // prédicat de filtrage (multi-colonnes)
@@ -78,7 +89,7 @@ export class DashboardUsersComponent implements OnInit {
                 `${row.firstName ?? ''} ${row.lastName ?? ''}`,
                 row.email,
                 row.phone,
-                row.place?.name,
+                this.isManager ? null : row.place?.name,
                 row.account?.username,
                 row.roleLabel,
             ]
@@ -94,7 +105,7 @@ export class DashboardUsersComponent implements OnInit {
     private fetchRows(): void {
         this.loading = true;
         forkJoin({
-            persons: this.personService.getPersons(),
+            persons: this.isAdmin ? this.personService.getPersons() : this.personService.getPersonsByPlace(this.currentUserPlace),
             users: this.userService.getUsers(),
         }).subscribe({
             next: ({ persons, users }) => {
@@ -247,6 +258,19 @@ export class DashboardUsersComponent implements OnInit {
                 return '—';
         }
     }
+
+    get isAdmin(): boolean {
+        return this.authService.isAdmin();
+    }
+
+    get isManager(): boolean {
+        return this.authService.isManager();
+    }
+
+    get currentUserPlace(): string {
+        return this.authService.getCurrentUser()?.person?.place?.name ?? '';
+    }
+
 }
 
 // Labels FR

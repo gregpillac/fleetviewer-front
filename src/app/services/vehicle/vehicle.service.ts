@@ -3,59 +3,64 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {CreateVehicle, Vehicle} from '../../models/vehicle';
+import {Person} from '../../models/person.model';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class VehicleService {
 
-  private apiUrl = environment.apiBaseUrl + '/api/vehicles';
+    private apiUrl = environment.apiBaseUrl + '/api/vehicles';
 
-  constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) {}
 
-  /**
-   * Récupère la liste de tous les véhicules.
-   * @returns Un Observable contenant un tableau de véhicules.
-   */
-  getVehicles(): Observable<Vehicle[]> {
+    /**
+    * Récupère la liste de tous les véhicules.
+    * @returns Un Observable contenant un tableau de véhicules.
+    */
+    getVehicles(): Observable<Vehicle[]> {
     return this.http.get<Vehicle[]>(this.apiUrl);
-  }
+    }
 
-  /**
-   * Récupère un véhicule par son identifiant.
-   * @param id L'identifiant du véhicule.
-   * @returns Un Observable contenant le véhicule.
-   */
-  getVehicleById(id: number): Observable<Vehicle> {
-    return this.http.get<Vehicle>(`${this.apiUrl}/${id}`);
-  }
+    getVehiclesByPlace(placeName: string): Observable<Vehicle[]> {
+        return this.http.get<Vehicle[]>(`${this.apiUrl}/place/${encodeURIComponent(placeName)}`);
+    }
 
-  /**
-   * Crée un nouveau véhicule.
-   * @param vehicle Les données du véhicule à créer.
-   * @returns Un Observable contenant le nouveau véhicule.
-   */
-  createVehicle(vehicle: CreateVehicle): Observable<Vehicle> {
-    return this.http.post<Vehicle>(this.apiUrl, vehicle);
-  }
+    /**
+    * Récupère un véhicule par son identifiant.
+    * @param id L'identifiant du véhicule.
+    * @returns Un Observable contenant le véhicule.
+    */
+    getVehicleById(id: number): Observable<Vehicle> {
+        return this.http.get<Vehicle>(`${this.apiUrl}/${id}`);
+    }
 
-  /**
-   * Met à jour un véhicule existant.
-   * @param vehicleId
-   * @param vehicle Les données du véhicule à mettre à jour.
-   * @returns Un Observable contenant le véhicule mis à jour.
-   */
-  updateVehicle(vehicleId: number, vehicle: Vehicle): Observable<Vehicle> {
-    return this.http.put<Vehicle>(`${this.apiUrl}/${vehicleId}`, vehicle);
-  }
+    /**
+    * Crée un nouveau véhicule.
+    * @param vehicle Les données du véhicule à créer.
+    * @returns Un Observable contenant le nouveau véhicule.
+    */
+    createVehicle(vehicle: CreateVehicle): Observable<Vehicle> {
+        return this.http.post<Vehicle>(this.apiUrl, vehicle);
+    }
 
-  /**
-   * Supprime un véhicule par son identifiant.
-   * @param id L'identifiant du véhicule à supprimer.
-   * @returns Un Observable.
-   */
-  deleteVehicle(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
+    /**
+    * Met à jour un véhicule existant.
+    * @param vehicleId
+    * @param vehicle Les données du véhicule à mettre à jour.
+    * @returns Un Observable contenant le véhicule mis à jour.
+    */
+    updateVehicle(vehicleId: number, vehicle: Vehicle): Observable<Vehicle> {
+        return this.http.put<Vehicle>(`${this.apiUrl}/${vehicleId}`, vehicle);
+    }
+
+    /**
+    * Supprime un véhicule par son identifiant.
+    * @param id L'identifiant du véhicule à supprimer.
+    * @returns Un Observable.
+    */
+    deleteVehicle(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
 
 }
