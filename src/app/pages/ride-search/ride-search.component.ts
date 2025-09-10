@@ -105,7 +105,16 @@ export class RideSearchComponent implements OnInit {
           });
       }
 
-      // Si ADMIN, charger tous les VEHICULES, sinon, charger les véhicules du lieu de l'utilisateur
+      // Si ADMIN, charger tous les UTILISATEURS, sinon, charger les UTILISATEURS du lieu de l'utilisateur connecté
+      this.auth.currentUser$.pipe( filter((u): u is User => !!u),
+          take(1),
+          switchMap(user => this.isAdmin
+              ? this.personService.getPersons()
+              : this.personService.getPersonsByPlaceId(user!.person.place!.id)
+          )
+      ).subscribe(p => this.persons = p);
+
+      // Si ADMIN, charger tous les VEHICULES, sinon, charger les véhicules du lieu de l'utilisateur connecté
       this.auth.currentUser$.pipe( filter((u): u is User => !!u),
           take(1),
           switchMap(user => this.isAdmin

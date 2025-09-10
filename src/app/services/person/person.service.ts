@@ -16,6 +16,15 @@ export class PersonService {
         return this.http.get<Person[]>(this.apiUrl);
     }
 
+    /**
+     * Récupère la liste des personnes d'un lieu donné.
+     * @param placeId L'identifiant du lieu.
+     * @returns Un Observable contenant un tableau de personnes.
+     */
+    getPersonsByPlaceId(placeId: number): Observable<Person[]> {
+        return this.http.get<Person[]>(`${this.apiUrl}/byPlace${placeId}`);
+    }
+
     getPersonsByPlace(placeName: string): Observable<Person[]> {
         return this.http.get<Person[]>(`${this.apiUrl}/place/${encodeURIComponent(placeName)}`);
     }
