@@ -27,7 +27,7 @@ export class ReservationService {
 
     /** Récupère les réservations d’un conducteur par son id (liste sans points d’itinéraire) */
     getReservationsByDriverId(driverId: number): Observable<Reservation[]> {
-        return this.http.get<Reservation[]>(`${this.apiUrl}/driver/${driverId}`);
+        return this.http.get<Reservation[]>(`${this.apiUrl}/by-driver/${driverId}`);
     }
 
     getReservationsByStatus(status: Status, placeId?: number) {

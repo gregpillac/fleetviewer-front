@@ -82,29 +82,7 @@
                             </div>
                         </div>
                     </div>
-
-                    <button mat-icon-button class="expand-btn" (click)="toggleExpand(r); $event.stopPropagation()">
-                        <mat-icon>{{ expandedId === r.id ? 'expand_less' : 'expand_more' }}</mat-icon>
-                    </button>
                 </div>
-
-                <!-- BODY -->
-                <div class="body" *ngIf="expandedId === r.id">
-                    <div class="details">
-                        <div><b>Départ :</b> {{ r.startDate | date:'full':'':'fr-FR' }}</div>
-                        <div><b>Retour :</b> {{ r.endDate   | date:'full':'':'fr-FR' }}</div>
-                        <div><b>Itinéraire :</b>
-                            {{ (placeName$(r.departureId) | async) || ('Lieu #' + r.departureId) }}
-                            →
-                            {{ (placeName$(r.arrivalId) | async) || ('Lieu #' + r.arrivalId) }}
-                        </div>
-
-                        <div *ngIf="r.reservationStatus === Status.CONFIRMED && vehicleId(r) as vid" class="veh-detail">
-                            <b>Véhicule :</b> {{ (vehicleLabel$(vid) | async) }}
-                        </div>
-                    </div>
-                </div>
-
             </mat-card>
         </div>
     </div>
