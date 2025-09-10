@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { Reservation } from '../../../../models/reservation';
 import { Vehicle } from '../../../../models/vehicle';
@@ -16,12 +18,16 @@ import { PersonService } from '../../../../services/person/person.service';
 import { AuthService } from '../../../../services/auth/auth.service';
 import { Status } from '../../../../enums/Status';
 
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, map, shareReplay } from 'rxjs/operators';
+
+import { PlaceService } from '../../../../services/place/place.service';
 
 type Row = Reservation & {
     driver?: Person | null;
 };
+
+type Place = { id: number; label?: string; name?: string };
 
 @Component({
     selector: 'app-pending-reservations',
@@ -33,7 +39,8 @@ type Row = Reservation & {
         MatSelectModule,
         MatFormFieldModule,
         MatIconModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        MatTooltipModule
     ],
     templateUrl: './pending-reservations.component.html',
     styleUrls: ['./pending-reservations.component.scss']
@@ -48,13 +55,16 @@ export class PendingReservationsComponent implements OnInit {
     selectionByRes = new Map<number, number>();         // reservationId -> vehicleId
     processing = new Set<number>();
 
+    private placeCache = new Map<number, Observable<string>>();
+
     constructor(
         private reservationsService: ReservationService,
         private personService: PersonService,
-        private authService: AuthService
+        private authService: AuthService,
+        private placeService: PlaceService
     ) {}
 
-    get isAdmin() { return this.authService.isAdmin(); }
+    get isAdmin()   { return this.authService.isAdmin(); }
     get isManager() { return this.authService.isManager(); }
     get currentPlaceId(): number | null {
         const id = this.authService.getCurrentUser()?.person?.place?.id;
@@ -170,5 +180,43 @@ export class PendingReservationsComponent implements OnInit {
             },
             error: () => this.processing.delete(resId)
         });
+    }
+
+    /* ===========================
+     *  Helpers affichage
+     * =========================== */
+
+    // Résout un nom de lieu à partir de l'id, avec cache et async pipe
+    placeName$(id?: number | null): Observable<string> {
+        if (id == null) return of('—');
+        const key = Number(id);
+        if (!Number.isFinite(key)) return of('—');
+
+        const cached = this.placeCache.get(key);
+        if (cached) return cached;
+
+        const obs = this.placeService.getPlaceById(key).pipe(
+            map((p: Place | null | undefined) => p?.label || p?.name || `Lieu #${key}`),
+            catchError(() => of(`Lieu #${key}`)),
+            shareReplay(1)
+        );
+        this.placeCache.set(key, obs);
+        return obs;
+    }
+
+    // Durée lisible HH h MM (ou X j Y h si > 24h)
+    durationLabel(r: Row): string {
+        const start = new Date((r as any)['startDate'] ?? (r as any)['start_date']).getTime();
+        const end   = new Date((r as any)['endDate']   ?? (r as any)['end_date']).getTime();
+        if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return '—';
+
+        const totalMin = Math.floor((end - start) / 60000);
+        const days  = Math.floor(totalMin / (60 * 24));
+        const hours = Math.floor((totalMin % (60 * 24)) / 60);
+        const mins  = totalMin % 60;
+        const pad = (n: number) => n.toString().padStart(2, '0');
+
+        if (days > 0) return `${days} j ${hours} h ${pad(mins)}`;
+        return `${hours} h ${pad(mins)}`;
     }
 }

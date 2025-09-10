@@ -1,75 +1,120 @@
-<div *ngIf="loading" class="p-4">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-</div>
+<!-- PENDING PANE -->
+<section class="pending-pane">
 
-<div *ngIf="!loading && rows.length === 0" class="empty">
-    Aucune réservation en attente.
-</div>
+    <!-- HEADER STICKY -->
+    <header class="pane-header">
+        <div class="title">
+            <mat-icon>hourglass_empty</mat-icon>
+            <h2>Réservations en attente</h2>
+            <span class="count-badge" *ngIf="!loading">{{ rows.length || 0 }}</span>
+        </div>
+    </header>
 
-<div class="list" *ngIf="!loading && rows.length">
-    <mat-card class="card" *ngFor="let r of rows">
-        <!-- HEADER -->
-        <div class="header" (click)="toggleExpand(r)">
-            <div class="title">
-                <mat-icon>hourglass_empty</mat-icon>
-                <strong>#{{ r.id }}</strong>
-                &nbsp;•&nbsp;
+    <!-- BODY SCROLLABLE -->
+    <div class="pane-body">
 
-                <!-- Conducteur : nom si enrichi, sinon #driverId, sinon '—' -->
-                <span>
-          {{
-                        (r.driver?.firstName && r.driver?.lastName)
-                            ? (r.driver?.firstName + ' ' + r.driver?.lastName)
-                            : (r['driverId'] ? ('Conducteur #' + r['driverId']) : '—')
-                    }}
-        </span>
-                &nbsp;•&nbsp;
-
-                <!-- Période -->
-                <span>
-          {{ r.startDate | date:'short' }} → {{ r.endDate | date:'short' }}
-        </span>
-            </div>
-
-            <button mat-icon-button>
-                <mat-icon>{{ expandedId === r.id ? 'expand_less' : 'expand_more' }}</mat-icon>
-            </button>
+        <!-- LOADING -->
+        <div *ngIf="loading" class="loading p-4">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
 
-        <!-- BODY -->
-        <div class="body" *ngIf="expandedId === r.id">
-            <div class="details">
-                <div><b>Départ :</b> {{ r.startDate | date:'full' }}</div>
-                <div><b>Retour :</b> {{ r.endDate   | date:'full' }}</div>
-            </div>
-
-            <div class="actions">
-                <!-- Sélecteur véhicule dispo -->
-                <mat-form-field appearance="outline" class="veh-field">
-                    <mat-label>Véhicule à attribuer</mat-label>
-                    <mat-select
-                        [value]="selectionByRes.get(r.id!) || null"
-                        (selectionChange)="onSelectVehicle(r.id!, $event.value)">
-                        <mat-option
-                            *ngFor="let v of (vehicleOptionsByRes.get(r.id!) || [])"
-                            [value]="v.id">
-                            {{ v.licensePlate }} — {{ v.brand }} {{ v.model }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-
-                <button mat-flat-button color="primary"
-                        [disabled]="processing.has(r.id!) || !selectionByRes.get(r.id!)"
-                        (click)="accept(r)">
-                    Accepter
-                </button>
-
-                <button mat-stroked-button color="warn"
-                        [disabled]="processing.has(r.id!)"
-                        (click)="reject(r)">
-                    Refuser
-                </button>
-            </div>
+        <!-- EMPTY -->
+        <div *ngIf="!loading && (!rows || rows.length === 0)" class="empty">
+            <mat-icon>inbox</mat-icon>
+            <p>Aucune réservation en attente.</p>
         </div>
-    </mat-card>
-</div>
+
+        <!-- LIST -->
+        <div class="list" *ngIf="!loading && rows.length">
+            <mat-card class="card" *ngFor="let r of rows">
+
+                <!-- HEADER: ORIGINE → DESTINATION + TIMING -->
+                <div class="header" (click)="toggleExpand(r)">
+                    <div class="left">
+                        <div class="route">
+              <span class="from">
+                {{ placeName$(r.departureId) | async }}
+              </span>
+                            <mat-icon class="arrow">arrow_forward</mat-icon>
+                            <span class="to">
+                {{ placeName$(r.arrivalId) | async }}
+              </span>
+                        </div>
+
+                        <!-- Conducteur -->
+                        <div class="meta">
+                            <mat-icon inline>person</mat-icon>
+                            <span>{{ r.driver?.firstName + ' ' + r.driver?.lastName }}</span>
+                        </div>
+                    </div>
+
+                    <div class="right">
+                        <!-- Ticket temporel compact (timeline) -->
+                        <div class="period-ticket">
+                            <!-- Départ -->
+                            <div class="period-side start">
+                                <div class="date">{{ r.startDate | date:'EEE d MMM':'':'fr-FR' }}</div>
+                                <div class="time">{{ r.startDate | date:'HH:mm':'':'fr-FR' }}</div>
+                            </div>
+
+                            <!-- Timeline + durée -->
+                            <div class="timeline">
+                                <span class="dot start"></span>
+                                <span class="bar"></span>
+                                <span class="dot end"></span>
+                                <div class="duration" matTooltip="Durée totale">
+                                    {{ durationLabel(r) }}
+                                </div>
+                            </div>
+
+                            <!-- Arrivée -->
+                            <div class="period-side end">
+                                <div class="date">{{ r.endDate | date:'EEE d MMM':'':'fr-FR' }}</div>
+                                <div class="time">{{ r.endDate | date:'HH:mm':'':'fr-FR' }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button mat-icon-button class="expand-btn" (click)="toggleExpand(r); $event.stopPropagation()">
+                        <mat-icon>{{ expandedId === r.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="body" *ngIf="expandedId === r.id">
+                    <div class="actions">
+                        <!-- Sélecteur au-dessus -->
+                        <mat-form-field appearance="outline" class="veh-field">
+                            <mat-label>Véhicule à attribuer</mat-label>
+                            <mat-select
+                                [value]="selectionByRes.get(r.id!) || null"
+                                (selectionChange)="onSelectVehicle(r.id!, $event.value)">
+                                <mat-option
+                                    *ngFor="let v of vehicleOptionsByRes.get(r.id!)"
+                                    [value]="v.id">
+                                    {{ v.licensePlate }} — {{ v.brand }} {{ v.model }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <!-- Boutons en dessous, toujours visibles -->
+                        <div class="btn-row">
+                            <button mat-flat-button color="primary" class="primary"
+                                    [disabled]="processing.has(r.id!) || !selectionByRes.get(r.id!)"
+                                    (click)="accept(r)">
+                                Ajouter
+                            </button>
+
+                            <button mat-stroked-button color="warn"
+                                    [disabled]="processing.has(r.id!)"
+                                    (click)="reject(r)">
+                                Refuser
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </mat-card>
+        </div>
+    </div>
+</section>

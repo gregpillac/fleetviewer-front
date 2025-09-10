@@ -12,7 +12,7 @@
                 <span class="menu-title">Manager {{currentUser.person.place?.name}}</span>
             </ng-container>
             <ng-container *ngIf="!(isAdmin || isManager)">
-                <a routerLink="/travels" routerLinkActive="active">Mes réservations</a>
+                <a routerLink="/reservations" routerLinkActive="active">Mes réservations</a>
                 <button class="cta-header" mat-stroked-button><a routerLink="/search-ride" routerLinkActive="active">Réserver</a></button>
             </ng-container>
 

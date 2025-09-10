@@ -1,1 +1,111 @@
-<p>reservations works!</p>
+<!-- MES RÉSERVATIONS -->
+<div class="pending-pane">
+
+    <!-- HEADER STICKY -->
+    <header class="pane-header">
+        <div class="title">
+            <mat-icon>schedule</mat-icon>
+            <h2>Mes réservations</h2>
+            <span class="count-badge" *ngIf="!loading">{{ rows.length || 0 }}</span>
+        </div>
+    </header>
+
+    <!-- BODY SCROLLABLE -->
+    <div class="pane-body">
+
+        <!-- LOADING -->
+        <div *ngIf="loading" class="loading p-4">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+
+        <!-- EMPTY -->
+        <div *ngIf="!loading && (!rows || rows.length === 0)" class="empty">
+            <mat-icon>inbox</mat-icon>
+            <p>Aucune réservation trouvée.</p>
+        </div>
+
+        <!-- LIST -->
+        <div class="list" *ngIf="!loading && rows.length">
+            <mat-card class="card" *ngFor="let r of rows">
+
+                <!-- HEADER -->
+                <div class="header" (click)="toggleExpand(r)">
+                    <div class="left">
+                        <div class="route">
+              <span class="from">
+                {{ (placeName$(r.departureId) | async) || ('Lieu #' + r.departureId) }}
+              </span>
+                            <mat-icon class="arrow">arrow_forward</mat-icon>
+                            <span class="to">
+                {{ (placeName$(r.arrivalId) | async) || ('Lieu #' + r.arrivalId) }}
+              </span>
+                        </div>
+
+                        <div class="meta-row">
+              <span class="status-badge" [ngClass]="statusClass(r.reservationStatus)">
+                {{ statusLabel(r.reservationStatus) }}
+              </span>
+
+                            <!-- Véhicule si CONFIRMED (via VehicleService + async) -->
+                            <ng-container *ngIf="r.reservationStatus === Status.CONFIRMED && vehicleId(r) as vid">
+                <span class="vehicle-chip">
+                  <mat-icon inline>directions_car</mat-icon>
+                    {{ (vehicleLabel$(vid) | async) }}
+                </span>
+                            </ng-container>
+                        </div>
+                    </div>
+
+                    <div class="right">
+                        <!-- Timeline -->
+                        <div class="period-ticket">
+                            <!-- Départ -->
+                            <div class="period-side start">
+                                <div class="date">{{ r.startDate | date:'EEE d MMM':'':'fr-FR' }}</div>
+                                <div class="time">{{ r.startDate | date:'HH:mm':'':'fr-FR' }}</div>
+                            </div>
+
+                            <!-- Timeline + durée -->
+                            <div class="timeline">
+                                <span class="dot start"></span>
+                                <span class="bar"></span>
+                                <span class="dot end"></span>
+                                <div class="duration" matTooltip="Durée totale">
+                                    {{ durationLabel(r) }}
+                                </div>
+                            </div>
+
+                            <!-- Arrivée -->
+                            <div class="period-side end">
+                                <div class="date">{{ r.endDate | date:'EEE d MMM':'':'fr-FR' }}</div>
+                                <div class="time">{{ r.endDate | date:'HH:mm':'':'fr-FR' }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button mat-icon-button class="expand-btn" (click)="toggleExpand(r); $event.stopPropagation()">
+                        <mat-icon>{{ expandedId === r.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="body" *ngIf="expandedId === r.id">
+                    <div class="details">
+                        <div><b>Départ :</b> {{ r.startDate | date:'full':'':'fr-FR' }}</div>
+                        <div><b>Retour :</b> {{ r.endDate   | date:'full':'':'fr-FR' }}</div>
+                        <div><b>Itinéraire :</b>
+                            {{ (placeName$(r.departureId) | async) || ('Lieu #' + r.departureId) }}
+                            →
+                            {{ (placeName$(r.arrivalId) | async) || ('Lieu #' + r.arrivalId) }}
+                        </div>
+
+                        <div *ngIf="r.reservationStatus === Status.CONFIRMED && vehicleId(r) as vid" class="veh-detail">
+                            <b>Véhicule :</b> {{ (vehicleLabel$(vid) | async) }}
+                        </div>
+                    </div>
+                </div>
+
+            </mat-card>
+        </div>
+    </div>
+</div>
