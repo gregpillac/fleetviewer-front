@@ -16,6 +16,10 @@ export class PersonService {
         return this.http.get<Person[]>(this.apiUrl);
     }
 
+    getPersonsByPlace(placeName: string): Observable<Person[]> {
+        return this.http.get<Person[]>(`${this.apiUrl}/place/${encodeURIComponent(placeName)}`);
+    }
+
     getPersonById(id: number): Observable<Person> {
         return this.http.get<Person>(`${this.apiUrl}/${id}`);
     }

@@ -3,8 +3,8 @@
     <!-- Toolbar -->
     <div class="table-toolbar">
         <h1>
-            Réservations
-            <ng-container *ngIf="!loading && dataSource.filteredData.length as n">({{ n }})</ng-container>
+            <span>{{ isAdmin ? 'Réservations' : 'Réservations | ' + currentUserPlace?.name }}</span>
+            <span *ngIf="!loading && dataSource.filteredData.length as n"> ({{ n }})</span>
         </h1>
 
         <div class="toolbar-actions">
@@ -63,9 +63,9 @@
 
                             <!-- Timeline + durée -->
                             <div class="timeline">
-                                <span class="dot"></span>
+                                <span class="dot start"></span>
                                 <span class="bar"></span>
-                                <span class="dot"></span>
+                                <span class="dot end"></span>
                                 <div class="duration" matTooltip="Durée totale">{{ r.periodDurationLabel }}</div>
                             </div>
 

@@ -3,7 +3,15 @@
 
 <div class="grid">
     <div class="panel" *ngFor="let d of dashboards" (click)="navTo(d.route)">
-        <span *ngIf="d.count as c" class="digit">{{ c }}</span>
-        <h4>{{ d.count === null ? 'Chargement...' : d.title }}</h4>
+       <ng-container *ngIf="d.count === null; else show">
+           <span>Chargement...</span>
+       </ng-container>
+        <ng-template #show>
+            <span *ngIf="d.count as c" class="digit">{{ c }}</span>
+            <div>
+                <span>{{ d.title }}</span>
+                <mat-icon>{{ d.icon }}</mat-icon>
+            </div>
+        </ng-template>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<nav class="side-menu" [class.collapsed]="collapsed">
+<nav class="    side-menu" [class.collapsed]="collapsed">
     <!-- Bouton rond bleu quand replié (remplace toute la sidebar) -->
     <div class="fab-toggle" (click)="toggle()" matTooltip="Ouvrir le menu">
         <mat-icon>chevron_right</mat-icon>
@@ -36,25 +36,39 @@
             </mat-nav-list>
 
             <!-- Utilisateurs -->
-            <mat-expansion-panel class="child" hideToggle>
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        <mat-icon>group</mat-icon>
-                        <span>Utilisateurs</span>
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
-                <mat-nav-list class="list-expanded" disableRipple>
+            <ng-container *ngIf="isAdmin; else isNotAdmin">
+                <mat-expansion-panel class="child" hideToggle>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <mat-icon>group</mat-icon>
+                            <span>Utilisateurs</span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-nav-list class="list-expanded" disableRipple>
+                        <a mat-list-item routerLink="/dashboard/users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                            <span>Liste des utilisateurs</span>
+                        </a>
+                        <a mat-list-item routerLink="/dashboard/users/add" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                            <div class="list-title">
+                                <mat-icon>person_add</mat-icon>
+                                <span>Nouvel utilisateur</span>
+                            </div>
+                        </a>
+                    </mat-nav-list>
+                </mat-expansion-panel>
+            </ng-container>
+
+            <ng-template #isNotAdmin>
+                <mat-nav-list class="child list-one" disableRipple>
                     <a mat-list-item routerLink="/dashboard/users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                        <span>Liste des utilisateurs</span>
-                    </a>
-                    <a mat-list-item routerLink="/dashboard/users/add" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <div class="list-title">
-                            <mat-icon>person_add</mat-icon>
-                            <span>Nouvel utilisateur</span>
+                            <mat-icon>group</mat-icon>
+                            <span>Utilisateurs</span>
                         </div>
                     </a>
                 </mat-nav-list>
-            </mat-expansion-panel>
+            </ng-template>
+
 
             <!-- Véhicules -->
             <mat-expansion-panel class="child"  hideToggle>
@@ -81,7 +95,7 @@
             <mat-expansion-panel class="child"  hideToggle>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        <mat-icon>book</mat-icon>
+                        <mat-icon>event</mat-icon>
                         <span>Réservations</span>
                     </mat-panel-title>
                 </mat-expansion-panel-header>
@@ -89,7 +103,7 @@
                     <a mat-list-item routerLink="/dashboard/reservations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <span>Liste des réservations</span>
                     </a>
-                    <a mat-list-item routerLink="/dashboard/reservations/pending" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <a mat-list-item routerLink="/dashboard/reservations/demandes" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <div class="list-title">
                             <mat-icon>search</mat-icon>
                             <span>Traiter les demandes</span>
@@ -106,25 +120,18 @@
 
             <mat-divider></mat-divider>
 
-            <!-- Actions -->
-            <mat-nav-list class="list-one" disableRipple>
-                <a mat-list-item routerLink="/search-ride" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                    <div class="list-title">
-                        <mat-icon>location_on</mat-icon>
-                        <span>Demande de trajet</span>
-                    </div>
-                </a>
-            </mat-nav-list>
-
+            <!-- Titre “Actions” -->
+            <div class="section-title">
+                <span>Divers</span>
+            </div>
             <mat-nav-list class="list-one" disableRipple>
                 <a mat-list-item routerLink="/rides" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                     <div class="list-title">
-                        <mat-icon>location_on</mat-icon>
-                        <span>Mes trajets</span>
+                        <mat-icon>route</mat-icon>
+                        <span>Mes réservations</span>
                     </div>
                 </a>
             </mat-nav-list>
-
         </mat-accordion>
     </div>
 </nav>

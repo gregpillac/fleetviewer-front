@@ -1,24 +1,28 @@
-<header *ngIf="user$ | async as user" class="header">
+<header *ngIf="currentUser" class="header">
     <div class="container">
         <div class="logo" routerLink="/">
             <svg-icon src="/_static/fleetviewer/fleetviewer_inline.svg" svgClass="fleetviewer-svg"></svg-icon>
         </div>
 
         <nav class="menu">
-            <ng-container *ngIf="isAdmin || isManager; else classicView">
+            <ng-container *ngIf="isAdmin">
                 <span class="menu-title">Outil d'administration et de supervision</span>
             </ng-container>
-            <ng-template #classicView>
-                <a routerLink="/search-ride" routerLinkActive="active">Réserver</a>
-                <a routerLink="/travels" routerLinkActive="active">Mes trajets</a>
-            </ng-template>
+            <ng-container *ngIf="isManager">
+                <span class="menu-title">Manager {{currentUser.person.place?.name}}</span>
+            </ng-container>
+            <ng-container *ngIf="!(isAdmin || isManager)">
+                <a routerLink="/travels" routerLinkActive="active">Mes réservations</a>
+                <button class="cta-header" mat-stroked-button><a routerLink="/search-ride" routerLinkActive="active">Réserver</a></button>
+            </ng-container>
 
             <div class="avatar-wrapper" (click)="toggleMenu()" tabindex="0" (blur)="closeMenu()">
-                <img src="/_static/images/default_pfp.jpg" alt="Avatar utilisateur" class="avatar" />
+                <img ngSrc="/_static/images/default_pfp.jpg" alt="Avatar utilisateur" class="avatar" height="340"
+                     width="340"/>
             </div>
 
             <div class="dropdown-avatar" *ngIf="menuOpen">
-                <p>Bonjour {{ user.person.firstName}} !</p>
+                <p>Bonjour {{ currentUser.person.firstName}} !</p>
                 <a routerLink="/account" (click)="closeMenu()">Voir mon profil</a>
                 <button (click)="logout()">Se déconnecter</button>
             </div>

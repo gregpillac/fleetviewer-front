@@ -71,8 +71,6 @@ export class HomeComponent {
         }
       });
 
-    } else {
-      console.log('Réservations pour le jour:', dayReservations);
     }
   }
 }

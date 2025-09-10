@@ -1,0 +1,75 @@
+<div *ngIf="loading" class="p-4">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div *ngIf="!loading && rows.length === 0" class="empty">
+    Aucune réservation en attente.
+</div>
+
+<div class="list" *ngIf="!loading && rows.length">
+    <mat-card class="card" *ngFor="let r of rows">
+        <!-- HEADER -->
+        <div class="header" (click)="toggleExpand(r)">
+            <div class="title">
+                <mat-icon>hourglass_empty</mat-icon>
+                <strong>#{{ r.id }}</strong>
+                &nbsp;•&nbsp;
+
+                <!-- Conducteur : nom si enrichi, sinon #driverId, sinon '—' -->
+                <span>
+          {{
+                        (r.driver?.firstName && r.driver?.lastName)
+                            ? (r.driver?.firstName + ' ' + r.driver?.lastName)
+                            : (r['driverId'] ? ('Conducteur #' + r['driverId']) : '—')
+                    }}
+        </span>
+                &nbsp;•&nbsp;
+
+                <!-- Période -->
+                <span>
+          {{ r.startDate | date:'short' }} → {{ r.endDate | date:'short' }}
+        </span>
+            </div>
+
+            <button mat-icon-button>
+                <mat-icon>{{ expandedId === r.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="body" *ngIf="expandedId === r.id">
+            <div class="details">
+                <div><b>Départ :</b> {{ r.startDate | date:'full' }}</div>
+                <div><b>Retour :</b> {{ r.endDate   | date:'full' }}</div>
+            </div>
+
+            <div class="actions">
+                <!-- Sélecteur véhicule dispo -->
+                <mat-form-field appearance="outline" class="veh-field">
+                    <mat-label>Véhicule à attribuer</mat-label>
+                    <mat-select
+                        [value]="selectionByRes.get(r.id!) || null"
+                        (selectionChange)="onSelectVehicle(r.id!, $event.value)">
+                        <mat-option
+                            *ngFor="let v of (vehicleOptionsByRes.get(r.id!) || [])"
+                            [value]="v.id">
+                            {{ v.licensePlate }} — {{ v.brand }} {{ v.model }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <button mat-flat-button color="primary"
+                        [disabled]="processing.has(r.id!) || !selectionByRes.get(r.id!)"
+                        (click)="accept(r)">
+                    Accepter
+                </button>
+
+                <button mat-stroked-button color="warn"
+                        [disabled]="processing.has(r.id!)"
+                        (click)="reject(r)">
+                    Refuser
+                </button>
+            </div>
+        </div>
+    </mat-card>
+</div>

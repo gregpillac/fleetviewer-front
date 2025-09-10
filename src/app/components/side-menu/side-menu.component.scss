@@ -86,12 +86,10 @@ mat-panel-title {
 
 /* Titre de section "Dashboard" */
 .section-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-    padding: 8px 12px;
-    margin: 4px 0;
+    font-weight: 300;
+    font-size: 18px;
+    padding: 0 12px;
+    color: #FFFFFF33;
 }
 
 /* Listes/items & Panels Material */
@@ -127,14 +125,22 @@ mat-nav-list.list-one a[mat-list-item] {
     }
 }
 
+mat-nav-list.list-expanded {
+    margin: 0 -14px -16px;
+}
+
 mat-expansion-panel.child mat-expansion-panel-header,
 mat-expansion-panel.child mat-expansion-panel-header.mat-expanded,
 mat-nav-list.child.list-one a[mat-list-item] {
-    padding: 0 2rem;
+    padding: 0 1rem;
 }
 
 mat-nav-list.list-expanded a[mat-list-item] {
     padding: 0 1rem;
+}
+
+mat-expansion-panel > .mat-expansion-panel-content-wrapper {
+    margin: 0 15px !important;
 }
 
 /* Icônes */

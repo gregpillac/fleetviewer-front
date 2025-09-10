@@ -25,6 +25,16 @@
             </mat-form-field>
 
             <mat-form-field appearance="outline">
+                <mat-label>Site de rattachement</mat-label>
+                <mat-select formControlName="place" [compareWith]="comparePlace">
+                    <mat-option [value]="null">— Aucun —</mat-option>
+                    <mat-option *ngFor="let p of places" [value]="p">
+                        {{ p.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
                 <input matInput formControlName="email" type="email" autocomplete="email" />
                 <mat-error *ngIf="hasError('email','required')">
@@ -43,7 +53,7 @@
                 </mat-error>
             </mat-form-field>
 
-            <!-- Adresse - lignes pleine largeur à partir de 768px (voir CSS) -->
+            <!-- Adresse -->
             <mat-form-field appearance="outline">
                 <mat-label>Adresse (n° et rue)</mat-label>
                 <input matInput formControlName="line1" autocomplete="address-line1" />

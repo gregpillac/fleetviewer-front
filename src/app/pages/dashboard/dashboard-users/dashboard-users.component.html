@@ -3,8 +3,8 @@
     <!-- Toolbar -->
     <div class="table-toolbar">
         <h1>
-            Utilisateurs
-            <ng-container *ngIf="!loading && dataSource.filteredData.length as n">({{ n }})</ng-container>
+            <span>{{ isAdmin ? 'Utilisateurs' : 'Utilisateurs | ' + currentUserPlace }}</span>
+            <span *ngIf="!loading && dataSource.filteredData.length as n"> ({{ n }})</span>
         </h1>
 
         <div class="toolbar-actions">
@@ -14,7 +14,7 @@
                     matInput
                     #searchInput
                     (keyup)="applyFilter(searchInput.value)"
-                    placeholder="Nom, email, téléphone, site, compte, rôle…" />
+                    [placeholder]="placeHolderFilter" />
                 <button
                     mat-icon-button
                     matSuffix
@@ -25,7 +25,7 @@
                 </button>
             </mat-form-field>
 
-            <button mat-raised-button color="primary" (click)="goToCreateUser()">
+            <button *ngIf="isAdmin" mat-raised-button color="primary" (click)="goToCreateUser()">
                 <mat-icon>add</mat-icon>
                 <span>Ajouter</span>
             </button>
@@ -56,7 +56,7 @@
                 </ng-container>
 
                 <!-- Site -->
-                <ng-container matColumnDef="place">
+                <ng-container matColumnDef="place" *ngIf="isAdmin">
                     <th mat-header-cell *matHeaderCellDef>Site de réf.</th>
                     <td mat-cell *matCellDef="let r">{{ r.place?.name || '—' }}</td>
                 </ng-container>
@@ -74,7 +74,7 @@
                 </ng-container>
 
                 <!-- Actions -->
-                <ng-container matColumnDef="actions">
+                <ng-container matColumnDef="actions" *ngIf="isAdmin">
                     <th mat-header-cell *matHeaderCellDef class="col-actions">Actions</th>
                     <td mat-cell *matCellDef="let r" class="cell-actions">
                         <div class="btn-actions">
