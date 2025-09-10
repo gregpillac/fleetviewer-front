@@ -60,14 +60,14 @@
         <mat-form-field appearance="outline" class="span-2" *ngIf="isAdmin || isManager">
             <mat-label>Sélection du vehicule</mat-label>
             <mat-select formControlName="vehicleId">
-                <mat-option *ngFor="let vehicle of vehicles" [value]="vehicle.id">{{vehicle.brand}} {{vehicle.model}} {{vehicle.licensePlate}}</mat-option>
+                <mat-option *ngFor="let v of vehicles" [value]="v.id">{{v.brand}} {{v.model}} - {{v.licensePlate}} ( {{v.seats}} places )</mat-option>
             </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline" *ngIf="isAdmin || isManager">
-            <mat-label>Bénéficiaire</mat-label>
+            <mat-label>Conducteur</mat-label>
             <mat-select formControlName="driverId">
-                <mat-option *ngFor="let person of persons" [value]="person.id">{{person.firstName}} {{person.lastName}}</mat-option>
+                <mat-option *ngFor="let pers of persons" [value]="pers.id">{{pers.firstName}} {{pers.lastName}}</mat-option>
             </mat-select>
         </mat-form-field>
       </div>

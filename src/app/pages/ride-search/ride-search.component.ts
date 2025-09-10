@@ -20,10 +20,9 @@ import {MatSelect} from '@angular/material/select';
 import {VehicleService} from '../../services/vehicle/vehicle.service';
 import {Vehicle} from '../../models/vehicle';
 import {AuthService} from '../../services/auth/auth.service';
-import {Role} from '../../enums/Role';
 import {PersonService} from '../../services/person/person.service';
 import {Person} from '../../models/person.model';
-import {filter, take} from 'rxjs/operators';
+import {filter, switchMap, take} from 'rxjs/operators';
 import {User} from '../../models/user.model';
 
 @Component({
@@ -90,9 +89,7 @@ export class RideSearchComponent implements OnInit {
 
 
   ngOnInit() {
-      this.placeService.getPlaces().subscribe(places => this.places = places);
-      this.vehicleService.getVehicles().subscribe(vehicles => this.vehicles = vehicles);
-
+      // Pré-remplir le CONDUCTEUR avec l'utilisateur courant
       this.auth.currentUser$
           .pipe( filter((u): u is User => !!u),
               take(1))
@@ -100,12 +97,24 @@ export class RideSearchComponent implements OnInit {
               this.reservationForm.patchValue({ driverId: user.person.id });
           });
 
+      // Charger la liste des CONDUCTEURS potentiels (Persons)
       if (this.isAdmin || this.isManager) {
           this.personService.getPersons().subscribe({
               next: persons => this.persons = persons,
               error: err => console.error('Chargement des personnes refusé (403)', err)
           });
       }
+
+      // Si ADMIN, charger tous les VEHICULES, sinon, charger les véhicules du lieu de l'utilisateur
+      this.auth.currentUser$.pipe( filter((u): u is User => !!u),
+          take(1),
+          switchMap(user => this.isAdmin
+              ? this.vehicleService.getVehicles()
+              : this.vehicleService.getVehiclesByPlaceId(user!.person.place!.id)
+          )
+      ).subscribe(v => this.vehicles = v);
+
+      this.placeService.getPlaces().subscribe(places => this.places = places);
   }
 
 
@@ -133,7 +142,6 @@ export class RideSearchComponent implements OnInit {
       const s = this.pad(d.getSeconds());
       return `${y}-${M}-${D}T${h}:${m}:${s}`;
   }
-
 
 
   // Action ADMIN ou MANAGER permettant de reserver directement un vehicule
