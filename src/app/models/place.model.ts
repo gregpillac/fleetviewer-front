@@ -6,7 +6,6 @@ export interface Place {
   id: number;
   name: string;
   isPublic: boolean;
-  placeType: PlaceType;
-  createdBy?: Person;
-  address: Address;
+  placeTypeId: number;
+  addressId: number;
 }
