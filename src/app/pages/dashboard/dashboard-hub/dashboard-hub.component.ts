@@ -10,9 +10,11 @@ import {AuthService} from '../../../services/auth/auth.service';
 import {ReservationService} from '../../../services/reservation.service';
 import {Reservation} from '../../../models/reservation';
 import {MatIcon} from '@angular/material/icon';
+import {PlaceService} from '../../../services/place/place.service';
+import {Place} from '../../../models/place.model';
 
 type Dashboard = {
-    key: 'persons' | 'vehicles' | 'reservations';  // tes sources
+    key: 'persons' | 'vehicles' | 'reservations' | 'sites';  // tes sources
     route: string;
     title: string;
     icon: string;
@@ -33,6 +35,7 @@ export class DashboardHubComponent implements OnInit {
     persons: Person[] | null = null;
     vehicles: Vehicle[] | null = null;
     reservations: Reservation[] | null = null;
+    sites: Place[] | null = null;
 
     dashboards: Dashboard[] = [
         {
@@ -55,6 +58,13 @@ export class DashboardHubComponent implements OnInit {
             title: 'Réservations ',
             icon: 'event',
             count: null
+        },
+        {
+            key: 'sites',
+            route: 'sites',
+            title: 'Sites ',
+            icon: 'location_pin',
+            count: null
         }
     ];
 
@@ -63,6 +73,7 @@ export class DashboardHubComponent implements OnInit {
         private personService: PersonService,
         private vehicleService: VehicleService,
         private reservationService: ReservationService,
+        private placeService: PlaceService,
         private authService: AuthService,
     ) {}
 
@@ -70,10 +81,12 @@ export class DashboardHubComponent implements OnInit {
         forkJoin({
             persons: this.isAdmin ? this.personService.getPersons() : this.personService.getPersonsByPlace(this.currentUserPlace),
             vehicles: this.isAdmin ? this.vehicleService.getVehicles() : this.vehicleService.getVehiclesByPlace(this.currentUserPlace),
-            reservations: this.reservationService.getAllReservations()
-        }).subscribe(({ persons, vehicles, reservations }) => {
+            reservations: this.reservationService.getAllReservations(),
+            sites: this.placeService.getPlaces()
+        }).subscribe(({ persons, vehicles, reservations, sites }) => {
             this.persons = persons;
             this.vehicles = vehicles;
+            this.sites = sites;
 
             // ---------- filtrage des réservations pour manager ----------
             const scopedReservations = this.isAdmin
@@ -94,6 +107,7 @@ export class DashboardHubComponent implements OnInit {
             this.setCount('persons', persons?.length ?? 0);
             this.setCount('vehicles', vehicles?.length ?? 0);
             this.setCount('reservations', scopedReservations?.length ?? 0);
+            this.setCount('sites', sites?.length ?? 0);
         });
     }
 

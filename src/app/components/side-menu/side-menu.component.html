@@ -36,7 +36,7 @@
             </mat-nav-list>
 
             <!-- Utilisateurs -->
-            <ng-container *ngIf="isAdmin; else isNotAdmin">
+            <ng-container *ngIf="isAdmin; else utilisateurs">
                 <mat-expansion-panel class="child" hideToggle>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
@@ -58,7 +58,7 @@
                 </mat-expansion-panel>
             </ng-container>
 
-            <ng-template #isNotAdmin>
+            <ng-template #utilisateurs>
                 <mat-nav-list class="child list-one" disableRipple>
                     <a mat-list-item routerLink="/dashboard/users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                         <div class="list-title">
@@ -117,6 +117,37 @@
                     </a>
                 </mat-nav-list>
             </mat-expansion-panel>
+
+            <mat-expansion-panel class="child"  *ngIf="isAdmin; else sites">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <mat-icon>location_pin</mat-icon>
+                        <span>Sites</span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-nav-list class="list-expanded" disableRipple>
+                    <a mat-list-item routerLink="/dashboard/sites" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                        <span>Liste des sites</span>
+                    </a>
+                    <a mat-list-item routerLink="/dashboard/sites/add" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                        <div class="list-title">
+                            <mat-icon>add_circle</mat-icon>
+                            <span>Nouveau site</span>
+                        </div>
+                    </a>
+                </mat-nav-list>
+            </mat-expansion-panel>
+
+            <ng-template #sites>
+                <mat-nav-list class="child list-one" disableRipple>
+                    <a mat-list-item routerLink="/dashboard/sites" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                        <div class="list-title">
+                            <mat-icon>location_pin</mat-icon>
+                            <span>Sites</span>
+                        </div>
+                    </a>
+                </mat-nav-list>
+            </ng-template>
 
             <mat-divider></mat-divider>
 

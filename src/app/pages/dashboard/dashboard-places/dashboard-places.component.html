@@ -1,0 +1,95 @@
+<div class="dashboard-page">
+    <!-- Toolbar -->
+    <div class="table-toolbar">
+        <h1>
+            <span>Sites</span>
+            <span *ngIf="!loading && dataSource.filteredData.length as n"> ({{ n }})</span>
+        </h1>
+
+        <div class="toolbar-actions">
+            <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+                <mat-label>Rechercher</mat-label>
+                <input
+                    matInput
+                    #searchInput
+                    (keyup)="applyFilter(searchInput.value)"
+                    [placeholder]="placeHolderFilter" />
+                <button
+                    mat-icon-button
+                    matSuffix
+                    *ngIf="searchInput.value"
+                    aria-label="Effacer la recherche"
+                    (click)="searchInput.value=''; applyFilter('')">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+
+            <!-- Bouton Ajouter visible seulement pour admin
+            <button *ngIf="isAdmin" mat-raised-button color="primary" (click)="goToCreatePlace()">
+                <mat-icon>add</mat-icon>
+                <span>Ajouter</span>
+            </button> -->
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container mat-elevation-z2">
+        <div class="table-scroll">
+            <table mat-table [dataSource]="dataSource" class="dashboard-table">
+
+                <!-- Nom -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>Nom</th>
+                    <td mat-cell *matCellDef="let r">{{ r.name }}</td>
+                </ng-container>
+
+                <!-- Adresse (first line, second line si existe, postalCode city) -->
+                <ng-container matColumnDef="address">
+                    <th mat-header-cell *matHeaderCellDef>Adresse</th>
+                    <td mat-cell *matCellDef="let r">>
+                        {{ '—' }}
+                    </td>
+                </ng-container>
+
+
+
+                <!-- Actions (seulement admin) -->
+                <ng-container matColumnDef="actions" *ngIf="isAdmin">
+                    <th mat-header-cell *matHeaderCellDef class="col-actions">Actions</th>
+                    <td mat-cell *matCellDef="let r" class="cell-actions">
+                        <div class="btn-actions">
+                            <button mat-icon-button color="primary" (click)="goToEditPlace(r)">
+                                <mat-icon [matTooltip]="'Modifier ' + r.name">edit</mat-icon>
+                            </button>
+
+                            <button mat-icon-button color="warn" (click)="deletePlace(r)">
+                                <mat-icon [matTooltip]="'Supprimer ' + r.name">delete</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <!-- Loader -->
+            <mat-progress-bar *ngIf="loading" mode="indeterminate" color="primary" class="table-loader">
+            </mat-progress-bar>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!loading && dataSource.filteredData.length === 0" class="empty">
+            Il n'y a aucun site.
+        </div>
+
+        <!-- Paginator -->
+        <mat-paginator
+            [pageIndex]="0"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions"
+            showFirstLastButtons
+            aria-label="Pagination des sites">
+        </mat-paginator>
+    </div>
+</div>

@@ -19,6 +19,7 @@ import {
     PendingReservationsComponent
 } from './pages/dashboard/dashboard-reservations/pending-reservations/pending-reservations.component';
 import {ReservationsComponent} from './pages/reservations/reservations.component';
+import {DashboardPlacesComponent} from './pages/dashboard/dashboard-places/dashboard-places.component';
 
 export const routes: Routes = [
     { title: 'FleetViewer - Accueil',path: '', component: HomeComponent, canActivate: [canActivateWithRole()] },
@@ -35,7 +36,9 @@ export const routes: Routes = [
             { title: 'FleetViewer | Modifier un véhicule', path: 'vehicles/:id', component: DashboardVehiclesFormComponent },
             { title: 'FleetViewer | Réservations', path: 'reservations', component: DashboardReservationsComponent },
             { title: 'FleetViewer | Traiter les demandes', path: 'reservations/demandes', component: PendingReservationsComponent },
-            { title: 'FleetViewer | Nouvelle réservation', path: 'reservations/add', component: RideSearchComponent }
+            { title: 'FleetViewer | Nouvelle réservation', path: 'reservations/add', component: RideSearchComponent },
+            { title: 'FleetViewer | Sites', path: 'sites', component: DashboardPlacesComponent },
+            { title: 'FleetViewer | Nouveau site', path: 'sites/add', component: DashboardPlacesComponent },
         ]
     },
     { title: 'FleetViewer - Mes réservations',path: 'reservations', component: ReservationsComponent, canActivate: [canActivateWithRole()] },
