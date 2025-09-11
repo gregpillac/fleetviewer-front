@@ -186,3 +186,19 @@ body {
         border-top: 1px solid rgba(0,0,0,.06);
     }
 }
+
+
+.snackbar-success {
+    background-color: #4caf50; /* vert */
+    color: #fff;
+}
+
+.snackbar-error {
+    background-color: #f44336; /* rouge */
+    color: #fff;
+}
+
+.snackbar-warning {
+    background-color: #ff9800; /* orange */
+    color: #fff;
+}

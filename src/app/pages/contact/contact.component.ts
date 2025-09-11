@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import {ContactService} from '../../services/contact/contact.service'; // ← SnackBar Angular Material
@@ -37,7 +37,10 @@ export class ContactComponent {
                         this.snackBar.open(
                             '✅ Votre message a bien été réceptionné. Nous vous répondrons rapidement !',
                             'Fermer',
-                            { duration: 4000, panelClass: ['snackbar-success'] }
+                            { duration: 4000,
+                                panelClass: ['snackbar-success'],
+                                horizontalPosition: 'center',
+                                verticalPosition: 'top' }
                         );
                         this.contactForm.reset();
                     },
@@ -46,7 +49,10 @@ export class ContactComponent {
                         this.snackBar.open(
                             '❌ Erreur lors de l’envoi du message.',
                             'Fermer',
-                            { duration: 4000, panelClass: ['snackbar-error'] }
+                            { duration: 4000,
+                                panelClass: ['snackbar-error'],
+                                horizontalPosition: 'center',
+                                verticalPosition: 'top' }
                         );
                     }
                 });

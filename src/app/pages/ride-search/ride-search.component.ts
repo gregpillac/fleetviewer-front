@@ -24,6 +24,7 @@ import {PersonService} from '../../services/person/person.service';
 import {Person} from '../../models/person.model';
 import {filter, switchMap, take} from 'rxjs/operators';
 import {User} from '../../models/user.model';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-ride-search',
@@ -67,7 +68,8 @@ export class RideSearchComponent implements OnInit {
       private personService: PersonService,
       private dialog: MatDialog,
       private route: ActivatedRoute,
-      private dateAdapter: DateAdapter<Date>
+      private dateAdapter: DateAdapter<Date>,
+      private snackBar: MatSnackBar
   ) {
       this.dateAdapter.setLocale('fr-FR');
       this.reservationForm = this.fb.group({
@@ -105,7 +107,7 @@ export class RideSearchComponent implements OnInit {
           });
       }
 
-      // Si ADMIN, charger tous les UTILISATEURS, sinon, charger les UTILISATEURS du lieu de l'utilisateur connecté
+      // Si ADMIN, charger tous les UTILISATEURS, sinon, charger les UTILISATEURS du lieu de l'utilisateur connecté //TODO: du conducteur selectionné
       this.auth.currentUser$.pipe( filter((u): u is User => !!u),
           take(1),
           switchMap(user => this.isAdmin
@@ -220,9 +222,26 @@ export class RideSearchComponent implements OnInit {
           } else {
               // si non, creer la demande de réservation (status=PENDING)
               this.reservationService.createReservation(payload).subscribe({
-                  next: (res) => { console.log('Réservation créée', res); // TODO: feedback UI / navigation
+                  next: (res) => {
+                      this.snackBar.open(
+                          '✅ Votre demande de réservation a bien été prise en compte.' +
+                          ' Nous vous répondrons rapidement !',
+                          'Fermer',
+                          { duration: 4000,
+                              panelClass: ['snackbar-success'],
+                              horizontalPosition: 'center',
+                              verticalPosition: 'top' }
+                      );
                   },
-                  error: (err) => { console.error('Erreur création réservation', err); // TODO: afficher erreurs de validation renvoyées par le back
+                  error: (err) => {
+                      this.snackBar.open(
+                          '❌ Désolé, nous n\'avons pas de véhicule disponible sur cette période.',
+                          'Fermer',
+                          { duration: 4000,
+                              panelClass: ['snackbar-error'],
+                              horizontalPosition: 'center',
+                              verticalPosition: 'top' }
+                      );console.error('Erreur création réservation', err); // TODO: afficher erreurs de validation renvoyées par le back
                   }
               });
           }
