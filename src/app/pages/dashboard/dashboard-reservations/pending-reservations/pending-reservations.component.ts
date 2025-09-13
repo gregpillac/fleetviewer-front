@@ -22,6 +22,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, shareReplay } from 'rxjs/operators';
 
 import { PlaceService } from '../../../../services/place/place.service';
+import {VehicleService} from '../../../../services/vehicle/vehicle.service';
 
 type Row = Reservation & {
     driver?: Person | null;
@@ -59,6 +60,7 @@ export class PendingReservationsComponent implements OnInit {
 
     constructor(
         private reservationsService: ReservationService,
+        private vehicleService: VehicleService,
         private personService: PersonService,
         private authService: AuthService,
         private placeService: PlaceService
@@ -72,9 +74,9 @@ export class PendingReservationsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const placeId = this.isAdmin ? undefined : this.currentPlaceId ?? undefined;
+        const currentUserplaceId = this.isAdmin ? undefined : this.currentPlaceId ?? undefined;
 
-        this.reservationsService.getReservationsByStatus(Status.PENDING, placeId).subscribe({
+        this.reservationsService.getReservationsByStatus(Status.PENDING, currentUserplaceId).subscribe({
             next: (reservations) => {
                 const list = reservations ?? [];
 
@@ -138,9 +140,9 @@ export class PendingReservationsComponent implements OnInit {
         if (this.expandedId === r.id && !this.vehicleOptionsByRes.has(r.id!)) {
             const startIso = this.toLocalIso((r as any)['startDate'] ?? (r as any)['start_date']);
             const endIso   = this.toLocalIso((r as any)['endDate']   ?? (r as any)['end_date']);
-            const placeId  = this.isAdmin ? undefined : this.currentPlaceId ?? undefined;
+            const vehiclePlaceId = r?.departureId != null ? Number(r.departureId) : undefined;
 
-            this.reservationsService.getAvailableVehicles(startIso, endIso, placeId)
+            this.vehicleService.getAvailableVehicles(startIso, endIso, vehiclePlaceId)
                 .subscribe(vs => this.vehicleOptionsByRes.set(r.id!, vs ?? []));
         }
     }

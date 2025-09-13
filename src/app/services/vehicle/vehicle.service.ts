@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {CreateVehicle, Vehicle} from '../../models/vehicle';
 import {Person} from '../../models/person.model';
+import {Reservation} from '../../models/reservation';
 
 @Injectable({
   providedIn: 'root'
@@ -70,5 +71,12 @@ export class VehicleService {
    */
   deleteVehicle(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  /** Véhicules dispo sur période (start/end au format ISO local: 'YYYY-MM-DDTHH:mm:ss') */
+  getAvailableVehicles(start: string, end: string, placeId?: number) {
+      let params = new HttpParams().set('start', start).set('end', end);
+      if (placeId != null) params = params.set('placeId', String(placeId));
+      return this.http.get<Vehicle[]>(`${this.apiUrl}/available-vehicles`, { params });
   }
 }

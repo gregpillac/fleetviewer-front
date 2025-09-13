@@ -36,13 +36,6 @@ export class ReservationService {
         return this.http.get<Reservation[]>(`${this.apiUrl}/by-status`, { params });
     }
 
-    /** Véhicules dispo sur période (start/end au format ISO local: 'YYYY-MM-DDTHH:mm:ss') */
-    getAvailableVehicles(start: string, end: string, placeId?: number) {
-        let params = new HttpParams().set('start', start).set('end', end);
-        if (placeId != null) params = params.set('placeId', String(placeId));
-        return this.http.get<Vehicle[]>(`${this.apiUrl}/available-vehicles`, { params });
-    }
-
     /** Crée une réservation */
     createReservation(reservation: Reservation): Observable<Reservation> {
         return this.http.post<Reservation>(this.apiUrl, reservation);
