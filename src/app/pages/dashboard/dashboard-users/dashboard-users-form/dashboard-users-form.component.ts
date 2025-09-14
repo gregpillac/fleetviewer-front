@@ -77,7 +77,7 @@ export class DashboardUsersFormComponent implements OnInit {
             // Person
             firstName: ['', Validators.required],
             lastName:  ['', Validators.required],
-            email:     [''],
+            email:     ['', [Validators.required, Validators.email]],
             phone:     [''],
             place:     [null as Place | null],
             line1:     [''],
